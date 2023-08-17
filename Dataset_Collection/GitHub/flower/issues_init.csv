@@ -1,0 +1,1674 @@
+url,label,title,all_text,comments,created_time,updated_time,closed_time
+https://github.com/adap/flower/issues/1137,['bug'],Cannot add class to config dict through on_fit_config_fn in FedAvg Strategy,"Cannot add class to config dict through on_fit_config_fn in FedAvg Strategy### Describe the bug
+
+I want the server to send any new client the configuration files through the Strategy's on_fit_config_fn. The configuration dict returned by the function passed as argument to FedAvg (on_fit_config_fn) has a class (reference?) as one of the values, i.e.
+
+config = {
+            'nn_model': ResnetClassifierBone,
+            'nn_params': {
+                         'dim_input': num_ap_all,                                                          
+                         'num_hidden': 2,
+                         'width_hidden': 300
+                         }
+              }
+
+
+
+### Steps/Code to Reproduce
+
+there was no info that this is not possible until I modified flwr/common/serde.py to raise the following exception:
+
+    raise Exception(f""Accepted types: {bool, bytes, float, int, str} (but not {scalar})"")
+
+and adding the following after line 307 in flower/server/server.py:
+
+    log(INFO, ""server.py fit_clients failure: {}"".format(failure))
+
+I could see in the logs the following:
+
+server.py fit_clients failure: Accepted types: (<class 'bool'>, <class 'bytes'>, <class 'float'>, <class 'int'>, <class 'str'>) (but not <class 'models.classifier_resnet.ResnetClassifierBone'>)
+
+
+### Expected Results
+
+I would be great if this could work
+
+### Actual Results
+
+Actual results shown above in steps/code to reproduceI now realize that it is probably impossible to ""send a class"" like that from server to client in plaintext
+
+However, even trying to send a Dict as one of the values of the Dict (see the entry under the 'nn_params' key above) is impossible. @Spraitazz Depending on what variable types are in the dictionary, you might be able to send it by converting it to bytes. On the server side you would have something like this:
+```
+import json
+def get_on_fit_config_fn():
+    def fit_config(rnd):
+        config = {}
+        my_dictionary = {'dim_input': 5, 'num_hidden': 2, 'width_hidden': 300}
+        config['example'] = json.dumps(my_dictionary).encode('utf-8')
+        return config
+    return fit_config
+
+strategy = fl.server.strategy.FedAvg(on_fit_config_fn=get_on_fit_config_fn())
+```
+
+Then on the client side you'd modify the fit function to convert it back to a dictionary: 
+```
+class MyClient(fl.client.NumPyClient):
+    def fit(self, parameters, config):
+        my_dictionary = json.loads(config['example'])
+        ...
+```
+While you still can't send  a user-defined class from the server to the client, if you have the class defined on both ends you could use this approach to send the kwargs from the server to initialize your ResnetClassifierBone class on the client side.@Spraitazz thanks for reaching out, your second comment is correct. The data types allowed in the config dict have been chosen to make it possible to build Flower clients in different programming languages. Data structures such as lists and dictionaries can also be challenging in that regard: Python allows to mix different value types in a single dict, but other languages are more restrictive, which is why we've chosen to only enable types that ProtoBuf considers to be ""scalars"". I agree that the error message should be more helpful there.
+
+An easy workaround to send a dict and some additional values is to add each `key`/`value` pair of the original dict to the config dict, but prefix the keys (e.g. instead of `my_key`, add `original_dict_my_key`. This enables the client to distinguish between values belonging to the original dict and other key/value pairs.
+
+For ""sending a class"", you could implement a client that dynamically loads code from *somewhere* depending on a `string` value provided through the configuration dict (for experimentation purposes only, not recommended for production systems).",3,2022-03-21 13:07:40,2022-04-24 21:15:38,2022-04-24 21:15:38
+https://github.com/adap/flower/issues/1023,[],Secure gRPC: Logging still reporing insecure connection,"Secure gRPC: Logging still reporing insecure connection### Discussed in https://github.com/adap/flower/discussions/1020
+
+<div type='discussions-op-text'>
+
+<sup>Originally posted by **NathanSchot** January 21, 2022</sup>
+Hey,
+
+My team and I have enjoyed working with flower for a few months now. We are very excited with the recent implementation of secure gRPC connections, as security is one of our main focus points.
+
+I realise I may be a bit early (and potentially nitpicky) with this question as secure gRPC is still under construction, but we noticed that the logging of the FL process does not take the existence of root certificates in account, therefore printing incorrect information. The two lines where this happens are:
+
+https://github.com/adap/flower/blob/cb66854dcbf2e0c5bf14ee48149053a84be8a3be/src/py/flwr/client/app.py#L89
+and 
+https://github.com/adap/flower/blob/cb66854dcbf2e0c5bf14ee48149053a84be8a3be/src/py/flwr/client/grpc_client/connection.py#L114
+
+Thanks in advance.</div>Thanks for the report @NathanSchot, appreciated! CC @tanertopal @NathanSchot much appreciated! We will update that asap!",2,2022-01-24 18:20:24,2022-01-25 16:15:50,2022-01-25 15:00:15
+https://github.com/adap/flower/issues/983,[],Empty distributed metrics in federated evaluation,"Empty distributed metrics in federated evaluationWhen using the advanced_tensorflow example, and removing the centralized evaluation, I get the desired federated evaluation. But the metrics are empty, and they should show the accuracy. I only get the distributed losses
+
+![image](https://user-images.githubusercontent.com/30962122/147923870-9c8e8f57-f362-4590-a185-6d6812881001.png)
+
+The client is returning the accuracy in the evaluate function
+
+![image](https://user-images.githubusercontent.com/30962122/147923536-4792de4c-68c5-461e-8fc8-b9fd5e9cbb65.png)
+
+
+Model is compiled with that metric
+
+![image](https://user-images.githubusercontent.com/30962122/147923368-736a6d34-e628-4bf8-ba7a-823297836433.png)
+Hi @SamuBox , thanks for the question! This is expected behaviour, but let me explain: Flower does not automatically aggregate custom metrics (e.g., `{""accuracy"": accuracy}`) because it's not always the right thing to do a weighted average and because there are many value types for which there is no sensible default aggregation (e.g., `str`). The dict was intended to be flexible enough to communicate different kinds of custom values back to the server and users might want to use it for things they don't intend to aggregate over the multiple clients (e.g., to log a specific per-client value).
+
+That being said, we understand that the current behaviour can easily confuse users, which is not the user experience we intend to provide :) we're thinking about way that (a) allow users to return custom metrics from the client and automatically aggregate these on the server-side and (b) allow users to return custom values of different types (e.g. `str`) that are not aggregated on the server-side. 
+
+In the meantime, here's the guide that describes how custom metrics can be aggregated: https://flower.dev/docs/saving-progress.html#aggregate-custom-evaluation-results (we could update the `advanced_tensorflow` example to include this).@danieljanes Thanks for the detailed answer!
+
+You should definetely include it in the `advanced_tensorflow` , or even better create a `tensorflow_from_centralized_to_federated`
+
+Also this (https://flower.dev/docs/saving-progress.html#aggregate-custom-evaluation-results) example should include all the code, as I can't make it work
+
+Could you post a full example with the fit function? Im getting different errors depending on how I configure the fit function
+
+Here is my fit function
+
+
+```
+class CifarClient(fl.client.NumPyClient):
+    def __init__(self, model, x_train, y_train, x_test, y_test):
+        self.model = model
+        self.x_train, self.y_train = x_train, y_train
+        self.x_test, self.y_test = x_test, y_test
+
+    def get_parameters(self):
+        """"""Get parameters of the local model.""""""
+        return self.model.get_weights()
+
+    def fit(self, parameters, config):
+        """"""Train parameters on the locally held training set.""""""
+
+        # Update local model parameters
+        self.model.set_weights(parameters)
+
+        history = self.model.fit(
+            self.x_train,
+            self.y_train,
+            steps_per_epoch=3
+        )
+
+        # Return updated model parameters and results
+        parameters_prime = self.model.get_weights()
+        num_examples_train = len(self.x_train)
+        results = {
+            ""loss"": history.history[""loss""][0],
+            ""accuracy"": history.history[""accuracy""][0],
+            ""val_loss"": history.history[""val_loss""][0],
+            ""val_accuracy"": history.history[""val_accuracy""][0],
+        }
+        return parameters_prime, num_examples_train, results
+```
+
+I created a centralized example with no luck of showing any additional behavior after creating the changes as `FedAvg` already contained `accuracy` in its metrics, so I closed the related _Pull Request_.
+Maybe we should create the `tensorflow_from_centralized_to_federated` example as pointed out by @SamuBox, could you kindly create a base _PR_ for it so we could add the custom strategy for getting distributed accuracies to show up in history? As I am unsure of what procedure are you using for removing the centralized evaluation.
+
+The `add_metrics_distributed()` history function is invoked by `Server` by using the `evaluate_round()` return value, which currently also uses the `aggregate_evaluate()` function call. In this way, we could add the custom metric aggregation the same way as I did in the closed _PR_, is that correct?
+
+We should create a `weighted_avg` function that could be used for any float metric and append this call into the metrics returned for the `fedavg` inherited new strategy. That would solve this issue.
+
+<details><summary>See output for the test</summary>
+
+```bash
+2022-01-06 21:30:31.674931: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+INFO flower 2022-01-06 21:30:32,390 | app.py:109 | Flower server running (2 rounds)
+SSL is disabled
+INFO flower 2022-01-06 21:30:32,390 | server.py:118 | Initializing global parameters
+INFO flower 2022-01-06 21:30:32,390 | server.py:301 | Using initial parameters provided by strategy
+INFO flower 2022-01-06 21:30:32,390 | server.py:120 | Evaluating initial parameters
+INFO flower 2022-01-06 21:30:32,390 | server.py:133 | FL starting
+DEBUG flower 2022-01-06 21:30:36,418 | server.py:252 | fit_round: strategy sampled 3 clients (out of 10)
+DEBUG flower 2022-01-06 21:30:56,980 | server.py:261 | fit_round received 3 results and 0 failures
+DEBUG flower 2022-01-06 21:30:57,163 | server.py:201 | evaluate_round: strategy sampled 2 clients (out of 10)
+DEBUG flower 2022-01-06 21:30:58,487 | server.py:210 | evaluate_round received 2 results and 0 failures
+DEBUG flower 2022-01-06 21:30:58,487 | server.py:252 | fit_round: strategy sampled 3 clients (out of 10)
+DEBUG flower 2022-01-06 21:31:32,220 | server.py:261 | fit_round received 3 results and 0 failures
+DEBUG flower 2022-01-06 21:31:32,389 | server.py:201 | evaluate_round: strategy sampled 2 clients (out of 10)
+DEBUG flower 2022-01-06 21:31:33,722 | server.py:210 | evaluate_round received 2 results and 0 failures
+INFO flower 2022-01-06 21:31:33,723 | server.py:172 | FL finished in 61.3320197969997
+INFO flower 2022-01-06 21:31:33,723 | app.py:149 | app_fit: losses_distributed [(1, 2.3144595623016357), (2, 2.3028911352157593)]
+INFO flower 2022-01-06 21:31:33,723 | app.py:150 | app_fit: metrics_distributed {'accuracy': [(1, 0.08437500149011612), (2, 0.09062499925494194)]}
+INFO flower 2022-01-06 21:31:33,723 | app.py:151 | app_fit: losses_centralized []
+INFO flower 2022-01-06 21:31:33,723 | app.py:152 | app_fit: metrics_centralized {}
+```
+</details>Try to clone my _PR_ and run the next commands:
+
+```bash
+cd examples/tensorflow_from_centralized_to_federated
+poetry install
+poetry run run.sh
+```@sisco0  Thanks for all the work! 
+
+It's works perfect :) 
+
+```
+INFO flower 2022-01-07 11:06:12,412 | server.py:172 | FL finished in 402.09212740099974
+INFO flower 2022-01-07 11:06:12,413 | app.py:149 | app_fit: losses_distributed [(1, 2.3211318254470825), (2, 2.3191205263137817)]
+INFO flower 2022-01-07 11:06:12,413 | app.py:150 | app_fit: metrics_distributed {'accuracy': [(1, 0.10312499850988388), (2, 0.12187499925494194)]}
+```",5,2022-01-03 11:08:41,2022-01-07 11:41:01,2022-01-07 11:41:01
+https://github.com/adap/flower/issues/971,[],`pull access denied for flower_client` for Embedded Devices example with RPi4.,"`pull access denied for flower_client` for Embedded Devices example with RPi4.I am trying to run the Embedded Devices example on a Raspberry Pi 4 with Raspian on it. (flower/examples/embedded_devices/). However, when I run `./run_pi.sh --server_address=<SERVER_ADDRESS> --cid=0 --model=Net`, I get this error message while building the Docker image:
+
+```
+ => ERROR [ 2/11] RUN apt-get install wget -y                              1.1s
+------                                                                          
+ > [ 2/11] RUN apt-get install wget -y:                                         
+#5 0.992 standard_init_linux.go:228: exec user process caused: exec format error
+------
+executor failed running [/bin/sh -c apt-get install wget -y]: exit code: 1
+Unable to find image 'flower_client:latest' locally
+docker: Error response from daemon: pull access denied for flower_client, repository does not exist or may require 'docker login': denied: requested access to the resource is denied.
+See 'docker run --help'.
+```
+
+I am assuming the problem is with access to the `flower_client:latest` image? Or can it be because I am using Raspian instead of Ubuntu, as instructed in the guide? Please let me know what I can do. Thanks! 
+As stated in the error **Unable to find image ... locally** we need to build the _Docker_ image first by using the script attached below:
+https://github.com/adap/flower/blob/c6350d124d12967931c2af8c68f6157d40826a38/examples/embedded_devices/build_image.sh
+
+Consider building the _Docker_ image by using the cited script and retry please.",1,2021-12-29 18:41:40,2021-12-30 16:50:58,2021-12-30 16:50:58
+https://github.com/adap/flower/issues/956,[],Error when converting model to .tflite,"Error when converting model to .tfliteHello @akhilmathurs ,
+I'm trying to run the_tflite.py for the example provided on https://flower.dev/blog/2021-12-15-federated-learning-on-android-devices-with-flower
+I'm getting the following error:
+`flower/examples/android/android/tflite_convertor/tfltransfer/heads/keras_model_head.py"", line 51, in __init__
+    input_def = next(self._predict_signature.inputs.values().__iter__())
+AttributeError: 'list' object has no attribute 'values'
+`
+I didn't do any modifications, how can I solve this issue?I would try to replicate the issue and debug what is happening here.
+
+The steps for reproducing this issue are shown next:
+
+```bash
+cd examples/android
+python3 -m poetry install
+python3 -m poetry run python3 tflite_convertor/convert_to_tflite.py
+```
+
+Which shows the next console output:
+
+```text
+2022-01-06 16:22:15.508872: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2022-01-06 16:22:15.625521: W tensorflow/python/util/util.cc:348] Sets are not currently considered sequences, but this may change in the future, so consider avoiding using them.
+Traceback (most recent call last):
+  File ""tflite_convertor/convert_to_tflite.py"", line 54, in <module>
+    10, base_path, heads.KerasModelHead(head), optimizers.SGD(1e-3), train_batch_size=32
+  File ""/home/tbd/dev/flower/examples/android/tflite_convertor/tfltransfer/heads/keras_model_head.py"", line 51, in __init__
+    input_def = next(self._predict_signature.inputs.values().__iter__())
+AttributeError: 'list' object has no attribute 'values'
+```
+
+The presence of this `values()` refers to some _Tensorflow v1_ function calls.
+
+```python
+$ grep -iRn ""tensorflow.compat""                                                                                                                                                                                                                                           
+utils.py:20:from tensorflow.compat import v1 as tfv1
+optimizers/sgd.py:21:import tensorflow.compat.v1 as tfv1
+optimizers/adam.py:21:import tensorflow.compat.v1 as tfv1
+tflite_transfer_converter.py:29:from tensorflow.compat import v1 as tfv1
+heads/keras_model_head.py:25:from tensorflow.compat import v1 as tfv1
+heads/softmax_classifier_head.py:22:from tensorflow.compat import v1 as tfv1
+heads/logits_saved_model_head.py:25:from tensorflow.compat import v1 as tfv1
+```@ramireguilherme @sisco0 Thanks for highlighting the issue. It was a problem with the tfltransfer library. I changed the library files and it should work now. Please try this PR https://github.com/adap/flower/pull/1001 @ramireguilherme @sisco0 can you confirm if the fix in #1001 works for you?@tanertopal  Thank you! That fixed the issue. I was able to run the example and convert to .tflite format.",4,2021-12-23 17:00:20,2022-01-17 13:48:15,2022-01-17 13:48:15
+https://github.com/adap/flower/issues/955,[],FL starting but no progress!,"FL starting but no progress!Hi, I am running pyTorch CIFAR-10 Example. I make the environment and change the server and client file with localhost:8080. It start but went to some infinite loop. No error message to find the mistake. 
+
+**Server side messages:**
+INFO flower 2021-12-22 15:06:15,217 | app.py:77 | Flower server running (insecure, 1 rounds)
+INFO flower 2021-12-22 15:06:15,218 | server.py:118 | Initializing global parameters
+INFO flower 2021-12-22 15:06:15,219 | server.py:304 | Requesting initial parameters from one random client
+INFO flower 2021-12-22 15:06:24,682 | server.py:307 | Received initial parameters from one random client
+INFO flower 2021-12-22 15:06:24,683 | server.py:120 | Evaluating initial parameters
+INFO flower 2021-12-22 15:06:24,684 | server.py:133 | FL starting
+
+**Client side messages:**
+DEBUG flower 2021-12-22 15:06:24,674 | connection.py:36 | ChannelConnectivity.IDLE
+DEBUG flower 2021-12-22 15:06:24,676 | connection.py:36 | ChannelConnectivity.CONNECTING
+INFO flower 2021-12-22 15:06:24,676 | app.py:61 | Opened (insecure) gRPC connection
+DEBUG flower 2021-12-22 15:06:24,676 | connection.py:36 | ChannelConnectivity.READYHi again! I just find if you initiate 2 clients then it works fine and 0 failure. I think some issue of indexing if we initiate just one client.",1,2021-12-22 15:26:07,2021-12-22 16:13:35,2021-12-22 16:12:48
+https://github.com/adap/flower/issues/938,[],DNS resolution failed when run with docker-compose,"DNS resolution failed when run with docker-compose## Expected outcome
+
+Running my `server.py` and `client.py` in different services using `docker-compose` should work.
+
+## Actual outcome
+
+The `client.py` cannot connect to the server started in `server.py` with the following error message:
+
+```shell
+debug_error_string = ""{""created"":""@1639410202.095422178"",""description"":""Resolver transient failure"",""file"":""src/core/ext/filters/client_channel/client_channel.cc"",""file_line"":1324,""referenced_errors"":[{""created"":""@1639410202.095420088"",""description"":""DNS resolution failed for service: server:5000"",""file"":""src/core/ext/filters/client_channel/resolver/dns/c_ares/dns_resolver_ares.cc"",""file_line"":359,""grpc_status"":14,""referenced_errors"":[{""created"":""@1639410202.095344709"",""description"":""C-ares status is not ARES_SUCCESS qtype=A name=server is_balancer=0: Domain name not found"",""file"":""src/core/ext/filters/client_channel/resolver/dns/c_ares/grpc_ares_wrapper.cc"",""file_line"":698,""referenced_errors"":[{""created"":""@1639410202.090720089"",""description"":""C-ares status is not ARES_SUCCESS qtype=AAAA name=server is_balancer=0: Domain name not found"",""file"":""src/core/ext/filters/client_channel/resolver/dns/c_ares/grpc_ares_wrapper.cc"",""file_line"":698}]}]}]}""
+```
+
+## Additional information
+
+The server is started via:
+
+```python
+fl.server.start_server(
+    f""{args.host}:{args.port}"",
+    strategy=strategy,
+    config={""num_rounds"": 10},
+)
+```
+
+The client is started via:
+
+```python
+fl.client.start_numpy_client(
+    f""{args.server}:{args.port}"",
+    client=SynthClient(model, data),
+)
+```
+
+And the `docker-compose.yaml` looks like this:
+
+```yaml
+version: ""3.9""
+services:
+  server:
+    image: flower-fed
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ""python flower_fed/server.py 0.0.0.0 8080 404""
+    hostname: ""server""
+    ports:
+      - ""5000:8080""
+  client1:
+    image: flower-fed
+    command: ""python flower_fed/client.py server 5000 42""
+    depends_on:
+      - ""server""
+  client2:
+    image: flower-fed
+    command: ""python flower_fed/client.py server 5000 8008""
+    depends_on:
+      - ""server""
+```
+
+## Notes
+
+To be honest, I am not entirely sure whether this is a problem with flower or with my docker-compose setup. :flushed:@shimst3r Docker does by default not support afaik IPv6. Could you try starting your Flower server and clients using IPv4 or enable IPv6 in your Docker daemon?@shimst3r Closing this due to inactivity. Feel free to open a new issue if this still needs resolving.I totally forgot about the issue over the holidays, very sorry! The team solved the problem in the meantime, thanks for getting back to me though.",3,2021-12-13 15:53:01,2022-02-04 12:17:09,2022-02-04 08:46:46
+https://github.com/adap/flower/issues/936,[],Examples not installing the correct version of Ray,"Examples not installing the correct version of RayWhen running a simulation example, the install procedure installs ray==1.9.0
+
+```
+git clone --depth=1 https://github.com/adap/flower.git && mv flower/examples/simulation_pytorch . && rm -rf flower && cd simulation_pytorch 
+poetry install
+poetry shell
+python
+import ray
+print(ray.__version__)
+```
+If the line in https://github.com/adap/flower/blob/715d029422773031a14a6044e31590f6d6f75640/examples/simulation_pytorch/pyproject.toml#L16 is uncommented and the line above it is commented, then the expected behavior (ray==1.6.0) is obtained (if we just clone the repo and do not delete it, of course). 
+
+I think this is due to Poetry not being able to correctly find `[""simulation""]` or due to `[""simulation""]` not containing any `ray` version. If we remove the parent directory (`flower/`), how can the example `pyproject.toml` know the definition of `[""simulation""]`. Should it get it from PyPI? The latest `ray` version is used as it could be seen by running `poetry install -vvv`. This behaviour is expected from the _Poetry_ package, as it is already detecting an `import ray` under the `main.py` file.
+
+The linked `../../` path is not accessible after running the `rm -rf flower` command in the first line of the shared _Bash_ script, so we would fail on fixing these extras. There would be two alternatives here:
+
+1. Do not `rm -rf` any directory and perform the _comment_/_uncomment_ procedure as you did successfully.
+2. Add the same extras (duplicate code, which is not always a good option) to this `pyproject.toml` under `examples/simulation_pytorch`.
+
+For replicating the first option (my preferred one) the command below should be executed. Note that the command output at the end is equal to `1.6.0` as expected:
+
+```bash
+git clone --depth=1 --branch fix/fix-relative-poetry-simulation https://github.com/sisco0/flower.git && cd flower/examples/simulation_pytorch && poetry install -vvv && poetry run python -c ""import ray; print(ray.__version__)""
+```
+
+We might have the same issue for other examples as well.
+<details><summary>Click here to see other examples cases</summary>
+
+```text
+$ grep -iRn ""git clone.*rm"" 
+baselines/README.md:8:git clone --depth=1 https://github.com/adap/flower.git && mv flower/baselines . && rm -rf flower && cd baselines
+examples/simulation_pytorch_legacy/README.md:24:git clone --depth=1 https://github.com/adap/flower.git && mv flower/examples/simulation_pytorch . && rm -rf flower && cd simulation_pytorch
+examples/quickstart_pytorch/README.md:11:git clone --depth=1 https://github.com/adap/flower.git && mv flower/examples/quickstart_pytorch . && rm -rf flower && cd quickstart_pytorch
+examples/pytorch_federated_variational_autoencoder/README.md:10:git clone --depth=1 https://github.com/adap/flower.git && mv flower/examples/pytorch_federated_variational_autoencoder . && rm -rf flower && cd pytorch_federated_variational_autoencoder
+examples/android/README.md:16:git clone --depth=1 https://github.com/adap/flower.git && mv flower/examples/android . && rm -rf flower && cd android
+examples/pytorch_from_centralized_to_federated/README.md:12:git clone --depth=1 https://github.com/adap/flower.git && mv flower/examples/pytorch_from_centralized_to_federated . && rm -rf flower && cd pytorch_from_centralized_to_federated
+examples/quickstart_simulation/README.md:16:git clone --depth=1 https://github.com/adap/flower.git && mv flower/examples/quickstart_simulation . && rm -rf flower && cd quickstart_simulation
+examples/quickstart_tensorflow/README.md:11:git clone --depth=1 https://github.com/adap/flower.git && mv flower/examples/quickstart_tensorflow . && rm -rf flower && cd quickstart_tensorflow
+examples/dp-sgd-mnist/README.md:14:git clone --depth=1 https://github.com/adap/flower.git && mv flower/examples/dp-sgd-mnist . && rm -rf flower && cd dp-sgd-mnist
+examples/simulation/README.md:24:git clone --depth=1 https://github.com/adap/flower.git && mv flower/examples/simulation . && rm -rf flower && cd simulation
+examples/mxnet_from_centralized_to_federated/README.md:12:git clone --depth=1 https://github.com/adap/flower.git && mv flower/examples/mxnet_from_centralized_to_federated . && rm -rf flower && cd mxnet_from_centralized_to_federated
+examples/embedded_devices/README.md:24:$ git clone --depth=1 https://github.com/adap/flower.git && mv flower/examples/embedded_devices . && rm -rf flower && cd embedded_devices
+examples/sklearn-logreg-mnist/README.md:11:git clone --depth=1 https://github.com/adap/flower.git && mv flower/examples/sklearn-logreg-mnist . && rm -rf flower && cd sklearn-logreg-mnist
+examples/quickstart_mxnet/README.md:12:git clone --depth=1 https://github.com/adap/flower.git && mv flower/examples/quickstart_mxnet . && rm -rf flower && cd quickstart_mxnet
+examples/quickstart_huggingface/README.md:12:git clone --depth=1 https://github.com/adap/flower.git && mv flower/examples/transformers-pytorch . && rm -rf flower && cd transformers-pytorch
+examples/advanced_tensorflow/README.md:17:git clone --depth=1 https://github.com/adap/flower.git && mv flower/examples/advanced_tensorflow . && rm -rf flower && cd advanced_tensorflow
+```
+</details>I really like the idea of having a hierarchical poetry system tbh, but I guess Examples were also meant to be used in a stand-alone fashion i.e. if you already have Flower you don't have to build it. @tanertopal @danieljanes any thoughts?The reason for this behaviour is the following: back in the 0.17 release, the Ray dependency was specified as [`^1.6.0`](https://github.com/adap/flower/blob/d963b39ff191164654b659e0e3a72aeef8cc3480/pyproject.toml#L67), so Poetry installs the latest version (which is `1.9.1`).
+
+Workarounds:
+- Try to install Ray 1.6 manually, then run the example install as mentioned above (IIRC, this should keep Ray at 1.6) --> this is probably the easiest thing to try
+- Install `flwr-nightly` (note: there are a few breaking changes to be aware of, for example, the required `get_properties` method)
+- Install Flower from branch [`release/v0.17`](https://github.com/adap/flower/tree/release/0.17) (it's basically `0.17` with two additional Ray-related cherry-picks, the version fix amongst them)
+- Wait for 0.18",3,2021-12-10 19:22:06,2022-01-04 14:36:18,2022-01-04 14:36:18
+https://github.com/adap/flower/issues/930,[],Can't install app for Android Example,"Can't install app for Android ExampleHi,
+
+I want to perform federated learning with Android Clients, and I tired to run through the Flower Android Example in this repo. 
+However, I failed to install the apk file on all 3 Android mobiles.
+It says that `[INSTALL_FAILED_NO_MATCHING_ABIS: Failed to extract native libraries, res=-113]`
+Is there anything I can do to solve this problem?What is the current device you are trying to run this application in? The key is ensuring that third-party dependencies are available for your architecture.How to check if the third-party dependencies are available?
+
+I tried on 
+(1) HTC U11 with Kernel version,
+```
+4.4.153-perf-g66b46bd
+and@AABM #1
+SMP PREEMPT
+```
+, Baseband version of `8998-200321-1905141529`, and android version of 9
+
+(2) HTC Desire 12s with Kernel version,
+```
+3.18.71-perf-g13ca675(gcc version 4.9.x
+20150123(prerelease)(GCC))
+jenkins@sh-16-201.rnd.longcheer.net #1
+Tue Aug 11 10:52:57 CST 2020
+```
+, Baseband version of `953_GEN_PACK-1.181186.4.183606.3`, and android version of 8.1.0
+
+(3) ASUS_Z017DA with Kernel version,
+```
+3.18.66-perf-gf957510
+android@mcrd1-39 #1
+Wed Sep 5 17:34:49 CST 2018
+```
+, Baseband version of `M3.10.47.19-Leo_080001`, and android version of 8.0.0
+
+I'm not sure if the provided information is enough, since I'm not familiar with this.... If there is any information needed, please let me know.
+Thank you!I would suggest compiling the project contained in the https://github.com/adap/flower/tree/main/examples/android/client folder by setting different splits so binaries for different platforms could be generated. For that purpose, we only need to append this configuration to [`build.gradle` under the `app` folder](https://github.com/adap/flower/blob/main/examples/android/client/app/build.gradle).
+
+```yaml
+splits {
+    abi {
+        enable true
+        reset()
+        include 'x86', 'armeabi-v7a', 'x86_64'
+        universalApk true
+    }
+}
+```
+
+Then, building the _APK_ newly could come up with a solution. But, just for getting to know better what are your target platforms based on, could you kindly run the next command and show the output under your hardware? ([Reference](https://handstandsam.com/2016/01/28/determining-supported-processor-types-abis-for-an-android-device/))
+
+```bash
+adb shell getprop ro.product.cpu.abilist
+```
+
+One of the options is that we are using the wrong APK for your ABI and the other one is that the libraries used are not included in your current _Android_ version (please correct me if I am wrong).
+
+Currently, the project seems to be configured for being compatible with [Android 7.0](https://developer.android.com/studio/releases/platforms) (v24) but it is compiled using the [Android 19.0](https://developer.android.com/studio/releases/platforms) (v29) SDK as attached below. If we are setting an SDK for the compilation that uses a higher version than the `minSdkVersion` we could run into issues if undefined `ABI` symbols from _Android 10.0_ (v29) are used under an _Android 9.0_ (v28) system.
+https://github.com/adap/flower/blob/8b9054866a46d0a41638a0a7ca9632b646eecea2/examples/android/client/app/build.gradle#L11-L12
+https://github.com/adap/flower/blob/8b9054866a46d0a41638a0a7ca9632b646eecea2/examples/android/client/transfer_api/build.gradle#L4-L10
+
+💡 We could modify the `targetSdkVersion` and `minSdkVersion` to be _Android 8.0_ (26) for ensuring it could work on the whole set of your devices and apply the required fixes if needed.
+
+I am currently running a relaxed APK build with SDK Version _Android 8.0_ (26) to see what is the result like, if it completes I would share the custom APK by here.
+
+**Results**
+It seems that trying to use an _Android SDK_ lower than 28 throws an error in the `android:attr/dialogCornerRadius` and `android:attr/fontVariationSettings` components. This makes the current source code not compatible with _Android 8.0_ so no direct workaround is had for this project to work on _Android 8.0_ **BUT** good news is that this project could be built correctly for _Android 9.0_ (_Android SDK_ 28) so you could use it hopefully in your first device. I attach the corresponding file here with the splits as specified above:
+
+https://drive.google.com/drive/folders/1kpygk5YIagLTWWjGXJ6PjHYPj3_KSNE9?usp=sharing
+
+Source code changes are noted in https://github.com/sisco0/flower/tree/refactor/android-example-set-to-9Sorry for the late reply.... I was busy for the past few days. And thank you for your reply!!!
+
+I don't know how to run the command `adb shell getprop ro.product.cpu.abilist` on my phone, so I downloaded an app that tells the command set (not sure what the actual English word for this is) the mobile uses.
+
+2 of the above mobiles use arm64-v8a. (I didn't test the third one due to memory shortage) Therefore, I appended the following configuration to build.gradle under the app folder like you said.
+```
+splits {
+    abi {
+        enable true
+        reset()
+        include 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
+        universalApk true
+    }
+}
+```
+( I found out later that I could simply include 'arm64-v8a' to build the desired APK. From the above configuration, it will build different APKs for different ""command sets"" if I understand it correctly.)
+
+The APK built with 'arm64-v8a' can be installed successfully on both mobiles. Both of them seem to be running, even with Android version =  8.1.0. I will then take a closer look at what the app is doing exactly and how.
+
+Thank you for all your assistance!! It is really a huge help for me!!!! 
+Thank you again and Merry Christmas~~`adb` command could be run by connecting the devices by using USB to your computer, it is like the shell login for debugging (ADB = Android Debugging).
+
+Great to know about the issue being solved by using the specific target architecture. This issue could be closed.Thank you again for your help!",6,2021-12-07 06:41:15,2021-12-25 03:41:47,2021-12-25 03:41:47
+https://github.com/adap/flower/issues/910,[],Loading a saved model in PyTorch - Confusion regarding the Weights and Parameters classes,"Loading a saved model in PyTorch - Confusion regarding the Weights and Parameters classesI'm saving a model according to the guidelines here: https://flower.dev/docs/saving-progress.html
+
+This saves the ""aggregated_weights"" into an "".npz"" file. However, loading this file and its contents into a PyTorch model afterwards for inference is not clear to me. I'm having a bit of a hard time understanding the ""aggregated_weights"" variable as well as it appears to be a flwr.commons.Parameters class that is not printable (my code hangs whenever I try to print)
+
+So my question is: How can I instead make these ""aggregated_weights"" into the standard PyTorch state_dict format and save it as "".pt""?
+
+I tried treating the ""aggregated_weights"" variable like the ""parameters variable is treated in this example: https://github.com/adap/flower/blob/main/examples/quickstart_pytorch/client.py#L105-L108
+
+But that didn't work for me. Perhaps this stems from my confusion regarding the flwr.commons.Parameters and Weights classesHi @Linardos, thanks for reaching out. This is a good question that many users might have, so I'll try to answer it with a lot of detail.
+
+`flwr.client.NumPyClient` is a convenience class built on top of `flwr.client.Client`. The difference is that `Client` sends/receives lower-level values that are close to the actual gRPC messages sent over the wire, which in turn means that you have to write a bit more boilerplate code when implementing it. `NumPyClient` is more opinionated (which also means less flexible), but it does a lot of this boilerplate work for you in return.
+
+One example for this boilerplate work is the conversion of model parameters. On the gRPC level, Flower communicates model parameters as byte arrays. To be more precise, Flower uses a gRPC/ProtoBuf message called [`Parameters`](https://github.com/adap/flower/blob/4d95d2627afb27153bfe66d5edff78a905f3f3e8/src/proto/flwr/proto/transport.proto#L24) to represent your model parameters in the following way:
+
+```
+message Parameters {
+  repeated bytes tensors = 1;
+  string tensor_type = 2;
+}
+```
+
+`repeated` is ProtoBuf-syntax for a list/array-ish data structure. So `Parameters` is a list of byte arrays and a string `tensor_type` that tells someone receiving a `Parameters` object how those byte arrays should be interpreted (after all, the byte arrays could contain anything). The Flower code examples usually serialize a single neural network layer into a byte arrays, so in that case, the `Parameters` object should have a list `tensors` with as many entries as the model has layers.
+
+Coming back to your question, what's the relationship between PyTorch, `NumPyClient`, and `aggregated_weights`?
+
+Since the transport layer uses byte arrays, we have to convert *whatever* model parameters we have into byte arrays. `NumPyClient` is the convenience class that does it for you by asking you to use a list of NumPy `ndarray` objects. So when you return from `fit`, you take the PyTorch `state_dict` and turn it into a list of NumPy `ndarray`s. `NumPyClient` then does a second conversion from this list into a list of byte arrays.
+
+On the server side, the reverse happens: we receive the `Parameters` object with the list of byte arrays, but then we have de-serialize it into a list of NumPy `ndarray`s before we can do any computation on it. This is done inside the `aggregate_fit` method: it converts `Parameters` to `ndarray`s, averages them, and converts them back to `Parameters` ([implementation](https://github.com/adap/flower/blob/4d95d2627afb27153bfe66d5edff78a905f3f3e8/src/py/flwr/server/strategy/fedavg.py#L254)).
+
+Now, to finally answer the question, yes, one can absolutely save the aggregated parameters as a PyTorch `state_dict`. `aggregate_fit` returns a `Parameters` object that has to be transformed into a list of NumPy `ndarray`s, and those have to be transformed into the PyTorch `state_dict` (just the way it's done on the client side). Here's the code:
+
+```python
+class SaveModelStrategy(fl.server.strategy.FedAvg):
+    def aggregate_fit(
+        self,
+        rnd: int,
+        results: List[Tuple[fl.server.client_proxy.ClientProxy, fl.common.FitRes]],
+        failures: List[BaseException],
+    ) -> Optional[fl.common.Weights]:
+        aggregated_parameters = super().aggregate_fit(rnd, results, failures)
+        if aggregated_parameters is not None:
+            aggregated_parameters = fl.common.para(aggregated_parameters)
+            
+            # Convert `Parameters` to `List[np.ndarray]`
+            aggregated_weights: List[np.ndarray] = fl.common.parameters_to_weights(aggregated_parameters)
+            
+            # Load PyTorch model
+            net = Net().to(DEVICE)
+
+            # Convert `List[np.ndarray]` to PyTorch`state_dict`
+            params_dict = zip(net.state_dict().keys(), aggregated_weights)
+            state_dict = OrderedDict({k: torch.tensor(v) for k, v in params_dict})
+            net.load_state_dict(state_dict, strict=True)
+
+            # TODO Save PyTorch `state_dict` as `.pt`
+
+        return aggregated_parameters
+```
+
+The reason we chose to migrate (almost) all of our API's to use `Parameters` objects is that we want Flower to be serialization-agnostic. In the future, we will make the serialization and deserialization pluggable (i.e., user-configurable through a plugin system).
+
+I also realized that some of the namings in the documentation weren't particularly helpful, so we'll update those to make them easier to follow. When we started the migration to `Parameters`, we tried to use `Weights` as a synonym for `List[np.ndarray]` and `Parameters` for the serialized version thereof, but there are still some historical artifacts where we're not yet following that convention.",1,2021-11-24 22:51:25,2021-11-25 14:38:35,2021-11-25 14:38:35
+https://github.com/adap/flower/issues/904,[],Raspberry pi 3 cannot import flwr,"Raspberry pi 3 cannot import flwrI installed flower : 
+
+`pip install flwr`
+
+It installed properly and now I have problem to import it. Thanks for help 
+
+
+`Python 3.9.2 (default, Mar 12 2021, 04:06:34) 
+[GCC 10.2.1 20210110] on linux
+Type ""help"", ""copyright"", ""credits"" or ""license"" for more information.
+>>> import flwr
+Traceback (most recent call last):
+  File ""<stdin>"", line 1, in <module>
+  File ""/home/pi/Desktop/flower/flower_env/lib/python3.9/site-packages/flwr/__init__.py"", line 18, in <module>
+    from . import client, server, simulation
+  File ""/home/pi/Desktop/flower/flower_env/lib/python3.9/site-packages/flwr/client/__init__.py"", line 18, in <module>
+    from .app import start_client as start_client
+  File ""/home/pi/Desktop/flower/flower_env/lib/python3.9/site-packages/flwr/client/app.py"", line 25, in <module>
+    from .grpc_client.connection import insecure_grpc_connection
+  File ""/home/pi/Desktop/flower/flower_env/lib/python3.9/site-packages/flwr/client/grpc_client/connection.py"", line 22, in <module>
+    import grpc
+  File ""/home/pi/Desktop/flower/flower_env/lib/python3.9/site-packages/grpc/__init__.py"", line 22, in <module>
+    from grpc import _compression
+  File ""/home/pi/Desktop/flower/flower_env/lib/python3.9/site-packages/grpc/_compression.py"", line 15, in <module>
+    from grpc._cython import cygrpc
+ImportError: /home/pi/Desktop/flower/flower_env/lib/python3.9/site-packages/grpc/_cython/cygrpc.cpython-39-arm-linux-gnueabihf.so: undefined symbol: __atomic_exchange_8
+Python 3.9.2 (default, Mar 12 2021, 04:06:34) 
+[GCC 10.2.1 20210110] on linux
+Type ""help"", ""copyright"", ""credits"" or ""license"" for more information.
+>>> import flwr
+Traceback (most recent call last):
+  File ""<stdin>"", line 1, in <module>
+  File ""/home/pi/Desktop/flower/flower_env/lib/python3.9/site-packages/flwr/__init__.py"", line 18, in <module>
+    from . import client, server, simulation
+  File ""/home/pi/Desktop/flower/flower_env/lib/python3.9/site-packages/flwr/client/__init__.py"", line 18, in <module>
+    from .app import start_client as start_client
+  File ""/home/pi/Desktop/flower/flower_env/lib/python3.9/site-packages/flwr/client/app.py"", line 25, in <module>
+    from .grpc_client.connection import insecure_grpc_connection
+  File ""/home/pi/Desktop/flower/flower_env/lib/python3.9/site-packages/flwr/client/grpc_client/connection.py"", line 22, in <module>
+    import grpc
+  File ""/home/pi/Desktop/flower/flower_env/lib/python3.9/site-packages/grpc/__init__.py"", line 22, in <module>
+    from grpc import _compression
+  File ""/home/pi/Desktop/flower/flower_env/lib/python3.9/site-packages/grpc/_compression.py"", line 15, in <module>
+    from grpc._cython import cygrpc
+ImportError: /home/pi/Desktop/flower/flower_env/lib/python3.9/site-packages/grpc/_cython/cygrpc.cpython-39-arm-linux-gnueabihf.so: undefined symbol: __atomic_exchange_8
+`@JozefKondas could you provide a bit more information on the system? Which OS, Version, which RPI, etc. Also would be nice if you can copy the error message into a comment or edit it into your description.Rapsberry information:
+`PRETTY_NAME=""Raspbian GNU/Linux 11 (bullseye)""
+NAME=""Raspbian GNU/Linux""
+VERSION_ID=""11""
+VERSION=""11 (bullseye)""
+VERSION_CODENAME=bullseye
+ID=raspbian
+ID_LIKE=debian
+HOME_URL=""http://www.raspbian.org/""
+SUPPORT_URL=""http://www.raspbian.org/RaspbianForums""
+BUG_REPORT_URL=""http://www.raspbian.org/RaspbianBugs""
+`
+My pip list:
+`Package        Version
+
+beautifulsoup4 4.10.0
+flwr           0.17.0
+google         2.0.3
+grpcio         1.42.0
+numpy          1.21.4
+pip            20.3.4
+pkg-resources  0.0.0
+protobuf       3.19.1
+setuptools     44.1.1
+six            1.16.0
+soupsieve      2.3.1
+wheel          0.34.2`
+
+
+Here It is. I am not really sure, If It is all. I am student having first experience with rapsberry :D @JozefKondas, have you tried running the [Embedded Devices](https://github.com/adap/flower/tree/main/examples/embedded_devices) example? There are several packages that require native compilation for `aarch64` (i.e. RPi, Jetson, and other devices running Arm CPUs).  It this [`Dockerfile`](https://github.com/adap/flower/blob/main/examples/embedded_devices/base_images/cpu/Dockerfile) you can see the steps I followed to make everything work. It can take a little while to install. I believe you can run those commands individually on the terminal (i.e. outside a Docker setting). let me know how it goes!I downloaded ubuntu image instead of Rapsbian and It's working",4,2021-11-18 13:20:44,2022-01-23 21:11:03,2022-01-23 21:11:02
+https://github.com/adap/flower/issues/892,[],Attribute error when running examples/android,"Attribute error when running examples/androidHi,
+
+I tried running the Examples/android script but encountered the following error when running the line: 
+`poetry run ./run.sh
+`
+
+```
+Traceback (most recent call last):
+  File ""./server.py"", line 38, in <module>
+    main()
+  File ""./server.py"", line 9, in main
+    strategy = fl.server.strategy.FedAvgAndroid(
+AttributeError: module 'flwr.server.strategy' has no attribute 'FedAvgAndroid'
+```
+How to resolve this error?
+Hello, probably the latest **stable** version of the flower does not have `'FedAvgAndroid'` attribute.
+Thus, you can try nightly releases with :
+`$ pip install flwr-nightly` 
+
+or simply install the latest version of the flower from the github
+
+`$ pip install git+https://github.com/adap/flower.git`
+
+This should work.@ubertanumutlu This worked for me. Thanks a lot!",2,2021-10-26 06:29:03,2021-11-19 05:37:57,2021-11-19 05:37:57
+https://github.com/adap/flower/issues/888,[],tensorflow fit_generator does not work,"tensorflow fit_generator does not workHello, 
+
+I am trying to run train a segmentation model using fit_generator(), nothing seems to happen. I do not receive an error message but also the models are not training. Does flower support fit_generator? 
+
+Thanks in advance, The issue is not FLOWer but TensorFlow version, upgrading it solved the issue. Happy to hear :)",2,2021-10-21 11:53:13,2021-10-22 14:11:22,2021-10-22 09:03:00
+https://github.com/adap/flower/issues/831,[],Advanced Tensorflow example using GPU,"Advanced Tensorflow example using GPULike the title suggest, i would like to try using GPU instead of CPU for the training session of the Advanced_tensorflow project inside the example of flower.
+
+The problem is that i get this error doing so:
+
+```
+$ bash run.sh
+2021-09-04 01:25:26.609146: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX AVX2
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2021-09-04 01:25:26.973252: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1510] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 5499 MB memory:  -> device: 0, name: NVIDIA GeForce RTX 3060 Ti, pci bus id: 0000:07:00.0, compute capability: 8.6
+Starting client 0
+Starting client 1
+Starting client 2
+Starting client 3
+Starting client 4
+Starting client 5
+Starting client 6
+Starting client 7
+Starting client 8
+Starting client 9
+INFO flower 2021-09-04 01:25:28,560 | app.py:73 | Flower server running (insecure, 4 rounds)
+INFO flower 2021-09-04 01:25:28,560 | server.py:118 | Getting initial parameters
+INFO flower 2021-09-04 01:25:28,560 | server.py:300 | Received initial parameters from strategy
+INFO flower 2021-09-04 01:25:28,560 | server.py:120 | Evaluating initial parameters
+2021-09-04 01:25:28.790720: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:185] None of the MLIR Optimization Passes are enabled (registered 2)
+DEBUG flower 2021-09-04 01:25:33,445 | connection.py:36 | ChannelConnectivity.IDLE
+INFO flower 2021-09-04 01:25:33,446 | app.py:61 | Opened (insecure) gRPC connection
+DEBUG flower 2021-09-04 01:25:33,446 | connection.py:36 | ChannelConnectivity.CONNECTING
+DEBUG flower 2021-09-04 01:25:33,477 | connection.py:36 | ChannelConnectivity.READY
+DEBUG flower 2021-09-04 01:25:33,759 | connection.py:36 | ChannelConnectivity.IDLE
+DEBUG flower 2021-09-04 01:25:33,760 | connection.py:36 | ChannelConnectivity.CONNECTING
+DEBUG flower 2021-09-04 01:25:33,760 | connection.py:36 | ChannelConnectivity.READY
+INFO flower 2021-09-04 01:25:33,760 | app.py:61 | Opened (insecure) gRPC connection
+DEBUG flower 2021-09-04 01:25:34,272 | connection.py:36 | ChannelConnectivity.IDLE
+DEBUG flower 2021-09-04 01:25:34,272 | connection.py:36 | ChannelConnectivity.CONNECTING
+DEBUG flower 2021-09-04 01:25:34,275 | connection.py:36 | ChannelConnectivity.READY
+INFO flower 2021-09-04 01:25:34,291 | app.py:61 | Opened (insecure) gRPC connection
+DEBUG flower 2021-09-04 01:25:34,335 | connection.py:36 | ChannelConnectivity.IDLE
+DEBUG flower 2021-09-04 01:25:34,355 | connection.py:36 | ChannelConnectivity.CONNECTING
+DEBUG flower 2021-09-04 01:25:34,355 | connection.py:36 | ChannelConnectivity.READY
+INFO flower 2021-09-04 01:25:34,371 | app.py:61 | Opened (insecure) gRPC connection
+DEBUG flower 2021-09-04 01:25:34,611 | connection.py:36 | ChannelConnectivity.IDLE
+DEBUG flower 2021-09-04 01:25:34,611 | connection.py:36 | ChannelConnectivity.CONNECTING
+DEBUG flower 2021-09-04 01:25:34,626 | connection.py:36 | ChannelConnectivity.READY
+INFO flower 2021-09-04 01:25:34,627 | app.py:61 | Opened (insecure) gRPC connection
+DEBUG flower 2021-09-04 01:25:35,553 | connection.py:36 | ChannelConnectivity.IDLE
+INFO flower 2021-09-04 01:25:35,554 | app.py:61 | Opened (insecure) gRPC connection
+DEBUG flower 2021-09-04 01:25:35,554 | connection.py:36 | ChannelConnectivity.CONNECTING
+DEBUG flower 2021-09-04 01:25:35,554 | connection.py:36 | ChannelConnectivity.READY
+DEBUG flower 2021-09-04 01:25:36,011 | connection.py:36 | ChannelConnectivity.IDLE
+INFO flower 2021-09-04 01:25:36,012 | app.py:61 | Opened (insecure) gRPC connection
+DEBUG flower 2021-09-04 01:25:36,012 | connection.py:36 | ChannelConnectivity.CONNECTING
+DEBUG flower 2021-09-04 01:25:36,013 | connection.py:36 | ChannelConnectivity.READY
+2021-09-04 01:25:36.024932: I tensorflow/stream_executor/cuda/cuda_dnn.cc:369] Loaded cuDNN version 8101
+DEBUG flower 2021-09-04 01:25:36,091 | connection.py:36 | ChannelConnectivity.IDLE
+DEBUG flower 2021-09-04 01:25:36,091 | connection.py:36 | ChannelConnectivity.READY
+INFO flower 2021-09-04 01:25:36,091 | app.py:61 | Opened (insecure) gRPC connection
+DEBUG flower 2021-09-04 01:25:36,123 | connection.py:36 | ChannelConnectivity.IDLE
+DEBUG flower 2021-09-04 01:25:36,123 | connection.py:36 | ChannelConnectivity.IDLE
+DEBUG flower 2021-09-04 01:25:36,124 | connection.py:36 | ChannelConnectivity.CONNECTING
+DEBUG flower 2021-09-04 01:25:36,124 | connection.py:36 | ChannelConnectivity.CONNECTING
+INFO flower 2021-09-04 01:25:36,124 | app.py:61 | Opened (insecure) gRPC connection
+INFO flower 2021-09-04 01:25:36,124 | app.py:61 | Opened (insecure) gRPC connection
+DEBUG flower 2021-09-04 01:25:36,331 | connection.py:36 | ChannelConnectivity.READY
+DEBUG flower 2021-09-04 01:25:36,331 | connection.py:36 | ChannelConnectivity.READY
+2021-09-04 01:25:43.368500: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 512.00M (536870912 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.368750: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 460.80M (483183872 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.368922: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 414.72M (434865664 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.369093: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 373.25M (391379200 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.369112: W tensorflow/core/common_runtime/bfc_allocator.cc:338] Garbage collection: deallocate free memory regions (i.e., allocations) so that we can re-allocate a larger region to avoid OOM due to memory fragmentation. If you see this message frequently, you are running near the threshold of the available device memory and re-allocation may incur great performance overhead. You may try smaller batch sizes to observe the performance impact. Set TF_ENABLE_GPU_GARBAGE_COLLECTION=false if you'd like to disable this feature.
+2021-09-04 01:25:43.403354: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.403377: W tensorflow/core/common_runtime/bfc_allocator.cc:338] Garbage collection: deallocate free memory regions (i.e., allocations) so that we can re-allocate a larger region to avoid OOM due to memory fragmentation. If you see this message frequently, you are running near the threshold of the available device memory and re-allocation may incur great performance overhead. You may try smaller batch sizes to observe the performance impact. Set TF_ENABLE_GPU_GARBAGE_COLLECTION=false if you'd like to disable this feature.
+2021-09-04 01:25:43.415854: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.415888: W tensorflow/core/common_runtime/bfc_allocator.cc:272] Allocator (GPU_0_bfc) ran out of memory trying to allocate 516.34MiB with freed_by_count=0. The caller indicates that this is not a failure, but may mean that there could be performance gains if more memory were available.
+2021-09-04 01:25:43.424359: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.424378: W tensorflow/core/common_runtime/bfc_allocator.cc:272] Allocator (GPU_0_bfc) ran out of memory trying to allocate 516.34MiB with freed_by_count=0. The caller indicates that this is not a failure, but may mean that there could be performance gains if more memory were available.
+2021-09-04 01:25:43.432990: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.433007: W tensorflow/core/common_runtime/bfc_allocator.cc:272] Allocator (GPU_0_bfc) ran out of memory trying to allocate 50.27MiB with freed_by_count=0. The caller indicates that this is not a failure, but may mean that there could be performance gains if more memory were available.
+2021-09-04 01:25:43.441596: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.441613: W tensorflow/core/common_runtime/bfc_allocator.cc:272] Allocator (GPU_0_bfc) ran out of memory trying to allocate 50.27MiB with freed_by_count=0. The caller indicates that this is not a failure, but may mean that there could be performance gains if more memory were available.
+2021-09-04 01:25:43.450590: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.450608: W tensorflow/core/common_runtime/bfc_allocator.cc:272] Allocator (GPU_0_bfc) ran out of memory trying to allocate 16.35MiB with freed_by_count=0. The caller indicates that this is not a failure, but may mean that there could be performance gains if more memory were available.
+2021-09-04 01:25:43.459132: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.459149: W tensorflow/core/common_runtime/bfc_allocator.cc:272] Allocator (GPU_0_bfc) ran out of memory trying to allocate 16.21MiB with freed_by_count=0. The caller indicates that this is not a failure, but may mean that there could be performance gains if more memory were available.
+2021-09-04 01:25:43.469236: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.469257: W tensorflow/core/common_runtime/bfc_allocator.cc:272] Allocator (GPU_0_bfc) ran out of memory trying to allocate 16.14MiB with freed_by_count=0. The caller indicates that this is not a failure, but may mean that there could be performance gains if more memory were available.
+2021-09-04 01:25:43.477976: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.477995: W tensorflow/core/common_runtime/bfc_allocator.cc:272] Allocator (GPU_0_bfc) ran out of memory trying to allocate 16.14MiB with freed_by_count=0. The caller indicates that this is not a failure, but may mean that there could be performance gains if more memory were available.
+2021-09-04 01:25:43.486435: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.486452: W tensorflow/core/common_runtime/bfc_allocator.cc:272] Allocator (GPU_0_bfc) ran out of memory trying to allocate 218.71MiB with freed_by_count=0. The caller indicates that this is not a failure, but may mean that there could be performance gains if more memory were available.
+2021-09-04 01:25:43.494806: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.494823: W tensorflow/core/common_runtime/bfc_allocator.cc:272] Allocator (GPU_0_bfc) ran out of memory trying to allocate 218.71MiB with freed_by_count=0. The caller indicates that this is not a failure, but may mean that there could be performance gains if more memory were available.
+2021-09-04 01:25:43.503244: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.511735: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.522888: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.531444: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.539976: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.548434: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.556858: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.565334: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.578277: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.586650: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.595462: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.604018: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.612514: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.621010: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.631608: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.640018: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.649903: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.658313: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.666985: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.675339: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.683823: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.692229: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.703361: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.712197: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.722405: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.730863: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.739273: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.747633: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.756120: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.764533: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:43.770860: I tensorflow/stream_executor/cuda/cuda_blas.cc:1760] TensorFloat-32 will be used for the matrix multiplication. This will only be logged once.
+
+  1/157 [..............................] - ETA: 39:22 - loss: 2.3026 - accuracy: 0.0938
+  3/157 [..............................] - ETA: 4s - loss: 2.3026 - accuracy: 0.1458
+  7/157 [>.............................] - ETA: 3s - loss: 2.3026 - accuracy: 0.1071
+ 11/157 [=>............................] - ETA: 2s - loss: 2.3026 - accuracy: 0.0994
+ 15/157 [=>............................] - ETA: 2s - loss: 2.3026 - accuracy: 0.1021
+ 19/157 [==>...........................] - ETA: 2s - loss: 2.3026 - accuracy: 0.1020
+ 23/157 [===>..........................] - ETA: 2s - loss: 2.3026 - accuracy: 0.1005
+ 27/157 [====>.........................] - ETA: 2s - loss: 2.3026 - accuracy: 0.1053
+ 31/157 [====>.........................] - ETA: 2s - loss: 2.3026 - accuracy: 0.1028
+ 35/157 [=====>........................] - ETA: 2s - loss: 2.3026 - accuracy: 0.1054
+ 39/157 [======>.......................] - ETA: 1s - loss: 2.3026 - accuracy: 0.1018
+ 43/157 [=======>......................] - ETA: 1s - loss: 2.3026 - accuracy: 0.1017
+ 47/157 [=======>......................] - ETA: 1s - loss: 2.3026 - accuracy: 0.1004
+ 51/157 [========>.....................] - ETA: 1s - loss: 2.3026 - accuracy: 0.0993
+ 55/157 [=========>....................] - ETA: 1s - loss: 2.3026 - accuracy: 0.1006
+ 59/157 [==========>...................] - ETA: 1s - loss: 2.3026 - accuracy: 0.1001
+ 63/157 [===========>..................] - ETA: 1s - loss: 2.3026 - accuracy: 0.0967
+ 67/157 [===========>..................] - ETA: 1s - loss: 2.3026 - accuracy: 0.0970
+ 71/157 [============>.................] - ETA: 1s - loss: 2.3026 - accuracy: 0.0977
+ 75/157 [=============>................] - ETA: 1s - loss: 2.3026 - accuracy: 0.0975
+ 79/157 [==============>...............] - ETA: 1s - loss: 2.3026 - accuracy: 0.0977
+ 83/157 [==============>...............] - ETA: 1s - loss: 2.3026 - accuracy: 0.0968
+ 87/157 [===============>..............] - ETA: 1s - loss: 2.3026 - accuracy: 0.0970
+ 91/157 [================>.............] - ETA: 1s - loss: 2.3026 - accuracy: 0.0968
+ 95/157 [=================>............] - ETA: 0s - loss: 2.3026 - accuracy: 0.0947
+ 99/157 [=================>............] - ETA: 0s - loss: 2.3026 - accuracy: 0.0947
+103/157 [==================>...........] - ETA: 0s - loss: 2.3026 - accuracy: 0.0934
+107/157 [===================>..........] - ETA: 0s - loss: 2.3026 - accuracy: 0.0935
+110/157 [====================>.........] - ETA: 0s - loss: 2.3026 - accuracy: 0.0929
+114/157 [====================>.........] - ETA: 0s - loss: 2.3026 - accuracy: 0.0932
+118/157 [=====================>........] - ETA: 0s - loss: 2.3026 - accuracy: 0.0940
+122/157 [======================>.......] - ETA: 0s - loss: 2.3026 - accuracy: 0.0950
+126/157 [=======================>......] - ETA: 0s - loss: 2.3026 - accuracy: 0.0945
+130/157 [=======================>......] - ETA: 0s - loss: 2.3026 - accuracy: 0.0962
+134/157 [========================>.....] - ETA: 0s - loss: 2.3026 - accuracy: 0.0977
+138/157 [=========================>....] - ETA: 0s - loss: 2.3026 - accuracy: 0.0978
+142/157 [==========================>...] - ETA: 0s - loss: 2.3026 - accuracy: 0.0973
+146/157 [==========================>...] - ETA: 0s - loss: 2.3026 - accuracy: 0.0972
+150/157 [===========================>..] - ETA: 0s - loss: 2.3026 - accuracy: 0.0973
+154/157 [============================>.] - ETA: 0s - loss: 2.3026 - accuracy: 0.09762021-09-04 01:25:46.403678: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.412048: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.420519: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.428947: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.441299: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.449572: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.458047: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.466429: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.480143: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.488524: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.496894: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.505300: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.516316: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.524798: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.533258: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.541761: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.550196: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.558585: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.569473: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.577827: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.586288: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.594697: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.603360: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.611753: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.622922: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.631593: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.640124: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.648523: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.657015: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.665501: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.677421: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.685830: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.694237: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.702647: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.716326: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.724800: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.733344: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.741704: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.750124: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.758502: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.769664: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.778118: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.786817: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.795288: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.803762: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.812151: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.823225: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.831705: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.840101: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.848504: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.856928: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.865328: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.877301: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.885744: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.894332: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.902700: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.913653: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.922065: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.930461: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.938845: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.947231: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.955630: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.966927: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.975315: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.983774: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:46.992076: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.000529: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.008961: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.019962: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.028513: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.037212: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.045603: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.054030: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.062444: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.071203: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.079624: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.089277: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.097949: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.106512: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.115045: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.123515: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.132026: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.144583: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.152915: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.161395: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.170667: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.181616: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.190010: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.198422: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.206955: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.215327: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.223699: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.232798: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.241180: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.250854: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.259339: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.267774: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.276263: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.284669: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.293052: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.305320: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.313683: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.322118: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.330480: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.339027: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.347443: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.356710: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.365212: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.375453: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.383867: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.392281: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.400691: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.409075: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.417483: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.429751: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.438111: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.446610: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.455041: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.463712: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.472129: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.481916: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.490338: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.498752: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.509328: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.517751: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.526181: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.538108: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.546784: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.555341: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.563725: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.572152: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.580760: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.591749: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.600176: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.608662: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.617036: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.625591: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.634089: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.643170: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.651674: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.661574: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.669983: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.678405: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.686863: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.695306: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.703697: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.716165: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.724529: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.732940: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.741289: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.752324: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.760734: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.769210: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.777688: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.786118: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.794591: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.804284: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.812641: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.822393: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.830856: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.839277: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.847676: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.856144: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.864584: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.873294: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.881686: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.891349: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.899746: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.908175: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.916585: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.925089: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.933452: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.942423: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.951131: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.961182: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.969593: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.977987: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.986402: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:47.994802: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.003400: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.014395: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.022801: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.031270: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.039742: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.048232: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.056591: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.065311: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.073703: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.083531: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.092000: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.100477: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.110734: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.119155: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.127532: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.137522: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.145922: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.155735: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.164465: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.173118: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.181667: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.190012: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.198367: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.207182: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.215548: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.225227: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.233959: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.242362: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.250756: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.259255: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+2021-09-04 01:25:48.267676: I tensorflow/stream_executor/cuda/cuda_driver.cc:732] failed to allocate 1.00G (1073741824 bytes) from device: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+
+
+```
+
+How can i fix it?
+
+I have a radeon 3060 ti, tensorflow can see the GPU and use it with no problem. The code is like the example, i just added those lines:
+
+```
+physical_devices = tf.config.experimental.list_physical_devices('GPU')
+if len(physical_devices) > 0:
+    tf.config.experimental.set_memory_growth(physical_devices[0], True)
+```
+
+Inside client.py and server.py to see if i could fix the memory allocation error, but didn't work.It seems you are running out of GPU memory.
+
+Did you try a lower batch_size? Alternatively, try to run fewer clients and see if that fixes your issue.Hello @fanto88 , how did you solve this?",2,2021-09-03 23:29:26,2022-02-16 01:43:33,2021-10-25 10:11:55
+https://github.com/adap/flower/issues/817,[],Error: 'Sequential' object has no attribute 'set_weight',"Error: 'Sequential' object has no attribute 'set_weight'So I am trying out Federated Learning on structured data and following this [dataset of German credit data](https://www.kaggle.com/kabure/german-credit-data-with-risk). I have a simple tensorflow based model and code. 
+
+Here is my client class- 
+
+```
+class GCR_Client(fl.client.NumPyClient):
+    def __init__(self, model, x_train, y_train, client_name):
+        self.model = model
+        self.x_train = x_train
+        self.y_train = y_train
+        self.client_name = client_name
+    
+    def get_parameters(self):
+        return self.model.get_weights()
+    
+    def fit(self, parameters, config):
+        self.model.set_weights(parameters)
+        self.model.fit(self.x_train.values, self.y_train.values, epochs=15, batch_size=64)
+        return self.model.get_weights(), len(self.x_train), {""Fit Data from"":self.client_name}
+    
+    def evaluate(self, parameters, config):
+        self.model.set_weight(parameters)
+        return 0,0,{""Clinet Evaluation"" : ""Undefined"", ""Client Name"":self.client_name}
+```
+
+
+In order to remove all the external factors I removed the code where I calculate the evaluation. 
+
+Whenever I run the code with 1 server and multiple clients, I get error in the `def evaluate(self, parameters, config)` function. 
+Error is `'Sequential' object has no attribute 'set_weight'`
+
+`def fit(self, parameters, config):` method contains the same line but the error is only being generated from `evaluate` function only. I am not sure what's wrong with the code. @Samvid95 thanks for reaching out. Could it be the missing `s`?
+
+- `self.model.set_weights(parameters)` in `fit`
+- `self.model.set_weight(parameters)` in `evaluate`Hahaha I completely missed it. Thank you 
+
+Now let me remove this question from the face of the internet. /s",2,2021-08-17 04:58:41,2021-08-18 08:26:47,2021-08-18 08:26:47
+https://github.com/adap/flower/issues/813,[],FL results are not available to the user as raw data at the end of each round. ,"FL results are not available to the user as raw data at the end of each round. ## Problem
+
+Results from a FL experiment are available via terminal logs at the end of the complete experiment. It would be nice to have access to metrics not only at the end of the complete FL training, but also at the end of each round for (1) partial logging using different interfaces such as `Tensorboard` and `Weight and Biases` and (2) decision making (reduce LR, etc...).
+
+Right now `server.server.fit(self, num_rounds: int) -> History:` returns a History, which is not forwarded by [server.app._fl](https://github.com/adap/flower/blob/de2394ed9f65a1f9563a3a4ebd7103460fdae0dc/src/py/flwr/server/app.py#L114).
+
+## Suggested Solutions:
+The current implementation is user-friendly and should probably be kept. 
+I suggest we provide a *complete example* that basically opens up `app.py` and allows users to insert function calls at the end of each round. This could be tutorial on how to use Weight and Biases. 
+What if we just store the `EvaluateRes` and `FitRes` objects given `server.server.app`? How is the information that is relayed to us / what we receive different from the configured server and client logger i.e. ` flwr.common.logger.configure(f""client_{args.client_partition_idx}"", host=args.log_host)` and internal functions such as `_fl ` and `server.fit` that can be re-written to store the dictionary objects? Our end goal here would be to store the average client-side accuracy given each round. We only want to store the metrics information for clients who fall under `fraction_fit` in this case. What would be the best way to do this? 
+Hi @ferasbg , for selected clients in each round,  `metrics` are now returned inside a `History` object as in https://github.com/adap/flower/blob/cc4dbb243fa268e29317680a41b0714d2aa5d23e/src/py/flwr/server/app.py#L120. 
+For all other users, you could use either have a centralized approach (research-only) where at the end of each round you call a centralized evaluation on the entire dateset (collection of all clients' datasets).",2,2021-08-04 17:34:49,2022-01-19 09:28:50,2022-01-19 09:20:24
+https://github.com/adap/flower/issues/807,[],set_parameters wrong,"set_parameters wrongHello, when using the efficientnetb0 pre-training model, the joint training will stop at the position shown in the figure below, and the following error will be reported.
+![image](https://user-images.githubusercontent.com/59415080/127867393-9591b26e-e0df-49f3-8f7d-869cd3fbe248.png)
+![image](https://user-images.githubusercontent.com/59415080/127867469-9b6f244a-35a0-43af-a842-e3fd7af22767.png)
+Hello,I have the same problem. Have you solved it？I've faced the same problem too.I’m watching the fedBN example of flower official website.because your model has the 'bn' layer, the model parameters to numpy parameters will wrong
+![image](https://user-images.githubusercontent.com/59415080/130625040-9c9e315a-3a63-4386-93b1-5033128812b9.png)
+This official code gives the correct idea.server and client add like the next picture describe.
+![image](https://user-images.githubusercontent.com/59415080/130626479-f20a1900-b7b9-4aaf-b0fc-078b72c70da4.png)",3,2021-08-02 13:12:55,2021-08-24 13:39:54,2021-08-24 13:39:31
+https://github.com/adap/flower/issues/799,[],Ray install not optional,"Ray install not optionalIf you try to run the Quickstart-Pytorch example without installing Ray, the following error occurs:
+```
+  File ""server.py"", line 1, in <module>
+    import flwr as fl
+  File ""/home/dux/.cache/pypoetry/virtualenvs/quickstart-pytorch-_Vro-tLH-py3.6/lib/python3.6/site-packages/flwr/__init__.py"", line 18, in <module>
+    from . import client, server, simulation
+  File ""/home/dux/.cache/pypoetry/virtualenvs/quickstart-pytorch-_Vro-tLH-py3.6/lib/python3.6/site-packages/flwr/simulation/__init__.py"", line 18, in <module>
+    from .app import start_simulation as start_simulation
+  File ""/home/dux/.cache/pypoetry/virtualenvs/quickstart-pytorch-_Vro-tLH-py3.6/lib/python3.6/site-packages/flwr/simulation/app.py"", line 30, in <module>
+    from flwr.simulation.ray_transport.ray_client_proxy import RayClientProxy
+  File ""/home/dux/.cache/pypoetry/virtualenvs/quickstart-pytorch-_Vro-tLH-py3.6/lib/python3.6/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py"", line 87, in <module>
+    @ray.remote  # type: ignore
+AttributeError: 'NoneType' object has no attribute 'remote'
+```
+It seems like the function definitions in ray_client_proxy.py need to be changed to handle the case Ray = None.@amm299 thank you! We already have a PR which will fix that shortly (#806)With #806 merged, Ray install is now optional (available in flwr-nightly and on branch `main`)",2,2021-07-28 09:35:33,2021-08-15 10:44:52,2021-08-15 10:44:52
+https://github.com/adap/flower/issues/772,[],How to set server and client address?,"How to set server and client address?Hi, all,
+
+I tried the [pytorch_from_centralized_to_federated](https://github.com/adap/flower/tree/main/examples/pytorch_from_centralized_to_federated) on my Mac, which worked OK. However, when I tried it on the remote server with addresses setting as [::]:8080 and [::]:8080, it showed 'failed to connect to all addresses' (please see the attached screenshot). The same error came out when I set addresses as localhost:8080 and localhost:8080 as well as X.X.X.X:8080 and X.X.X.X:8080. Could anyone have any idea which could solve my problem? Many thanks!
+
+<img width=""959"" alt=""截屏2021-07-16 下午9 04 37"" src=""https://user-images.githubusercontent.com/18133362/125952324-a212bd0d-17a9-4d1c-bb5f-7063318a6139.png"">
+
+<img width=""1421"" alt=""截屏2021-07-16 下午9 03 27"" src=""https://user-images.githubusercontent.com/18133362/125952147-094cac7a-b5cd-4c5f-911c-8f1dc9f45d61.png"">
+Hi, 
+
+you can parse the arguments or write the IP address of the server hard inside: `src/py/flwr/server/app.py` in line: DEFAULT_SERVER_ADDRESS = ""[::]:8080""
+
+Here an example of mine using argument parser on both sides server and client.
+Server (`src/py/flwr_example/quickstart_pytorch/server.py`):
+
+```
+    # Instantiate the parser
+    parser = argparse.ArgumentParser(description='Optional app description')
+
+    ### Add Arguments
+    parser.add_argument('--ip', type=str, required=True, help='Enter Server IP')
+    parser.add_argument('--port', type=str, default='8080', help='Enter Server Port, default: 8080')
+
+    # Parse arguments
+    args = parser.parse_args()
+
+    fl.server.start_server(
+	server_address=f""{args.ip}:{args.port}"",
+    	config={""num_rounds"": 3}
+    	)
+```
+
+For the client, the argument parser is already implemented, see `src/py/flwr_example/quickstart_pytorch/sclient.py`.
+
+Best regardsThanks! I solved the problem by setting IP as 127.0.0.1:8080 at both server and client.@Sylarair Thanks for your comment. I was having the same issue with Tensorflow and your solution also worked for me. Thanks :)
+
+Cheers,
+Shehroz",3,2021-07-16 12:37:50,2022-01-19 09:19:10,2022-01-19 09:19:10
+https://github.com/adap/flower/issues/765,[],Using Fed+ of FedProx,"Using Fed+ of FedProxHi everyone, I have started using Flower and I would like to know if it possible to use the fusion algorithms such as Fed+ or FedProx instead of  FedAvg.
+Thanks in advance.Hello @Enrique-Marmol you should be able to adapt the Flower version of FedAvg to FedProx by setting FedAvg to accept failures in the initial parameters and then adding the proximal term to the loss of your network during training on the clients.",1,2021-07-02 10:49:40,2022-01-19 09:20:50,2022-01-19 09:20:50
+https://github.com/adap/flower/issues/756,[],Client not starting,"Client not startingAm getting the following error when I try to start client after server while trying to run the below example.
+
+[pytorch_from_centralized_to_federated](https://github.com/adap/flower/tree/main/examples/pytorch_from_centralized_to_federated)
+
+`Files already downloaded and verified
+Files already downloaded and verified
+DEBUG flower 2021-06-10 15:54:23,140 | connection.py:36 | ChannelConnectivity.IDLE
+DEBUG flower 2021-06-10 15:54:23,140 | connection.py:36 | ChannelConnectivity.CONNECTING
+DEBUG flower 2021-06-10 15:54:23,141 | connection.py:36 | ChannelConnectivity.TRANSIENT_FAILURE
+INFO flower 2021-06-10 15:54:23,141 | app.py:61 | Opened (insecure) gRPC connection
+DEBUG flower 2021-06-10 15:54:23,343 | connection.py:68 | Insecure gRPC channel closed
+Traceback (most recent call last):
+  File ""client.py"", line 98, in <module>
+    main()
+  File ""client.py"", line 94, in main
+    fl.client.start_numpy_client(""[::]:8080"", client)
+  File ""C:\Users\HP\anaconda3\lib\site-packages\flwr\client\app.py"", line 112, in start_numpy_client
+    start_client(
+  File ""C:\Users\HP\anaconda3\lib\site-packages\flwr\client\app.py"", line 64, in start_client
+    server_message = receive()
+  File ""C:\Users\HP\anaconda3\lib\site-packages\flwr\client\grpc_client\connection.py"", line 60, in <lambda>
+    receive: Callable[[], ServerMessage] = lambda: next(server_message_iterator)
+  File ""C:\Users\HP\anaconda3\lib\site-packages\grpc\_channel.py"", line 416, in __next__
+    return self._next()
+  File ""C:\Users\HP\anaconda3\lib\site-packages\grpc\_channel.py"", line 689, in _next
+    raise self
+grpc._channel._MultiThreadedRendezvous: <_MultiThreadedRendezvous of RPC that terminated with:
+        status = StatusCode.UNAVAILABLE
+        details = ""failed to connect to all addresses""
+        debug_error_string = ""{""created"":""@1623320663.140000000"",""description"":""Failed to pick subchannel"",""file"":""src/core/ext/filters/client_channel/client_channel.cc"",""file_line"":4134,""referenced_errors"":[{""created"":""@1623320663.140000000"",""description"":""failed to connect to all addresses"",""file"":""src/core/ext/filters/client_channel/lb_policy/pick_first/pick_first.cc"",""file_line"":398,""grpc_status"":14}]}""
+>`
+![image](https://user-images.githubusercontent.com/16716026/121510537-5edb2700-ca05-11eb-9d22-90c7fed7c863.png)
+
+Python Version: 3.8.5
+OS: Windows 10
+RAM: 8 GB
+Using conda base environment to run this.I had the same problem on Windows. Just try to insert ""localhost"" instead of ""[::]"" in the address provided in the client and server code. That is:
+[client.py] fl.client.start_numpy_client(""localhost:8080"", client=client)
+[server.py] fl.server.start_server(""localhost:8080"", config={""num_rounds"": HERE_YOUR_NUM_OF_ROUNDS}, strategy=strategy)",1,2021-06-10 10:33:55,2021-06-11 07:31:17,2021-06-11 07:31:16
+https://github.com/adap/flower/issues/751,[],grpc client server communication is not working when client and server is started from different terminals,"grpc client server communication is not working when client and server is started from different terminalsHi flower developers,
+
+I tried the examples provided with flower and they work if I start the server and clients with the run.sh script, but communication stalls if client and server are started from different terminals.  The log from the client:
+
+DEBUG flower 2021-06-07 17:37:16,844 | connection.py:36 | ChannelConnectivity.READY
+
+This is where it waits indefinitely. At a keyboard interrupt, the log is the following:
+
+File ""client.py"", line 34, in <module>
+    fl.client.start_numpy_client(""[::]:8080"", client=CifarClient())
+  File ""/home/sallogy/anaconda3/envs/flower/lib/python3.7/site-packages/flwr/client/app.py"", line 115, in start_numpy_client
+    grpc_max_message_length=grpc_max_message_length,
+  File ""/home/sallogy/anaconda3/envs/flower/lib/python3.7/site-packages/flwr/client/app.py"", line 64, in start_client
+    server_message = receive()
+  File ""/home/sallogy/anaconda3/envs/flower/lib/python3.7/site-packages/flwr/client/grpc_client/connection.py"", line 60, in <lambda>
+    receive: Callable[[], ServerMessage] = lambda: next(server_message_iterator)
+  File ""/home/sallogy/anaconda3/envs/flower/lib/python3.7/site-packages/grpc/_channel.py"", line 426, in __next__
+    return self._next()
+  File ""/home/sallogy/anaconda3/envs/flower/lib/python3.7/site-packages/grpc/_channel.py"", line 817, in _next
+    _common.wait(self._state.condition.wait, _response_ready)
+  File ""/home/sallogy/anaconda3/envs/flower/lib/python3.7/site-packages/grpc/_common.py"", line 141, in wait
+    _wait_once(wait_fn, MAXIMUM_WAIT_TIMEOUT, spin_cb)
+  File ""/home/sallogy/anaconda3/envs/flower/lib/python3.7/site-packages/grpc/_common.py"", line 106, in _wait_once
+    wait_fn(timeout=timeout)
+  File ""/home/sallogy/anaconda3/envs/flower/lib/python3.7/threading.py"", line 300, in wait
+    gotit = waiter.acquire(True, timeout)
+KeyboardInterrupt
+
+The log from the server:
+
+INFO flower 2021-06-07 17:36:33,616 | app.py:76 | Flower server running (insecure, 3 rounds)
+INFO flower 2021-06-07 17:36:33,617 | server.py:118 | Getting initial parameters
+INFO flower 2021-06-07 17:37:16,913 | server.py:306 | Received initial parameters from one random client
+INFO flower 2021-06-07 17:37:16,913 | server.py:120 | Evaluating initial parameters
+INFO flower 2021-06-07 17:37:16,913 | server.py:133 | FL starting
+
+It seems that it blocks in python threading. I tried also with different versions of python, the same result. What can be the problem?@sallogy can you share a bit more information about your runtime environment?
+
+* Which OS (incl. version) e.g. Ubuntu 18.04
+* Which CPU/GPU
+* How much RAM
+
+Also what code did you run? A specific Flower example? Did you bootstrap your own project without any example? Some context is very much appreciated.
+Sorry, my mistake. When I dug into the source code, I realized that the default FedAvg strategy expects minimum 2 clients in order to start the training, and I tried with 1 client (actually I dockerized the client and server, and I thought that it is some issue related to this, but not). . Anyway, some informative message about the minimum number of clients required to start the training would be helpful.   @sallogy Happy to hear you could resolve the problem. Would you like to propose it as an idea here: https://github.com/adap/flower/discussions/categories/ideas and explain a little what you would consider a good solution? I would close this ticket for now as it's resolved.",3,2021-06-07 16:14:50,2021-06-11 07:35:00,2021-06-11 07:35:00
+https://github.com/adap/flower/issues/747,[],Example simulation docker execution fails,"Example simulation docker execution failsHi all,
+
+first of all, I am very impressed with your work! Looking forward to see how flower grows (pun intended) and maybe contributing, if I find time!
+
+Regarding my issue, I am having trouble launching the docker container in the [basic simulation](https://github.com/adap/flower/tree/main/examples/simulation) using the command:
+
+`
+docker build -t flower_federated_learning_simulation .
+`
+
+I get the following output:
+
+`
+[+] Building 0.0s (1/2)                                                                                                                                                  
+ => [internal] load build definition from Dockerfile                                                                                                                0.0s
+ => => transferring dockerfile: 2B                                                                                                                                  0.0s
+failed to solve with frontend dockerfile.v0: failed to read dockerfile: open /var/lib/docker/tmp/buildkit-mount549581533/Dockerfile: no such file or directory
+`
+
+Kind regardsI have been able to resolve my issue: apparently there was something wrong with my docker installation, reinstalling docker fixed the issue.
+
+Kind regardsThanks for the update @arnewitt !",2,2021-06-04 16:55:01,2021-06-05 19:07:04,2021-06-05 10:45:14
+https://github.com/adap/flower/issues/712,[],Using results returned from client's fit,"Using results returned from client's fitI want to save the results returned to the server by the client's fit method and save them. 
+I am not sure how I am supposed to access the results in the server script.
+
+The example in https://flower.dev/docs/saving-progress.html#aggregate-custom-evaluation-results only covers results from the clients evaluate function but does not show results from the client's fit function.
+
+In the [advanced_tensorflow](https://github.com/adap/flower/blob/main/examples/advanced_tensorflow/client.py) example, the client's `fit` method is returning some results to the server, but the `server.py` is not using the these results anywhere. 
+
+I could also do this if there was a way to access all the returned accuracies and results from the clients after the fl is finished.
+
+is there an api reference of the returned result object ?Hi @cozek , thanks for the questions. What you want to do isn't properly documented yet (and there will be built-in improvements in future releases), but you could do it in the same way as it's done in the docs you linked above. The only difference is that you'd override `aggregate_fit` instead of `aggregate_evaluate`:
+
+```python
+class SaveCustomFitMetricStrategy(fl.server.strategy.FedAvg):
+    def aggregate_fit(
+        self,
+        rnd: int,
+        results: List[Tuple[ClientProxy, FitRes]],
+        failures: List[BaseException],
+    ) -> Optional[Weights]:
+        """"""Aggregate evaluation losses using weighted average.""""""
+        if not results:
+            return None
+
+        # Save results
+        for _, fit_res in results:
+            fit_metrics = fit_res.metrics
+            print(""TODO: save individual results here"", fit_metrics)
+
+        # Call aggregate_fit from base class (FedAvg)
+        return super().aggregate_fit(rnd, results, failures)
+```
+
+The `results` object is a list of tuples (pairs of `(ClientProxy, FitRes)`), the code example above shows how to get the dictionary returned by `Client.fit` from `FitRes`. The `flwr.common.typing` module contains many type definitions (for future reference):
+
+https://github.com/adap/flower/blob/main/src/py/flwr/common/typing.py@danieljanes Thanks for the code example and quick reply. This solves my use case for now. ",2,2021-05-06 12:37:05,2021-05-07 19:40:25,2021-05-07 19:40:25
+https://github.com/adap/flower/issues/710,[],Connection issue tf-quickstart,"Connection issue tf-quickstartHi there, 
+
+I am trying to implement flower and going through the tensorflow quickstart tutorial. And I am encountering the following error: 
+
+```
+ status = StatusCode.UNAVAILABLE
+ details = ""failed to connect to all addresses""
+```
+
+My issue is the same one as #648 & #537  
+
+I tried changing the port value to IPv6 as well as tried multiple ports but nothing worked for me.  Is there anything else I can do?
+
+My setup: 
+Windows 10 with Anaconda virtual environment.
+
+Best,
+SamvidHi @Samvid95 , thanks for reaching out.
+
+We had Windows users who had issues with their firewall, could you try turning that off?
+
+Other than that you could try to use WSL2 on Windows 10, that should work like a charm (some of the Flower core devs use it on a daily basis w/ Ubuntu 18.04 or 20.04). Awesome. It works.@Samvid95 great, happy to hear!",3,2021-05-05 14:45:36,2021-05-11 15:59:17,2021-05-11 13:24:18
+https://github.com/adap/flower/issues/666,[],Cant Install flwr top of the Poetry Shell,"Cant Install flwr top of the Poetry Shelli got error when i try to run install import flwr top of the poetry
+
+
+ModuleNotFoundError: No module named 'flwr'
+Hi @sachugowda. Can you maybe elaborate a little further and explain in which environment and how you installed Flower? Ideally provide some information about your system and the commands you have executed.Dear @tanertopal , Thanks for your Reply.
+i am using Ubuntu 18, and i have successfully installed Flower and cloned from github.
+i cant install poetry and if i installed using https://python-poetry.org/docs/ i can used poetry command to start shell and i cant execute this command poetry run python3 -c ""import flwr""
+
+even i tried in google colab also.. kindly help me to run examples to learn more in FL ![Screenshot from 2021-03-08 17-06-20](https://user-images.githubusercontent.com/4860900/110316512-d9745f00-8030-11eb-92aa-4472b283bc24.png)
+![Screenshot from 2021-03-08 17-07-25](https://user-images.githubusercontent.com/4860900/110316526-de391300-8030-11eb-9bcc-ee7fa48bde96.png)
+![Screenshot from 2021-03-08 17-16-47](https://user-images.githubusercontent.com/4860900/110317393-1bea6b80-8032-11eb-8956-b275ffe58d39.png)
+Thanks you, working fine",5,2021-03-08 10:09:08,2021-03-08 12:16:05,2021-03-08 12:16:05
+https://github.com/adap/flower/issues/659,[],QFedAvg Loss Unitialized Error,"QFedAvg Loss Unitialized ErrorHello,
+I am trying to use the qffedavg strategy and getting ""NameError: free variable 'loss' referenced before assignment in enclosing scope."" I think the problem is that I did not specify an evaluation function as a parameter so the loss variable is not initialized before it is called later in the program. If I understand right, then if the loss really is necessary for q-FedAvg the evaluation function parameter should not be optional. Otherwise, the for loop after the line where loss is supposed to be initialized (line 185) should first check that loss is not None.
+
+Also, from the paper, I think the correct name of the algorithm is qFedAvg not qFFedAvg as the strategy is named here. 
+
+Is there an example for the evaluation function?
+
+
+Server code:
+```
+import flwr as fl
+from flwr.server import Server, SimpleClientManager
+
+def main():
+    strategy = fl.server.strategy.QffedAvg(min_available_clients=2)
+
+    myServer = Server(client_manager = SimpleClientManager(), strategy=strategy)
+
+    fl.server.start_server(server_address= ""localhost:8080"", server = myServer, config={""num_rounds"": 5})
+
+if __name__ == ""__main__"":
+    main()
+```
+
+Error message produced:
+```
+Traceback (most recent call last):
+  File ""C:\Users\wishi\OneDrive - University of Kentucky\FLCode\Organized_Pytorch\DataDistributions\centralizedDist\trimmedServer.py"", line 12, in <module>
+    main()
+  File ""C:\Users\wishi\OneDrive - University of Kentucky\FLCode\Organized_Pytorch\DataDistributions\centralizedDist\trimmedServer.py"", line 9, in main
+    fl.server.start_server(server_address= ""localhost:8080"", server = myServer, config={""num_rounds"": 5})
+  File ""C:\Users\wishi\AppData\Local\Programs\Python\Python37\lib\site-packages\flwr\server\app.py"", line 79, in start_server
+    _fl(server=initialized_server, config=initialized_config)
+  File ""C:\Users\wishi\AppData\Local\Programs\Python\Python37\lib\site-packages\flwr\server\app.py"", line 108, in _fl
+    hist = server.fit(num_rounds=config[""num_rounds""])
+  File ""C:\Users\wishi\AppData\Local\Programs\Python\Python37\lib\site-packages\flwr\server\server.py"", line 92, in fit
+    weights_prime = self.fit_round(rnd=current_round)
+  File ""C:\Users\wishi\AppData\Local\Programs\Python\Python37\lib\site-packages\flwr\server\server.py"", line 181, in fit_round
+    return self.strategy.aggregate_fit(rnd, results, failures)
+  File ""C:\Users\wishi\AppData\Local\Programs\Python\Python37\lib\site-packages\flwr\server\strategy\qffedavg.py"", line 193, in aggregate_fit
+    [np.float_power(loss + 1e-10, self.q_param) * grad for grad in grads]
+  File ""C:\Users\wishi\AppData\Local\Programs\Python\Python37\lib\site-packages\flwr\server\strategy\qffedavg.py"", line 193, in <listcomp>
+    [np.float_power(loss + 1e-10, self.q_param) * grad for grad in grads]
+NameError: free variable 'loss' referenced before assignment in enclosing scope
+
+
+```
+Hi @smoser82 , thanks a lot for the detailed report!
+
+We do have an example for the evaluation function in the Advanced TensorFlow Example (https://github.com/adap/flower/tree/main/examples/advanced_tensorflow, and a few more in deprecated parts of the codebase under `src/py/flwr_example` and `src/py/flwr_experimental`, but those will be removed eventually).
+
+The gist is to hand a function to the strategy that takes model parameters and return the evaluation result:
+
+```python
+def main() -> None:
+    # Create strategy
+    strategy = fl.server.strategy.FedAvg(
+        fraction_fit=0.3,
+        fraction_eval=0.2,
+        min_fit_clients=3,
+        min_eval_clients=2,
+        min_available_clients=10,
+        eval_fn=get_eval_fn(),
+        on_fit_config_fn=fit_config,
+        on_evaluate_config_fn=evaluate_config,
+    )
+    # Start Flower server for four rounds of federated learning
+    fl.server.start_server(""[::]:8080"", config={""num_rounds"": 4}, strategy=strategy)
+
+
+def get_eval_fn():
+    """"""Return an evaluation function for server-side evaluation.""""""
+
+    # Load data and model here to avoid the overhead of doing it in `evaluate` itself
+    (x_train, y_train), _ = tf.keras.datasets.cifar10.load_data()
+
+    # Use the last 5k training examples as a validation set
+    x_val, y_val = x_train[45000:50000], y_train[45000:50000]
+
+    # Load and compile model
+    model = tf.keras.applications.EfficientNetB0(
+        input_shape=(32, 32, 3), weights=None, classes=10
+    )
+    model.compile(""adam"", ""sparse_categorical_crossentropy"", metrics=[""accuracy""])
+
+    # The `evaluate` function will be called after every round
+    def evaluate(weights: fl.common.Weights) -> Optional[Tuple[float, float]]:
+        model.set_weights(weights)  # Update model with the latest parameters
+        loss, accuracy = model.evaluate(x_val, y_val)
+        return loss, accuracy
+
+    return evaluate
+```
+
+Does this solve your issue?
+
+I'll take a look at the paper and talk to the original author of this strategy to learn more about the naming and the issue with the optional nature of the evaluation function.That's a very helpful example, thank you. I think it's working now!The renaming just got merged into `main` and will become available in tomorrow's Flower nightly release (and the full 0.17 a little later) - thanks again for pointing this out @smoser82 !",3,2021-03-03 16:20:12,2021-08-15 12:03:42,2021-08-15 12:01:34
+https://github.com/adap/flower/issues/648,[],Trying to run quickstart_tensorflow,"Trying to run quickstart_tensorflowHello,
+I am trying to run your quickstart project but I got an error. When I tried to run server.py with port 8080 it failed, so I just changed the port to 5040 in both files (+ I checked if it is a free port ). The server runs ok, but then when I tried to run client.py I could not connect to the server. Both files client and server are running from the same PC with anaconda environment. Any clue what I did wrong? 
+
+![flower quickstart2](https://user-images.githubusercontent.com/72346204/108837436-8af7a700-75d2-11eb-8ff5-c4604ee30efa.png)
+![flower quickstart3](https://user-images.githubusercontent.com/72346204/108838494-fdb55200-75d3-11eb-8e3a-7b80d7fd2e95.png)
+
+Hi @Martin-Stevlik , can you try to use IPv6 (so `[::]:8080`) for both server and client? We've recently changed the example code to use this because IPv4 produced an error in some cases.Thank you for your quick response. I have tried it and it works just fine. Is there a way for it to work with IPv4 in future? Because I want to run the server.py in AZURE VM and most of VM does not support IPv6 ...Great to hear it works @Martin-Stevlik - IPv4 is generally supported, but we're seeing the error you reported every now and then, however, it's not quite clear where it's coming from. Which platform are you on? We've tested the examples with both IPv4 and IPv6 and some people experienced issues while others didn't.
+
+In the case of Docker, it's actually recommended to use IPv4 over IPv6 (IPv6 requires additional configuration in Docker).I am using Windows 10 and as a virtual environment Anaconda. My next step is to try your embedded devices quickstart on my Raspberry PI's. I will see how it goes there...@Martin-Stevlik were you able to resolve your issue? Let us know if we can help you further. With regards to Flower on Raspberry this might be useful for you: https://github.com/adap/flower/tree/main/examples/embedded_devices
+
+
+Hi, I followed your instructions in the embedded devices tutorial and came across the same connecting issue. I have a PC witch runs server.py and 2 raspberries that runs client.py. Both raspberries and PC are on the same network and I am using your latest release 0.14.0. I don't know if you should put the port number in the client's code, but I have tried it but it would not resolve an issue.
+
+![flower_raspberry3 1](https://user-images.githubusercontent.com/72346204/110376751-da6ab800-8053-11eb-9e40-daa9e0df2869.png)
+![flower_raspberry](https://user-images.githubusercontent.com/72346204/110376764-dfc80280-8053-11eb-9071-c961a3a2211e.png)
+![flower_raspberry2](https://user-images.githubusercontent.com/72346204/110376776-e22a5c80-8053-11eb-861a-e58bb8456085.png)
+@Martin-Stevlik I think the issue is that the clients also need the port of the server. Can you try with `192.168.1.32:5000` when calling the `run_pi.sh`?
+
+If that's the issue I will adjust the https://github.com/adap/flower/blob/main/examples/embedded_devices/README.md file to clarify it further.@tanertopal as you can see on the right side of the image. I have already tried it and it did not work ... I will try using IPv6 and give you an update on how it goes. @Martin-Stevlik my bad. Missed that. Am I guessing right that the server is running on a Windows machine? I think we did not test the setup with a Windows OS. I'll try it out in the next couple days on Windows 10 if you can confirm my guess.
+
+In general can you tell me a little bit about your overall setup?
+
+- Which exact OS and version
+- Version of the tools involved e.g. DockerI am using 64 bit OS, Windows 10 PRO version 2004. For the environment on PC, I am using an anaconda with python=3.8.3, flwr=0.14.0, tensorflow-cpu=2.4.1 
+
+As for raspberries I have raspberry 3 model B, OS is 64bit Ubuntu Server 20.04.2 LTS with docker version 20.10.4@tanertopal so I have tried it with IPv6 and the same issue comes up. I have put ""[::]:5040"" in server.py and my IPv6 address in client.py, if I do this in quickstart_tensorflow project it works ...@Martin-Stevlik so I assume you have run the `quickstart_tensorflow` example without docker as otherwise, you would have to activate [IPv6 support in Docker](https://docs.docker.com/config/daemon/ipv6/)? I am going to set up a new Raspberry Pi and try to replicate your issue. Need to check if I have a Raspberry 3 B somewhere lying around (I think so 😄  ).
+
+As another idea. Are you already part of our [Slack community](https://flower.dev/join-slack)? Maybe we can solve your issue faster there.
+
+A few more ideas/questions:
+1. Is the IP of the server you are using visible when you run `Get-NetIPConfiguration` in Powershell on the Windows server?
+2. Can you modify the `run_pi.sh` and `run_jetson.sh` to include `--net=host`
+    * `docker run --rm flower_client ${@}` => `docker run --net=host --rm flower_client ${@}` 
+3. What happens when you run `telnet SERVER_ADDRESS SERVER_PORT` on the Raspberry Pi? Does it connect? You can cancel the connection if so using CTRL+D. This will give us a hint if its a Docker issue.Okay, so the key advice for running this ""embedded_devices"" project on windows 10 is to fully disable the firewall ;)",13,2021-02-23 11:39:53,2021-03-18 19:49:45,2021-03-18 19:49:45
+https://github.com/adap/flower/issues/552,[],Improve docs (misc),"Improve docs (misc)# Description
+Improve the docs by removing obsolete parts and making it overall more readable (also on mobile).
+
+# Tasks
+- [x] Remove obsolete parts of the docs aka. How To AWS
+- [x] Fix formatting
+- [x] Use new Theme
+Related PR's
+* #547 
+* #548 
+* #551 Also relates to #482 and #472",2,2021-01-05 17:16:41,2021-01-19 11:16:41,2021-01-19 11:16:29
+https://github.com/adap/flower/issues/542,[],transport_pb2.pyi file,"transport_pb2.pyi fileHow to generate the `transport_pb2.pyi` file? I cannot find any information about this on gRPC's official documentation. https://github.com/dropbox/mypy-protobuf
+Problem solved. Thanks!",1,2020-12-27 09:17:36,2020-12-27 09:56:52,2020-12-27 09:56:52
+https://github.com/adap/flower/issues/540,['bug'],Evaluation of the final model on empty client set,"Evaluation of the final model on empty client setHello,
+I'm trying to run the basic [Tensorflow Example](https://github.com/adap/flower/tree/main/examples/quickstart_tensorflow) but when the [final model evaluation is executed](https://github.com/adap/flower/blob/42ef63b6a8097c3b571b65e11b5471477253a48d/src/py/flwr/server/app.py#L97) the client returns an empty set, thus the evaluation is not executed.
+This should be due to the fact that the server [closes the connections](https://github.com/adap/flower/blob/42ef63b6a8097c3b571b65e11b5471477253a48d/src/py/flwr/server/server.py#L117) with the clients after the fit.
+
+Thank youThanks for the report @NicholasRasi ! What you're describing is right, good catch. We'll fix this asap.This is fixed by #553 and will be available in Flower 0.13.0.",2,2020-12-23 08:45:41,2021-01-06 09:37:37,2021-01-06 09:37:37
+https://github.com/adap/flower/issues/537,[],grpc error: details: failed to connect to all addresses,"grpc error: details: failed to connect to all addressesHi, I was just trying the examples on [https://flower.dev/docs/example_walkthrough_pytorch_mnist.html](url). After runing  `bash ./run-clients.sh`, I got the following errors. Can someone provides any help? 
+`$ DEBUG flower 2020-12-17 14:45:45,394 | connection.py:36 | ChannelConnectivity.IDLE
+DEBUG flower 2020-12-17 14:45:45,394 | connection.py:36 | ChannelConnectivity.TRANSIENT_FAILURE
+INFO flower 2020-12-17 14:45:45,394 | app.py:61 | Opened (insecure) gRPC connection
+DEBUG flower 2020-12-17 14:45:45,410 | connection.py:36 | ChannelConnectivity.IDLE
+DEBUG flower 2020-12-17 14:45:45,410 | connection.py:36 | ChannelConnectivity.CONNECTING
+DEBUG flower 2020-12-17 14:45:45,410 | connection.py:36 | ChannelConnectivity.TRANSIENT_FAILURE
+INFO flower 2020-12-17 14:45:45,410 | app.py:61 | Opened (insecure) gRPC connection
+DEBUG flower 2020-12-17 14:45:45,597 | connection.py:68 | Insecure gRPC channel closed 
+`
+`Traceback (most recent call last):  
+  File ""E:\Anaconda3\envs\ptq\lib\runpy.py"", line 194, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File ""E:\Anaconda3\envs\ptq\lib\runpy.py"", line 87, in _run_code
+    exec(code, run_globals)
+  File ""E:\Anaconda3\envs\ptq\lib\site-packages\flwr_example\quickstart_pytorch\client.py"", line 96, in <module>
+    fl.client.start_client(args.server_address, client)
+  File ""E:\Anaconda3\envs\ptq\lib\site-packages\flwr\client\app.py"", line 64, in start_client
+    server_message = receive()
+  File ""E:\Anaconda3\envs\ptq\lib\site-packages\flwr\client\grpc_client\connection.py"", line 60, in <lambda>
+    receive: Callable[[], ServerMessage] = lambda: next(server_message_iterator)
+  File ""E:\Anaconda3\envs\ptq\lib\site-packages\grpc\_channel.py"", line 416, in __next__
+    return self._next()
+  File ""E:\Anaconda3\envs\ptq\lib\site-packages\grpc\_channel.py"", line 786, in _next
+    raise self
+grpc._channel._MultiThreadedRendezvous: <_MultiThreadedRendezvous of RPC that terminated with:
+        status = StatusCode.UNAVAILABLE
+        details = ""failed to connect to all addresses""
+        debug_error_string = ""{""created"":""@1608187545.406000000"",""description"":""Failed to pick subchannel"",""file"":""src/core/ext/filters/client_channel/client_channel.cc"",""file_line"":4143,""referenced_errors"":[{""created"":""@1608187545.406000000"",""description"":""failed to connect to all addresses"",""file"":""src/core/ext/filters/client_channel/lb_policy/pick_first/pick_first.cc"",""file_line"":398,""grpc_status"":14}]}""`issue solved by changing the ipv4 port.Hey I am having the same problem. I tried changing the port. But it still having the same issue. Can you tell me what did you exactly change?I have the same issue but after I changed port 5040 for both server and client, the FL worked fine.@lfzhagn  For me changing the [::] to localhost for both client and server side as follow worked:
+
+`fl.client.start_numpy_client(""[::]:8080"", client=CifarClient())`
+to
+`fl.client.start_numpy_client(""localhost:8080"", client=CifarClient())`",4,2020-12-17 07:07:00,2022-01-10 23:38:05,2020-12-17 09:12:56
+https://github.com/adap/flower/issues/530,['bug'],`Server.fit` method crash with `TypeError: 'int' object is not iterable` error,"`Server.fit` method crash with `TypeError: 'int' object is not iterable` errorHello,
+since release `0.11.0` I'm not able to launch code that worked fine with release `0.10.0`
+
+I have the same problem with release `0.12.0` 
+
+Here is the Error Stack : 
+```
+File ""/srv/code/utils/ml_server_flower.py"", line 70, in run
+    hist = server.fit(num_rounds=federated_config['ROUND_BEFORE_AGGREGATION'])
+  File ""/usr/local/lib/python3.7/dist-packages/flwr/server/server.py"", line 110, in fit
+    res_fed = self.evaluate(rnd=current_round)
+  File ""/usr/local/lib/python3.7/dist-packages/flwr/server/server.py"", line 133, in evaluate
+    rnd=rnd, weights=self.weights, client_manager=self._client_manager
+  File ""/usr/local/lib/python3.7/dist-packages/flwr/server/strategy/fedavg.py"", line 121, in configure_evaluate
+    parameters = weights_to_parameters(weights)
+  File ""/usr/local/lib/python3.7/dist-packages/flwr/common/parameter.py"", line 28, in weights_to_parameters
+    tensors = [ndarray_to_bytes(ndarray) for ndarray in weights]
+TypeError: 'int' object is not iterable
+```
+The context where the issue appears
+
+```python
+client_manager = SimpleClientManager()
+strategy = FedAvg()
+server = Server(client_manager=client_manager, strategy=strategy)
+
+model = KerasModel(data[0].shape[1], data[0].shape[2], data[1].shape[1])
+
+grpc_server = start_insecure_grpc_server(
+	client_manager=server.client_manager(), server_address=params['grpc_host']
+)
+hist = server.fit(num_rounds=federated_config['ROUND_BEFORE_AGGREGATION'])
+...
+```
+
+the model i use :
+```python
+class KerasModel:
+    def __init__(self, n_timesteps, n_features, n_outputs):
+        """"""
+        with : n_timesteps, n_features, n_outputs = trainX.shape[1], trainX.shape[2], trainy.shape[1]
+        """"""
+        #Personalization of the optimizer
+        sgd = optimizers.SGD(lr=float(keras_config['LEARNING_RATE']), momentum=0.0, decay=0.0,
+                             nesterov=False)
+        adam = optimizers.Adam(lr=float(keras_config['LEARNING_RATE']))
+        rmsProp = optimizers.RMSprop(lr=float(keras_config['LEARNING_RATE']), rho=0.9, epsilon=None, decay=0.0)
+        adagrad = optimizers.Adagrad(lr=0.01, epsilon=None, decay=0.0)
+        adadelta = optimizers.Adadelta(lr=1.0, rho=0.95, epsilon=None, decay=0.0)
+        adamax = optimizers.Adamax(lr=0.002, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0)
+
+	    #The network
+        self.model = Sequential()
+        self.model.add(Conv1D(filters=int(keras_config['FILTERS_CONV1D']),
+                         kernel_size=int(keras_config['KERNEL_CONV1D']), activation=keras_config['ACTIVATION_CONV1D'],
+                         input_shape=(n_timesteps,n_features)))
+        #self.model.add(Conv1D(filters=8, kernel_size=5, activation='relu'))
+        self.model.add(Dropout(float(keras_config['DROPOUT_RATIO'])))
+        self.model.add(MaxPooling1D(pool_size=int(keras_config['POOL_SIZE_MAXPOOL'])))
+
+        self.model.add(Conv1D(filters = int(keras_config['FILTERS_CONV1D']),
+                              kernel_size=int(keras_config['KERNEL_CONV1D']), activation = keras_config['ACTIVATION_CONV1D']))
+        self.model.add(Dropout(float(keras_config['DROPOUT_RATIO'])))
+        self.model.add(MaxPooling1D(pool_size=int(keras_config['POOL_SIZE_MAXPOOL'])))
+ 
+        self.model.add(Flatten())
+		self.model.add(Dense(int(keras_config['DENSE1_NEURONS']), activation=keras_config['ACTIVATION_DENSE1']))
+        self.model.add(Dense(n_outputs, activation=keras_config['ACTIVATION_DENSE2']))
+        self.model.compile(loss=keras_config['LOSS'], optimizer=keras_config['OPTIMIZER'], metrics=['accuracy'])
+ 
+    def set_weights(self, weights):
+        self.model.set_weights(weights)
+ 
+    def fit(self, x_train, y_train, epochs=None):
+        self.model.fit(x_train, y_train, epochs=epochs, batch_size=common_config['BATCH_SIZE'])
+ 
+    def get_weights(self):
+        return self.model.get_weights()
+ 
+    def evaluate(self, x_test, y_test):
+        return self.model.evaluate(x_test, y_test)
+```
+
+configuration dictionary : 
+
+```python
+federated_config = {
+    'ROUND_BEFORE_AGGREGATION': 3,
+    'EPOCHS_PER_ROUND': 2,
+}
+
+common_config = {
+    'TEST_BATCH_SIZE': 1000,
+    'BATCH_SIZE': 64,
+    'EPOCHS': 5,
+}
+
+keras_config = {
+    'LEARNING_RATE': 0.0004,
+    'FILTERS_CONV1D': 8,
+    'KERNEL_CONV1D': 3,
+    'ACTIVATION_CONV1D': 'relu',
+    'DROPOUT_RATIO': 0.5,
+    'POOL_SIZE_MAXPOOL': 3,
+    'L2_REGU': False,
+    'DENSE1_NEURONS': 20,
+    'ACTIVATION_DENSE1': 'relu',
+    'VALUE_L2_REGU': 0.001,
+    'ACTIVATION_DENSE2': 'softmax',
+    'LOSS': 'mean_squared_error',
+    'OPTIMIZER': 'adam',
+}
+Thanks for the report @altor ! We went through your code and everything looks fine. The issues seems to be related to parameter serialization for distributed evaluation (i.e., on the clients). Does the initial round of training work before Flower tries to do the evaluation?
+IIRC there were no changes related to that part of the codebase during the 0.11.0 and 0.12.0 release. Would it be possible to open source your code (or alternatively invite @tanertopal  and @danieljanes  to a private repo) so that we can try to run it?Closing this now because we couldn't reproduce. Feel free to reopen if this is still an issue for you @altor .",2,2020-12-09 18:39:19,2021-02-05 10:10:08,2021-02-05 10:10:07
+https://github.com/adap/flower/issues/433,['bug'],Not able to run example in flwr_example/quickstart_pytorch,"Not able to run example in flwr_example/quickstart_pytorchI cannot run
+```
+$ ./src/py/flwr_example/quickstart_pytorch/run-server.sh
+/usr/bin/python3: Error while finding module specification for 'flwr_example.quickstart_pytorch.server' (ModuleNotFoundError: No module named 'flwr_example.quickstart_pytorch')
+```
+
+But I can run the other example
+```
+$ ./src/py/flwr_example/pytorch/run-server.sh
+```Thanks for the report @yinfredyue , we're looking into it.@yinfredyue We just made a new release 0.9.0. Could you please update and try it again?I am afraid the problem still exists.@yinfredyue thanks for the feedback. How are you trying to run the script? Are you using the `flwr` package from PyPI or did you clone the GitHub repository?I cloned the repo.
+
+I found the reason. The path in `run-server.sh` is wrong:
+
+``` sh
+# Wrong
+# cd ""$( cd ""$( dirname ""${BASH_SOURCE[0]}"" )"" && pwd )""/../../../
+
+# Correct
+cd ""$( cd ""$( dirname ""${BASH_SOURCE[0]}"" )"" && pwd )""/../../
+```
+
+Shall I create a PR to fix the issue?Ah cool, yes, a PR would be great @yinfredyue @yinfredyue we just checked the scripts. The `cd` statements are not relevant in these scripts. To avoid confusion in the future we are removing them.
+The `python -m flwr_example.quickstart_pytorch.server` call should load the example server from your installed version of the Flower library.
+There might be something we are not thinking of so maybe you could elaborate how you installed Flower?Yeah, you are right. Previously I was thinking it is loading files in `flwr_example/`.
+I just tried it, indeed, changing `cd` is not relevant. But I did get errors (like in my first comment) when I ran it before.
+I reinstalled `flwr` and it works.
+
+Thank you!I re-examine the issue. Previously I get confused with the `python -m` command. Apparently, it looks for local modules first, and if not found, global modules. For example, consider command `python -m flwr_experiemental.logserver.server`.
+- If we run in `flower/src/py/`, Python runs the local version, `flwr_experimental/logserver/server.py`, (which is usually what users of this framework want);
+- If we run in other directories, there's no module `flwr_experimental` in the current directory, then modules in the `flwr` package would be run. 
+
+Currently, most script uses `python -m` and as I mentioned in my previous comment, the `cd` affects from which directory `python -m` is called and which module is executed. I believe most users of this framework want to make their own changes and run their own version, instead of the `flwr` library installed. This would cause confusion to future users of flower (if they are not very familiar with python modules and packages).
+
+Another question is: why I can run the installed library `flwr_experiemental` without saying `flwr.flwr_experimental`? I am a bit confused.",9,2020-10-19 05:13:27,2020-11-09 05:13:10,2020-11-08 15:03:04
+https://github.com/adap/flower/issues/408,['bug'],execution of client example crash after training is terminated,"execution of client example crash after training is terminatedHello !
+
+I'm trying to use the example you provide ([quickstart](https://github.com/adap/flower/tree/main/src/py/flwr_example/quickstart) and [tensorflow](https://github.com/adap/flower/tree/main/src/py/flwr_example/tensorflow)). I achieve to train models but clients can't achieve to stop themselves without crashing.
+
+I just run `run_server.sh` and `run_clients.sh` in separate terminals, see the clients downloading data and train their models. After training, the server evaluate the model ant stop itself properly.
+At this moments, clients crash by rising an exception with this message : 
+
+```
+Traceback (most recent call last):
+  File ""client.py"", line 114, in <module>
+    main()
+  File ""client.py"", line 110, in main
+    fl.client.start_keras_client(args.server_address, client)
+  File ""/usr/local/lib/python3.7/dist-packages/flwr/client/app.py"", line 47, in start_keras_client
+    start_client(server_address, flower_client)
+  File ""/usr/local/lib/python3.7/dist-packages/flwr/client/app.py"", line 35, in start_client
+    server_message = receive()
+  File ""/usr/local/lib/python3.7/dist-packages/flwr/client/grpc_client/connection.py"", line 59, in <lambda>
+    receive: Callable[[], ServerMessage] = lambda: next(server_message_iterator)
+  File ""/usr/local/lib/python3.7/dist-packages/grpc/_channel.py"", line 416, in __next__
+    return self._next()
+  File ""/usr/local/lib/python3.7/dist-packages/grpc/_channel.py"", line 706, in _next
+    raise self
+grpc._channel._MultiThreadedRendezvous: <_MultiThreadedRendezvous of RPC that terminated with:
+        status = StatusCode.UNAVAILABLE
+        details = ""Socket closed""
+        debug_error_string = ""{""created"":""@1601383903.613729459"",""description"":""Error received from peer ipv6:[::]:8080"",""file"":""src/core/lib/surface/call.cc"",""file_line"":1055,""grpc_message"":""Socket closed"",""grpc_status"":14}""
+```
+ Hi @altor - thanks for creating the issue! We are aware of this, the reason for this exception is that the current `Client`/`KerasClient` implementations do not implement a *graceful shutdown* when the server is done training. We'll soon release an update that fixes the issue :) until we do, if the server shows the final accuracy/loss logs, your workload ran successfully.Ok, For the moment, i'll just catch the exception and close the client properly
+Thanks for your answer !We'll update this issue once the change has landed.Thanks !
+PR is ready: #449 PR is merged, graceful shutdown is available on branch main. New release will follow shortly.thanks !@altor the new release 0.10.0 is now available on PyPI",8,2020-09-29 13:11:20,2020-11-09 11:28:22,2020-11-09 11:28:22

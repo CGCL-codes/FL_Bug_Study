@@ -1,0 +1,61 @@
+id,bug,created_time,last_activity_date,lifecycle
+68412517,https://stackoverflow.com/questions/68412517/build-custom-federated-averaging-process-with-valueerror-layer-sequential-expec,2021-07-17 00:39:46,2021-07-19 00:51:55,"2 days, 0:12:09"
+65434193,https://stackoverflow.com/questions/65434193/multi-gpu-tff-simulation-errors-detected-dataset-reduce-op-in-multi-gpu-tff-sim,2020-12-24 13:03:21,2020-12-31 14:14:13,"7 days, 1:10:52"
+66206118,https://stackoverflow.com/questions/66206118/typeerror-expected-tensorflow-python-framework-tensor-spec-tensorspec-found-nu,2021-02-15 18:12:18,2021-02-16 01:42:11,7:29:53
+66557738,https://stackoverflow.com/questions/66557738/exploding-memory-consumption-when-training-fl-model-with-varying-number-of-parti,2021-03-10 11:00:00,2021-03-23 02:24:37,"12 days, 15:24:37"
+71428904,https://stackoverflow.com/questions/71428904/valueerror-layer-sequential-expects-1-inputs-but-it-received-10-input-tens,2022-03-11 02:14:36,2022-03-15 23:48:50,"4 days, 21:34:14"
+59741397,https://stackoverflow.com/questions/59741397/federated-learning-convert-my-own-image-dataset-into-tff-simulation-clientdata,2020-01-15 04:33:42,2020-11-29 00:29:22,"318 days, 19:55:40"
+62754913,https://stackoverflow.com/questions/62754913/attempting-to-capture-an-eagertensor-without-building-a-function-error-while,2020-07-06 19:18:06,2020-07-06 21:10:05,1:51:59
+65471612,https://stackoverflow.com/questions/65471612/tensorflow-federated-has-no-attribute-namedtupletype,2020-12-28 07:57:17,2020-12-28 11:37:41,3:40:24
+65578498,https://stackoverflow.com/questions/65578498/tff-valueerror-shapes-none-1-and-none-are-incompatible,2021-01-05 20:02:33,2021-01-06 17:35:28,21:32:55
+67053731,https://stackoverflow.com/questions/67053731/error-using-update-struct-function-in-tensorflow-federated,2021-04-12 14:45:56,2021-04-12 16:50:14,2:04:18
+67533039,https://stackoverflow.com/questions/67533039/tensorflow-keras-input-0-of-layer-lstm-is-incompatible-with-the-layer-expec,2021-05-14 18:45:35,2021-05-14 19:35:33,0:49:58
+71037598,https://stackoverflow.com/questions/71037598/how-to-gather-all-client-weights-at-server-in-tff,2022-02-09 00:44:48,2022-02-09 03:15:43,2:30:55
+71251685,https://stackoverflow.com/questions/71251685/module-keras-api-v2-keras-experimental-has-no-attribute-peepholelstmcell,2022-02-24 20:05:07,2022-03-08 20:26:42,"12 days, 0:21:35"
+71289273,https://stackoverflow.com/questions/71289273/tff-train-test-client-split-to-partition-each-client-data,2022-02-28 07:29:09,2022-02-28 21:57:18,14:28:09
+71506975,https://stackoverflow.com/questions/71506975/valueerror-missing-data-for-input-input-2-you-passed-a-data-dictionary-with,2022-03-17 12:05:40,2022-03-18 02:08:22,14:02:42
+72022654,https://stackoverflow.com/questions/72022654/attributeerror-module-tensorflow-federated-python-learning-has-no-attribute,2022-04-27 10:36:59,2022-07-03 00:03:01,"66 days, 13:26:02"
+72076723,https://stackoverflow.com/questions/72076723/attributeerror-mapdataset-object-has-no-attribute-preprocess-in-tensorflow,2022-05-01 20:30:14,2022-05-01 22:48:37,2:18:23
+70338012,https://stackoverflow.com/questions/70338012/running-out-of-ram-using-fileperuserclientdata,2021-12-14 00:42:47,2022-01-01 01:30:15,"18 days, 0:47:28"
+68691256,https://stackoverflow.com/questions/68691256/attributeerror-module-tensorflow-privacy-has-no-attribute-dpquery,2021-08-07 17:53:15,2021-08-07 20:15:56,2:22:41
+65481370,https://stackoverflow.com/questions/65481370/size-mismatch-in-tensorflow-federated-eager-executor,2020-12-29 01:14:26,2020-12-29 06:35:54,5:21:28
+60866002,https://stackoverflow.com/questions/60866002/pysyft-client-and-server,2020-03-26 19:17:03,2020-11-28 19:01:42,"246 days, 23:44:39"
+60202610,https://stackoverflow.com/questions/60202610/pysyft-federated-learning-error-with-websockets,2020-02-13 15:33:37,2020-11-28 19:03:07,"289 days, 3:29:30"
+59484278,https://stackoverflow.com/questions/59484278/pureframeworktensorfounderror-runtime-error-fedeartedlearning,2019-12-26 13:43:05,2020-11-28 19:09:32,"338 days, 5:26:27"
+71767784,https://stackoverflow.com/questions/71767784/accuracy-0-for-binary-classification,2022-04-06 21:36:06,2022-04-06 22:27:50,0:51:44
+68018178,https://stackoverflow.com/questions/68018178/federated-learning-for-image-classification-in-colab,2021-06-17 19:12:23,2021-06-20 01:09:27,"2 days, 5:57:04"
+66304067,https://stackoverflow.com/questions/66304067/error-while-executing-federated-learning-text-generation-tutorial-in-colab,2021-02-21 23:43:42,2021-02-22 01:09:24,1:25:42
+72698170,https://stackoverflow.com/questions/72698170/typeerror-expected-at-most-1-arguments-got-2-data-collections-ordered,2022-06-21 17:14:29,2022-06-21 17:50:12,0:35:43
+66680070,https://stackoverflow.com/questions/66680070/attributeerror-type-object-tensor-has-no-attribute-fft,2021-03-18 03:37:23,2021-07-03 14:55:39,"107 days, 11:18:16"
+58367187,https://stackoverflow.com/questions/58367187/modulenotfounderror-no-module-named-syft-pysyft,2019-10-14 03:42:39,2020-11-28 19:03:40,"411 days, 15:21:01"
+61850455,https://stackoverflow.com/questions/61850455/could-not-find-a-version-that-satisfies-the-requirement-torch-1-4-0-from-syft,2020-05-17 18:39:11,2021-04-01 12:09:16,"318 days, 17:30:05"
+59239818,https://stackoverflow.com/questions/59239818/pysyft-torrch-jit-script-runtimeerror-undefined-value-reduction,2019-12-09 04:54:55,2020-11-28 19:04:01,"355 days, 14:09:06"
+66483639,https://stackoverflow.com/questions/66483639/attributeerror-module-syft-has-no-attribute-torchhook,2021-03-05 05:54:50,2021-10-08 09:42:23,"217 days, 3:47:33"
+65236793,https://stackoverflow.com/questions/65236793/multiple-values-for-argument,2020-12-10 22:49:39,2020-12-10 23:12:23,0:22:44
+60365627,https://stackoverflow.com/questions/60365627/syft-pysyft-modulenotfounderror-syft-proto-messaging-v1-protocol-pb2,2020-02-24 02:50:23,2020-11-28 19:05:15,"278 days, 16:14:52"
+72035825,https://stackoverflow.com/questions/72035825/typeerror-type-object-is-not-subscriptable-when-importing-tensorflow-federate,2022-04-28 06:08:14,2022-05-01 23:10:51,"3 days, 17:02:37"
+60920524,https://stackoverflow.com/questions/60920524/error-while-using-gpu-based-remote-execution-with-tensorflow-federated,2020-03-30 04:48:31,2020-05-13 07:34:14,"44 days, 2:45:43"
+60903579,https://stackoverflow.com/questions/60903579/error-when-running-tensorflow-federated-on-server,2020-03-29 00:32:38,2020-03-31 16:28:10,"2 days, 15:55:32"
+60815004,https://stackoverflow.com/questions/60815004/modulenotfounderror-no-module-named-tensorflow-federated-python-research,2020-03-23 21:59:14,2020-03-23 22:56:50,0:57:36
+58484719,https://stackoverflow.com/questions/58484719/tensor-type-error-when-federated-learning,2019-10-21 18:48:59,2019-10-22 20:37:32,"1 day, 1:48:33"
+71396780,https://stackoverflow.com/questions/71396780/loading-multiple-csv-files-silos-to-compose-tensorflow-federated-dataset,2022-03-08 22:38:54,2022-03-11 01:04:21,"2 days, 2:25:27"
+70398702,https://stackoverflow.com/questions/70398702/client-level-differential-privacy-in-tensorflow-federated-local-dp,2021-12-18 04:44:03,2021-12-20 17:45:02,"2 days, 13:00:59"
+69619028,https://stackoverflow.com/questions/69619028/access-and-modify-weights-sent-from-client-on-the-server-tensorflow-federated,2021-10-18 23:51:20,2021-11-08 17:49:06,"20 days, 17:57:46"
+69614134,https://stackoverflow.com/questions/69614134/tensorflow-federated-object-is-not-subscriptable,2021-10-18 17:59:16,2021-10-19 16:58:05,22:58:49
+68891143,https://stackoverflow.com/questions/68891143/tensorflow-federated-tff-typeerror-in-tff-templates-iterativeprocess-next-wh,2021-08-23 18:39:29,2021-08-25 12:14:50,"1 day, 17:35:21"
+62906596,https://stackoverflow.com/questions/62906596/attributeerror-tensor-op-is-meaningless-when-eager-execution-is-enabled-when-us,2020-07-15 10:13:44,2020-07-17 10:17:53,"2 days, 0:04:09"
+62398225,https://stackoverflow.com/questions/62398225/when-using-building-a-federated-averaging-process-typeerror-expected-a-callab,2020-06-16 06:46:32,2020-06-16 09:53:58,3:07:26
+62786889,https://stackoverflow.com/questions/62786889/error-while-encoding-with-hub-keraslayer-while-using-tff,2020-07-08 11:01:59,2020-07-09 22:02:09,"1 day, 11:00:10"
+60457040,https://stackoverflow.com/questions/60457040/get-typeerror-caught-exception-for-using-accuracy-in-tensorflow-federated,2020-02-29 02:00:44,2020-03-10 18:48:48,"10 days, 16:48:04"
+60181180,https://stackoverflow.com/questions/60181180/tensorflow-federated-typeerror-when-using-customized-dataset-and-model,2020-02-12 12:30:15,2022-06-04 22:56:27,"843 days, 10:26:12"
+57581345,https://stackoverflow.com/questions/57581345/change-model-in-tensorflow-federated-but-not-work,2019-08-21 04:48:44,2019-08-22 23:44:22,"1 day, 18:55:38"
+67138338,https://stackoverflow.com/questions/67138338/unable-to-interpret-an-argument-of-type-tensorflow-python-data-ops-dataset-ops-p,2021-04-17 20:45:45,2021-04-17 22:05:45,1:20:00
+62332459,https://stackoverflow.com/questions/62332459/tff-custom-input-spec-with-custom-data-set-typeerror-object-of-type-tensors,2020-06-12 03:52:49,2020-06-13 02:33:55,22:41:06
+61882422,https://stackoverflow.com/questions/61882422/tensorflow-federated-learning-from-keras-model-no-longer-contains-dummy-bat,2020-05-19 10:49:00,2020-05-19 11:38:52,0:49:52
+72132691,https://stackoverflow.com/questions/72132691/use-different-metrics-in-tf-keras-metrics-for-mutli-classification-model,2022-05-06 03:31:25,2022-05-18 16:00:17,"12 days, 12:28:52"
+71790095,https://stackoverflow.com/questions/71790095/colab-pro-using-gpu-crashes-the-session,2022-04-08 07:39:05,2022-05-12 16:00:46,"34 days, 8:21:41"
+60982530,https://stackoverflow.com/questions/60982530/valueerror-tensorcnn-conv2d-kernel0-shape-dtype-resource-must-be-from,2020-04-02 08:37:48,2020-04-05 04:14:43,"2 days, 19:36:55"
+69335892,https://stackoverflow.com/questions/69335892/keyerror-0-tff-strange-error-in-multi-outputs-model,2021-09-26 22:30:05,2021-09-27 04:51:01,6:20:56
+57381329,https://stackoverflow.com/questions/57381329/expected-a-callable-found-non-callable-tensorflow-federated-python-learning-mod,2019-08-07 01:35:03,2019-08-07 06:43:55,5:08:52
+67147951,https://stackoverflow.com/questions/67147951/tensorflow-federated-python-simulation-has-no-attribute-fromtensorslicesclien,2021-04-18 19:22:17,2021-08-05 21:17:51,"109 days, 1:55:34"
+69325272,https://stackoverflow.com/questions/69325272/tff-runtimeerror-attempting-to-capture-an-eagertensor-without-building-a-functi,2021-09-25 18:29:55,2021-09-26 02:14:40,7:44:45

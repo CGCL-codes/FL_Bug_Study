@@ -1,0 +1,158 @@
+url	label	title	all_text	comments	merged	created_time	updated_time	closed_time
+https://github.com/tensorflow/federated/pull/2912	[]	Move jax components into a non-experimental namespace.	"Move jax components into a non-experimental namespace.Move jax components into a non-experimental namespace.
+
+* Moved core API.
+* Moved learning API.
+* Updated documentation.
+* Deleted infrastructure required to maintain the experimental directory.
+"	1	True	2022-05-27 13:23:41	2022-06-01 19:15:41	2022-06-01 19:15:40
+https://github.com/tensorflow/federated/pull/2109	['cla: yes']	Silence some pytype errors.	"Silence some pytype errors.Silence some pytype errors.
+"	1	True	2021-11-08 23:33:14	2021-11-10 00:59:46	2021-11-10 00:59:46
+https://github.com/tensorflow/federated/pull/1688	['cla: yes']	Minor fix of mismatch in code and description of `building_your_own_federated_leanring_algorithm` tutorial.	"Minor fix of mismatch in code and description of `building_your_own_federated_leanring_algorithm` tutorial.Minor fix of mismatch in code and description of `building_your_own_federated_leanring_algorithm` tutorial.
+"	1	True	2021-07-27 17:22:17	2021-07-27 22:08:06	2021-07-27 22:07:58
+https://github.com/tensorflow/federated/pull/1597	['cla: no']	Fix the error message format in emnist baseline task.	"Fix the error message format in emnist baseline task.Fix the error message format in emnist baseline task.
+"	1	True	2021-07-10 01:56:48	2021-07-12 20:45:54	2021-07-12 20:45:53
+https://github.com/tensorflow/federated/pull/1592	['cla: no']	Use `grpc/bazel` Python proto library rules.	"Use `grpc/bazel` Python proto library rules.Use `grpc/bazel` Python proto library rules.
+
+See https://github.com/grpc/grpc/blob/master/bazel/python_rules.bzl for more information.
+"	1	True	2021-07-09 21:21:22	2021-07-12 20:43:54	2021-07-12 20:43:52
+https://github.com/tensorflow/federated/pull/1588	['cla: no']	Fix pydoc formatting for modules in the `learning/` directory.	"Fix pydoc formatting for modules in the `learning/` directory.Fix pydoc formatting for modules in the `learning/` directory.
+"	1	True	2021-07-09 18:04:55	2021-07-12 20:42:55	2021-07-12 20:42:54
+https://github.com/tensorflow/federated/pull/1520	['cla: no']	Use golden files for extract_computations tree_transformations_test	"Use golden files for extract_computations tree_transformations_testUse golden files for extract_computations tree_transformations_test
+
+Editing these transformations can cause significant ripple effects
+to these outputs which are very annoying to fix up by hand. This
+change moves them to use golden files so that the outputs can
+be easily automatically updated.
+"	1	True	2021-06-25 00:49:26	2021-06-30 16:10:55	2021-06-30 16:10:53
+https://github.com/tensorflow/federated/pull/1510	['cla: no']	Fix minor typing issues, add some minor documentation.	"Fix minor typing issues, add some minor documentation.Fix minor typing issues, add some minor documentation.
+"	1	True	2021-06-23 19:45:15	2021-06-30 16:05:05	2021-06-30 16:05:04
+https://github.com/tensorflow/federated/pull/1450	['cla: yes']	Update the raised error for `dataset.reduce` in multi-GPU to point out to TFF tutorial.	"Update the raised error for `dataset.reduce` in multi-GPU to point out to TFF tutorial.Update the raised error for `dataset.reduce` in multi-GPU to point out to TFF tutorial.
+"	1	True	2021-06-04 19:13:07	2021-06-04 21:10:46	2021-06-04 21:10:39
+https://github.com/tensorflow/federated/pull/1423	['cla: yes']	Fix bug in LearningProcess where initialize is set to next. This also adds a unit test that would catch such issues, that fails without this change.	"Fix bug in LearningProcess where initialize is set to next. This also adds a unit test that would catch such issues, that fails without this change.Fix bug in LearningProcess where initialize is set to next. This also adds a unit test that would catch such issues, that fails without this change.
+"	1	True	2021-05-21 18:05:52	2021-05-21 19:01:56	2021-05-21 19:01:50
+https://github.com/tensorflow/federated/pull/1412	['cla: yes']	Provide a nicer error if `tff.tf_computation` is called with a value	"Provide a nicer error if `tff.tf_computation` is called with a valueProvide a nicer error if `tff.tf_computation` is called with a value
+
+This helps address the case where the user accidentally forgets the
+`lambda: ...` part of `tff.tf_computation(lambda: 5)`."	1	True	2021-05-18 22:02:58	2021-05-18 23:26:37	2021-05-18 23:26:28
+https://github.com/tensorflow/federated/pull/1399	['cla: no']	Add federated CelebA dataset (derived via LEAF) to TensorFlow Federated.	"Add federated CelebA dataset (derived via LEAF) to TensorFlow Federated.Add federated CelebA dataset (derived via LEAF) to TensorFlow Federated.
+- CelebA dataset information: http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html
+- LEAF project information: https://leaf.cmu.edu/build/html/index.html
+"	1	True	2021-05-14 17:03:38	2021-06-30 16:10:19	2021-06-30 16:10:16
+https://github.com/tensorflow/federated/pull/1348	['cla: yes']	Adds Skip(0) call before FinalizeDataset in order to prevent placer from making an incorrect placement decision.	Adds Skip(0) call before FinalizeDataset in order to prevent placer from making an incorrect placement decision.Adds Skip(0) call before FinalizeDataset in order to prevent placer from making an incorrect placement decision.	1	True	2021-04-21 23:03:21	2021-04-23 03:41:19	2021-04-23 03:41:12
+https://github.com/tensorflow/federated/pull/1343	['cla: yes']	Fix compression colab notebook to catch errors when cleaning a directory that doesn't exist.	"Fix compression colab notebook to catch errors when cleaning a directory that doesn't exist.Fix compression colab notebook to catch errors when cleaning a directory that doesn't exist.
+"	1	True	2021-04-21 16:57:13	2021-04-21 23:04:14	2021-04-21 23:04:09
+https://github.com/tensorflow/federated/pull/1253	['cla: no']	Fix tff.learning.dataset_reduce pytype and test.	"Fix tff.learning.dataset_reduce pytype and test.Fix tff.learning.dataset_reduce pytype and test.
+"	1	True	2021-03-19 19:17:11	2021-03-19 21:28:03	2021-03-19 21:27:59
+https://github.com/tensorflow/federated/pull/906	['cla: yes']	small fix: use bit size terms in compression tutorial	small fix: use bit size terms in compression tutorial	1	True	2020-09-13 06:07:19	2020-09-29 22:19:53	2020-09-29 22:19:53
+https://github.com/tensorflow/federated/pull/856	['cla: yes']	fix: tf.random_uniform to tf.random.uniform	"fix: tf.random_uniform to tf.random.uniformA small fix for the demo on federated GANs to avoid using the deprecated API:
+<img width=""883"" alt=""Screen Shot 2020-05-26 at 18 45 09"" src=""https://user-images.githubusercontent.com/17913919/82921432-09aaaf80-9f81-11ea-8655-0e72dd1235ea.png"">"	1	True	2020-05-26 15:48:47	2020-06-08 20:01:13	2020-06-08 20:01:13
+https://github.com/tensorflow/federated/pull/839	['cla: yes']	Disable some of the tests on GPUs. This is a temporary workaround for a few bugs that we need TF to help with.	"Disable some of the tests on GPUs. This is a temporary workaround for a few bugs that we need TF to help with.Disable some of the tests on GPUs. This is a temporary workaround for a few bugs that we need TF to help with.
+"	1	True	2020-04-29 18:47:22	2020-04-29 23:55:15	2020-04-29 22:12:54
+https://github.com/tensorflow/federated/pull/811	['cla: yes']	Update deployment.md	Update deployment.mdFixed the broken link of ```tff.framework.Executor```.	2	True	2020-03-21 17:10:01	2020-03-23 18:15:58	2020-03-23 18:15:57
+https://github.com/tensorflow/federated/pull/807	['cla: yes']	Fix unreachable code in federating & composing executors	"Fix unreachable code in federating & composing executorsAdd None as `getattr` default in `FederatingExecutor.create_call` & `ComposingExecutor.create_call`. This is necessary to reach the NotImplementedError for intrinsics that aren't supported by these executors.
+
+Happy to add a test on request."	2	True	2020-03-17 21:10:20	2020-03-23 22:37:17	2020-03-23 22:37:17
+https://github.com/tensorflow/federated/pull/757	['cla: yes']	fix: minor type	fix: minor type	2	True	2019-09-03 00:43:53	2019-09-04 23:47:53	2019-09-04 23:47:52
+https://github.com/tensorflow/federated/pull/750	['cla: yes']	Minor fixes to datasets	Minor fixes to datasets	1	True	2019-08-22 20:10:34	2019-08-23 15:23:55	2019-08-23 15:23:55
+https://github.com/tensorflow/federated/pull/706	['cla: no']	Fix LICENSE file to be a verbatim copy of https://www.apache.org/licenses/LICENSE-2.0.txt	Fix LICENSE file to be a verbatim copy of https://www.apache.org/licenses/LICENSE-2.0.txtFix LICENSE file to be a verbatim copy of https://www.apache.org/licenses/LICENSE-2.0.txt	1	True	2019-07-18 22:00:10	2019-08-14 16:13:28	2019-07-19 15:38:37
+https://github.com/tensorflow/federated/pull/672	['cla: no']	Fix lint issues.	Fix lint issues.Fix lint issues.	1	True	2019-07-09 16:20:19	2019-08-14 16:13:16	2019-07-09 18:49:58
+https://github.com/tensorflow/federated/pull/671	['cla: no']	Fix Python3 compatibility issues.	Fix Python3 compatibility issues.Fix Python3 compatibility issues.	1	True	2019-07-08 22:25:23	2019-08-14 16:13:16	2019-07-09 15:59:51
+https://github.com/tensorflow/federated/pull/668	['cla: no']	Updates simulation tutorial for Jupyter (workaround for the asyncio bug).	Updates simulation tutorial for Jupyter (workaround for the asyncio bug).Updates simulation tutorial for Jupyter (workaround for the asyncio bug).	2	True	2019-07-08 07:12:10	2019-08-14 16:13:15	2019-07-08 16:24:46
+https://github.com/tensorflow/federated/pull/667	['cla: no']	Bug fixes in the remote executor and service.	Bug fixes in the remote executor and service.Bug fixes in the remote executor and service.	2	True	2019-07-05 21:24:32	2019-08-14 16:13:14	2019-07-08 00:28:46
+https://github.com/tensorflow/federated/pull/664	['cla: no']	Several bug fixes and MNIST tests in executors.	Several bug fixes and MNIST tests in executors.Several bug fixes and MNIST tests in executors.	1	True	2019-07-05 00:22:47	2019-08-14 16:13:13	2019-07-07 22:52:51
+https://github.com/tensorflow/federated/pull/641	['cla: no']	Adds a local executor stack and a fix for zip in the federated executor.	Adds a local executor stack and a fix for zip in the federated executor.Adds a local executor stack and a fix for zip in the federated executor.	1	True	2019-07-02 01:53:37	2019-08-14 16:13:06	2019-07-02 03:27:17
+https://github.com/tensorflow/federated/pull/640	['cla: no']	Fixes and integration of lambda executor with federated executor.	Fixes and integration of lambda executor with federated executor.Fixes and integration of lambda executor with federated executor.	1	True	2019-07-02 00:18:20	2019-08-14 16:13:05	2019-07-02 02:54:27
+https://github.com/tensorflow/federated/pull/632	['cla: no']	Fixes processing of argument tuples and implements the minimal usable part of the remote executor (synchronous gRPC client for now).	Fixes processing of argument tuples and implements the minimal usable part of the remote executor (synchronous gRPC client for now).Fixes processing of argument tuples and implements the minimal usable part of the remote executor (synchronous gRPC client for now).	1	True	2019-06-27 19:48:06	2019-08-14 16:13:02	2019-06-27 21:28:56
+https://github.com/tensorflow/federated/pull/631	['cla: no']	Fix missed link in compatibility section of readme.	Fix missed link in compatibility section of readme.Fix missed link in compatibility section of readme.	1	True	2019-06-27 19:04:12	2019-08-14 16:13:02	2019-06-27 19:40:10
+https://github.com/tensorflow/federated/pull/623	['cla: no']	Fix lint warnings	Fix lint warningsFix lint warnings	1	True	2019-06-26 12:34:39	2019-08-14 16:12:58	2019-06-26 13:19:48
+https://github.com/tensorflow/federated/pull/599	['cla: no']	Cleanup change, adding some debugging info and converters.	Cleanup change, adding some debugging info and converters.Cleanup change, adding some debugging info and converters.	1	True	2019-06-24 18:34:15	2019-08-14 16:12:52	2019-06-25 18:30:53
+https://github.com/tensorflow/federated/pull/591	['cla: no']	Fix around weird unintended variable sharing in eager executor.	Fix around weird unintended variable sharing in eager executor.Fix around weird unintended variable sharing in eager executor.	1	True	2019-06-21 21:34:07	2019-08-14 16:12:50	2019-06-21 22:05:01
+https://github.com/tensorflow/federated/pull/590	['cla: no']	Initializer fix to handle variables in eager executor.	Initializer fix to handle variables in eager executor.Initializer fix to handle variables in eager executor.	1	True	2019-06-21 07:59:01	2019-08-14 16:12:50	2019-06-21 14:07:11
+https://github.com/tensorflow/federated/pull/572	['cla: no']	Fixes bug that transform_type_postorder was not calling itself.	Fixes bug that transform_type_postorder was not calling itself.Fixes bug that transform_type_postorder was not calling itself.	1	True	2019-06-14 00:50:52	2019-08-14 16:12:43	2019-06-14 22:37:24
+https://github.com/tensorflow/federated/pull/571	['cla: no']	Fix bug in merging federated aggregates.	Fix bug in merging federated aggregates.Fix bug in merging federated aggregates.	1	True	2019-06-13 21:43:26	2019-08-14 16:12:41	2019-06-15 04:59:52
+https://github.com/tensorflow/federated/pull/562	['cla: no']	Adds tests that exercise Dataset.reduce() after a fix to TF's wrap_function().	Adds tests that exercise Dataset.reduce() after a fix to TF's wrap_function().Adds tests that exercise Dataset.reduce() after a fix to TF's wrap_function().	1	True	2019-06-11 21:24:21	2019-08-14 16:12:39	2019-06-18 15:50:13
+https://github.com/tensorflow/federated/pull/536	['cla: no']	Extend error message to include the list of placements received by tff.federated_zip()	Extend error message to include the list of placements received by tff.federated_zip()Extend error message to include the list of placements received by tff.federated_zip()	1	True	2019-06-04 21:15:30	2019-08-14 16:12:31	2019-06-05 01:05:33
+https://github.com/tensorflow/federated/pull/532	['cla: no']	Fix CODE_URL_PREFIX for generated API docs and regenerate markdown.	Fix CODE_URL_PREFIX for generated API docs and regenerate markdown.Fix CODE_URL_PREFIX for generated API docs and regenerate markdown.	1	True	2019-06-03 22:39:45	2019-08-14 16:12:30	2019-06-03 22:50:36
+https://github.com/tensorflow/federated/pull/529	['cla: no']	Fix test assertions in graph_utils_test.	Fix test assertions in graph_utils_test.Fix test assertions in graph_utils_test.	1	True	2019-06-03 22:14:35	2019-08-14 16:12:30	2019-06-04 15:08:00
+https://github.com/tensorflow/federated/pull/518	['cla: no']	Clean-up bug TODO now that TFF has moved pased TF 1.13	Clean-up bug TODO now that TFF has moved pased TF 1.13Clean-up bug TODO now that TFF has moved pased TF 1.13	2	True	2019-05-31 22:50:05	2019-08-14 16:12:25	2019-05-31 23:03:19
+https://github.com/tensorflow/federated/pull/515	['cla: no']	Removes workaround for old bug in federated_evaluation.	Removes workaround for old bug in federated_evaluation.Removes workaround for old bug in federated_evaluation.	1	True	2019-05-31 17:03:25	2019-05-31 19:48:10	2019-05-31 18:05:59
+https://github.com/tensorflow/federated/pull/511	['cla: no']	Fix bug in `merge_tuple_intrinsics`.	Fix bug in `merge_tuple_intrinsics`.Fix bug in `merge_tuple_intrinsics`.	1	True	2019-05-31 01:33:14	2019-05-31 19:48:09	2019-05-31 19:07:59
+https://github.com/tensorflow/federated/pull/510	['cla: no']	Flips parameterized.parameters for parameterized.named_parameters in	"Flips parameterized.parameters for parameterized.named_parameters inFlips parameterized.parameters for parameterized.named_parameters in
+python/learning."	1	True	2019-05-30 23:42:09	2019-05-31 19:48:08	2019-05-31 17:18:11
+https://github.com/tensorflow/federated/pull/507	['cla: no']	Fix `uniquify_reference_names` to not take into account existing names.	Fix `uniquify_reference_names` to not take into account existing names.Fix `uniquify_reference_names` to not take into account existing names.	1	True	2019-05-30 20:59:00	2019-05-31 19:48:08	2019-05-31 00:36:07
+https://github.com/tensorflow/federated/pull/495	['cla: no']	Fix some commands to work on macOS.	Fix some commands to work on macOS.Fix some commands to work on macOS.	1	True	2019-05-29 15:03:32	2019-05-31 19:48:05	2019-05-29 15:22:00
+https://github.com/tensorflow/federated/pull/488	['cla: no']	Fix lint issues.	Fix lint issues.Fix lint issues.	1	True	2019-05-28 17:13:42	2019-05-31 19:48:03	2019-05-28 17:45:10
+https://github.com/tensorflow/federated/pull/484	['cla: yes']	Add support for multiple losses with tf.keras	"Add support for multiple losses with tf.kerasFixes #386 ```suggestion
+  def __init__(self, inner_model, dummy_batch, loss_fns, loss_weights=None, metrics=None):
+```
+
+Lets add defaults for everything after `loss_fns````suggestion
+``````suggestion
+``````suggestion
+      be the sum of all individual losses, each weighted by `loss_weights`.
+``````suggestion
+  if isinstance(loss, (collections.Mapping, collections.Sequence)):
+```TFF generally aims to include the parameters in the error string for easier debugging, this is probably different than traditional Python.
+
+In this case, perhaps we could add the string `'loss: {}\noutputs: {}'.format(loss, keras_model.outputs)`. Same fro the error raised below.TFF tries to be strict and avoid assumptions on user input. Lets change this to raise an error instead, and include the names of the outputs and losses so the user can easily determine what was missing.Is `yapf` adding the newlines before each new condition branch? This isn't common in TFF, if possible lets remove the empty newlines.Lets add one more test with a dict of loss_weights that doesn't have the same keys are the outputs."	9	True	2019-05-28 12:15:16	2019-05-30 18:38:18	2019-05-30 18:36:42
+https://github.com/tensorflow/federated/pull/477	['cla: no']	Fix lint issues.	Fix lint issues.Fix lint issues.	1	True	2019-05-24 21:40:43	2019-05-31 19:48:01	2019-05-24 22:31:01
+https://github.com/tensorflow/federated/pull/476	['cla: no']	Fix Python compatibility issues.	Fix Python compatibility issues.Fix Python compatibility issues.	1	True	2019-05-24 21:40:13	2019-05-31 19:48:00	2019-05-24 21:59:22
+https://github.com/tensorflow/federated/pull/468	['cla: no']	Fixes possible name-dropping bug in parsing tuple of called TF graphs.	Fixes possible name-dropping bug in parsing tuple of called TF graphs.Fixes possible name-dropping bug in parsing tuple of called TF graphs.	1	True	2019-05-23 23:18:48	2019-05-31 19:47:58	2019-05-24 00:06:49
+https://github.com/tensorflow/federated/pull/443	['cla: no']	Fixes type signature issue in construct_federated_map.	Fixes type signature issue in construct_federated_map.Fixes type signature issue in construct_federated_map.	1	True	2019-05-16 21:01:45	2019-05-31 19:47:50	2019-05-16 22:22:45
+https://github.com/tensorflow/federated/pull/440	['cla: no']	Fix lint issues.	Fix lint issues.Fix lint issues.	1	True	2019-05-15 22:07:37	2019-05-31 19:47:48	2019-05-15 22:20:12
+https://github.com/tensorflow/federated/pull/433	['cla: no']	Remove tff.to_value() calls to arguments that are expected to be tff.Values.	"Remove tff.to_value() calls to arguments that are expected to be tff.Values.Remove tff.to_value() calls to arguments that are expected to be tff.Values.
+
+This caused errors when the `weights` argument of the StatefulAggregateFn was
+not specified, as tff.to_value(None) is not allowed in TFF."	1	True	2019-05-15 18:48:18	2019-05-31 19:47:47	2019-05-15 19:52:31
+https://github.com/tensorflow/federated/pull/420	['cla: no']	Expand and clarify error messages for AnonymousTuple.	Expand and clarify error messages for AnonymousTuple.Expand and clarify error messages for AnonymousTuple.	1	True	2019-05-13 15:49:45	2019-05-31 19:47:42	2019-05-13 16:00:06
+https://github.com/tensorflow/federated/pull/405	['cla: no']	Fixes type signature issues in value_utils.zip_two_tuple.	Fixes type signature issues in value_utils.zip_two_tuple.Fixes type signature issues in value_utils.zip_two_tuple.	1	True	2019-05-07 19:18:46	2019-05-31 19:47:37	2019-05-20 19:09:02
+https://github.com/tensorflow/federated/pull/401	['cla: no']	Fix lint issues.	Fix lint issues.Fix lint issues.	1	True	2019-05-07 16:16:47	2019-05-31 19:47:38	2019-05-07 16:41:52
+https://github.com/tensorflow/federated/pull/400	['cla: no']	Fix Python compatibility issues.	Fix Python compatibility issues.Fix Python compatibility issues.	1	True	2019-05-07 16:04:20	2019-05-31 19:47:38	2019-05-08 14:34:09
+https://github.com/tensorflow/federated/pull/385	['cla: no']	Fix transforming a tuple of named intrinsics.	Fix transforming a tuple of named intrinsics.Fix transforming a tuple of named intrinsics.	1	True	2019-05-02 00:34:38	2019-05-31 19:47:33	2019-05-16 22:08:18
+https://github.com/tensorflow/federated/pull/384	['cla: no']	Bugfix for wrong parameter name in python container conversion function.	Bugfix for wrong parameter name in python container conversion function.Bugfix for wrong parameter name in python container conversion function.	1	True	2019-05-01 20:46:43	2019-05-31 19:47:32	2019-05-02 22:59:35
+https://github.com/tensorflow/federated/pull/377	['cla: no']	Fix types on dummy method in unittests.	Fix types on dummy method in unittests.Fix types on dummy method in unittests.	1	True	2019-04-30 16:32:35	2019-05-31 19:47:31	2019-04-30 16:42:31
+https://github.com/tensorflow/federated/pull/356	['cla: no']	Fix the unbound variable issue when transforming chained federated maps.	Fix the unbound variable issue when transforming chained federated maps.Fix the unbound variable issue when transforming chained federated maps.	1	True	2019-04-23 20:18:50	2019-05-31 19:47:24	2019-04-26 00:23:00
+https://github.com/tensorflow/federated/pull/355	['cla: no']	Fix `replace_tuple_intrinsics` with named tuple.	Fix `replace_tuple_intrinsics` with named tuple.Fix `replace_tuple_intrinsics` with named tuple.	1	True	2019-04-23 19:27:42	2019-05-31 19:47:24	2019-04-23 20:28:32
+https://github.com/tensorflow/federated/pull/351	['cla: no']	Fix ModelWeights → Keras model.weights assignment post commit:	"Fix ModelWeights → Keras model.weights assignment post commit:Fix ModelWeights → Keras model.weights assignment post commit:
+https://github.com/tensorflow/tensorflow/commit/83b481ca6461807e6fb0cc9ff39b1af12b974ef0
+
+This is a shorter-term work-around to get Keras layers such as
+BatchNormalization working again; while deeper thoughts around the right API
+surface in FL API can be considered."	2	True	2019-04-22 20:02:41	2019-05-31 19:47:22	2019-04-23 13:16:02
+https://github.com/tensorflow/federated/pull/342	['cla: no']	Fix Python compatibility issues.	Fix Python compatibility issues.Fix Python compatibility issues.	1	True	2019-04-18 15:13:47	2019-05-31 19:47:20	2019-04-18 22:19:13
+https://github.com/tensorflow/federated/pull/322	['cla: no']	For Infinite EMNIST dataset, invert image prior to transform (which assumes background of 0.0). Also quantize to 8 bits.	For Infinite EMNIST dataset, invert image prior to transform (which assumes background of 0.0). Also quantize to 8 bits.For Infinite EMNIST dataset, invert image prior to transform (which assumes background of 0.0). Also quantize to 8 bits.	1	True	2019-04-08 23:28:19	2019-05-31 19:47:15	2019-04-09 20:17:01
+https://github.com/tensorflow/federated/pull/320	['cla: no']	Fix lint issues.	Fix lint issues.Fix lint issues.	1	True	2019-04-08 17:43:41	2019-05-31 19:47:15	2019-04-09 22:20:46
+https://github.com/tensorflow/federated/pull/319	['cla: no']	Fix Python compatibility issues.	Fix Python compatibility issues.Fix Python compatibility issues.	1	True	2019-04-08 17:43:11	2019-05-31 19:47:15	2019-04-08 20:59:14
+https://github.com/tensorflow/federated/pull/318	['cla: no']	Hotfix for typechecking error in remove federated maps.	Hotfix for typechecking error in remove federated maps.Hotfix for typechecking error in remove federated maps.	1	True	2019-04-08 17:32:10	2019-05-31 19:47:14	2019-04-08 18:11:54
+https://github.com/tensorflow/federated/pull/300	['cla: no']	Fix bugs in infinite_emnist transform function.	Fix bugs in infinite_emnist transform function.Fix bugs in infinite_emnist transform function.	1	True	2019-04-03 21:42:50	2019-05-31 19:47:09	2019-04-05 18:20:01
+https://github.com/tensorflow/federated/pull/284	['cla: no']	Add a model for assign tff.learning.Model weights back to a tf.keras.Model.	"Add a model for assign tff.learning.Model weights back to a tf.keras.Model.Add a model for assign tff.learning.Model weights back to a tf.keras.Model.
+
+This is a fix for issue #258, which uncovered that tf.keras.Model.weights and tf.keras.Model.get_weights() are not ordered the same."	1	True	2019-03-29 17:34:56	2019-05-31 19:47:01	2019-03-29 23:49:56
+https://github.com/tensorflow/federated/pull/276	['cla: no']	Add Infinite Federated MNIST dataset.	Add Infinite Federated MNIST dataset.Add Infinite Federated MNIST dataset.	1	True	2019-03-27 21:44:56	2019-05-31 19:47:03	2019-03-29 18:38:17
+https://github.com/tensorflow/federated/pull/266	['cla: no']	Fixes apidoc before the release.	Fixes apidoc before the release.Fixes apidoc before the release.	1	True	2019-03-25 20:34:02	2019-05-31 19:47:02	2019-03-25 21:05:53
+https://github.com/tensorflow/federated/pull/263	['cla: no']	Fix spelling error.	Fix spelling error.Fix spelling error.	1	True	2019-03-22 15:36:16	2019-05-31 19:47:01	2019-03-22 16:26:51
+https://github.com/tensorflow/federated/pull/253	['cla: no']	Fixed Matplotlib deprecation warning in the TFF part2 notebook.	Fixed Matplotlib deprecation warning in the TFF part2 notebook.Fixed Matplotlib deprecation warning in the TFF part2 notebook.	2	True	2019-03-18 21:59:04	2019-03-20 22:57:05	2019-03-18 23:15:53
+https://github.com/tensorflow/federated/pull/240	['cla: no']	Fix lint issues.	Fix lint issues.Fix lint issues.	1	True	2019-03-12 18:19:22	2019-03-20 22:57:03	2019-03-12 19:07:43
+https://github.com/tensorflow/federated/pull/239	['cla: no']	Fix reshape to put the expanded dimension at the end of the predictions.	Fix reshape to put the expanded dimension at the end of the predictions.Fix reshape to put the expanded dimension at the end of the predictions.	2	True	2019-03-12 17:39:35	2019-03-20 22:57:03	2019-03-12 18:14:09
+https://github.com/tensorflow/federated/pull/238	['cla: no']	Fix Python compatibility issues.	Fix Python compatibility issues.Fix Python compatibility issues.	1	True	2019-03-12 16:49:31	2019-03-20 22:57:03	2019-03-12 17:35:14
+https://github.com/tensorflow/federated/pull/200	['cla: no']	Spot fixes in the custom algorithms tutorial.	Spot fixes in the custom algorithms tutorial.Spot fixes in the custom algorithms tutorial.	1	True	2019-02-23 17:49:55	2019-03-20 22:56:57	2019-02-23 19:28:45
+https://github.com/tensorflow/federated/pull/192	['cla: no']	Spot fixes in documentation.	Spot fixes in documentation.Spot fixes in documentation.	1	True	2019-02-22 20:32:44	2019-03-20 22:56:56	2019-02-22 21:34:58
+https://github.com/tensorflow/federated/pull/189	['cla: no']	Spot fixes in documentation	Spot fixes in documentationSpot fixes in documentation	1	True	2019-02-22 17:32:53	2019-03-20 22:56:55	2019-02-22 18:24:46
+https://github.com/tensorflow/federated/pull/187	['cla: no']	Fix anchor link in documentation.	Fix anchor link in documentation.Fix anchor link in documentation.	1	True	2019-02-22 16:38:15	2019-03-20 22:56:55	2019-02-22 17:06:08
+https://github.com/tensorflow/federated/pull/170	['cla: no']	Fix lint issues.	Fix lint issues.Fix lint issues.	1	True	2019-02-20 01:59:36	2019-03-20 22:56:53	2019-02-20 02:26:19
+https://github.com/tensorflow/federated/pull/165	['cla: no']	Fix lint issues.	Fix lint issues.Fix lint issues.	1	True	2019-02-18 21:43:08	2019-03-20 22:56:52	2019-02-18 23:00:39
+https://github.com/tensorflow/federated/pull/164	['cla: no']	Fix Python compatibility issues.	Fix Python compatibility issues.Fix Python compatibility issues.	1	True	2019-02-18 21:42:27	2019-03-20 22:56:51	2019-02-18 22:19:58
+https://github.com/tensorflow/federated/pull/160	['cla: no']	Spot fixes in tutorials for external runs: moves pip import comment, plot.show().	Spot fixes in tutorials for external runs: moves pip import comment, plot.show().Spot fixes in tutorials for external runs: moves pip import comment, plot.show().	1	True	2019-02-17 00:55:43	2019-03-20 22:56:51	2019-02-17 01:45:04
+https://github.com/tensorflow/federated/pull/158	['cla: no']	Fix python3 compatibility issues in the custom algorithms tutorial.	Fix python3 compatibility issues in the custom algorithms tutorial.Fix python3 compatibility issues in the custom algorithms tutorial.	1	True	2019-02-16 19:20:35	2019-03-20 22:56:50	2019-02-16 19:59:51
+https://github.com/tensorflow/federated/pull/149	['cla: no']	Preserve the order of variable lists and provide ModelWeights.keras_weights.	"Preserve the order of variable lists and provide ModelWeights.keras_weights.Preserve the order of variable lists and provide ModelWeights.keras_weights.
+
+This lets us get back from a ModelWeights structure to a list that can be used with keras_model.set_weights().
+
+Fixes a bug where anonymous_tuple.flatten was used together with nest.pack_sequence_as, which happened to work before but didn't after the other changes in this CL. Consolidates all the TFF-specific code in optimizer_utils.py to a single function."	1	True	2019-02-15 04:45:37	2019-03-20 22:56:48	2019-02-16 06:12:58
+https://github.com/tensorflow/federated/pull/146	['cla: no']	Fix for ingesting empty federated datasets.	Fix for ingesting empty federated datasets.Fix for ingesting empty federated datasets.	1	True	2019-02-15 01:35:16	2019-03-20 22:56:48	2019-02-16 00:19:46
+https://github.com/tensorflow/federated/pull/144	['cla: no']	Fix lint issues.	Fix lint issues.Fix lint issues.	1	True	2019-02-14 22:48:38	2019-03-20 22:56:48	2019-02-16 14:07:36
+https://github.com/tensorflow/federated/pull/143	['cla: no']	Fix Python compatibility issues.	Fix Python compatibility issues.Fix Python compatibility issues.	1	True	2019-02-14 22:37:57	2019-03-20 22:56:48	2019-02-16 05:00:42
+https://github.com/tensorflow/federated/pull/134	['cla: no']	Fix bash function inconsistency.	Fix bash function inconsistency.Fix bash function inconsistency.	1	True	2019-02-14 00:18:22	2019-03-20 22:56:47	2019-02-14 01:01:10
+https://github.com/tensorflow/federated/pull/133	['cla: no']	Add better error messaging to `build_pip_package`.	Add better error messaging to `build_pip_package`.Add better error messaging to `build_pip_package`.	1	True	2019-02-13 22:57:55	2019-03-20 22:56:46	2019-02-13 23:55:00
+https://github.com/tensorflow/federated/pull/126	['cla: no']	Add more information to reference_executor error to make debugging easier.	Add more information to reference_executor error to make debugging easier.Add more information to reference_executor error to make debugging easier.	1	True	2019-02-12 18:10:55	2019-03-20 22:56:45	2019-02-13 22:14:22

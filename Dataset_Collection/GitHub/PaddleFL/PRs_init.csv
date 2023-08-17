@@ -1,0 +1,47 @@
+url,label,title,all_text,comments,merged,created_time,updated_time,closed_time
+https://github.com/PaddlePaddle/PaddleFL/pull/253,[],"fix auc,ks bug","fix auc,ks bugfix auc,ks bugadd comments for ks binning",2,True,2022-03-09 08:07:11,2022-03-09 10:49:31,2022-03-09 10:49:31
+https://github.com/PaddlePaddle/PaddleFL/pull/252,[],"fix auc,ks bug","fix auc,ks bug",2,False,2022-03-09 07:43:52,2022-03-09 08:03:44,2022-03-09 08:03:44
+https://github.com/PaddlePaddle/PaddleFL/pull/241,[],add  separate compilation for feature engineering,"add  separate compilation for feature engineeringThanks for your comments #238 !  @honshj The main changes are as follows:  
+1. I create a new package for the feature engineering project that doesn't rely on paddlefl, support separate compilation and pip install. The pip version along with paddlefl will be supported sooner.
+2. the C++ codes realatd to paillier  are put under 'PaddleFl/core/he'.
+3. the python code and proto are put under 'PaddleFl/python/feature_engineering'.
+4. revised some expressions and code specification.
+Thanks for your review and help! @honshj  @kaih70 
+can we do this with cmake?如果能在cmake里面完成protoc，那么这个步骤可以省略1.在cmake里没有编译c++ 的grpc;直接使用了python的grpc;
+2.proto生成的metrics_pb2_grpc.py  必须是 from paddle_fl.feature_engineering.proto import metrics_pb , 或者 from .  import metrics_pb2 ;  自动生成的前面一般没有这个from xxx，那么在pip install 时候会报错“no modulo named xxx”
+综合考虑在这里使用手动生成的方法",1,True,2021-12-01 14:02:05,2021-12-04 18:24:28,2021-12-04 18:24:28
+https://github.com/PaddlePaddle/PaddleFL/pull/204,[],remove split learning in release/1.1.2,"remove split learning in release/1.1.2- remove extra code
+- fix bug in data parallel",1,True,2021-07-30 11:59:24,2021-07-30 19:19:15,2021-07-30 19:19:15
+https://github.com/PaddlePaddle/PaddleFL/pull/203,[],fix bug in data parallel,fix bug in data parallel- fix bug in data parallel,1,True,2021-07-30 09:37:54,2021-07-30 19:18:48,2021-07-30 19:18:48
+https://github.com/PaddlePaddle/PaddleFL/pull/187,[],[split_learning] add copyright,"[split_learning] add copyright1. fix copyright.
+2. fix code format.",1,True,2021-07-27 08:25:14,2021-07-27 08:51:36,2021-07-27 08:40:57
+https://github.com/PaddlePaddle/PaddleFL/pull/134,[],fix bugs: fail to convert relu/pool2d into mpc_relu/mpc_pool2d when encrypting model.,"fix bugs: fail to convert relu/pool2d into mpc_relu/mpc_pool2d when encrypting model.fix bugs: fail to convert relu/pool2d into mpc_relu/mpc_pool2d when encrypting model.The logic is OK, but putting the stuff here will make the function not neat and the code hard to maintain when more op need the special care.
+
+Considering replace them with a method: 
+add_extra_op_desc(op)
+And use a ABC call OpExtraDesc, derivate it as Pool2dExtraDesc, ReluExtraDesc, etc.
+In OpExtraDesc, add an abstract method called 'add_extra_desc(op_desc)', which contains the extra stuffs here.doneThe if...else... clause has redundant checks, i.e., even if op is relu, the other checks will be run, which is expected not.
+
+use dict to store the op_desc instance, and get rid of the if...else... clauses.
+e.g.,  ops_to_add_extra = {‘relu’:ReluExtraDesc(), 'relu_grad':ReluGradExtraDesc, ...}
+
+then get the instance directly by the key:
+op_desc_inst = ops_to_add_extra.get(op.type)
+if op_desc_inst:
+    op_desc_inst.add_extra_desc(op, block)",1,True,2020-11-27 07:55:02,2020-12-01 02:48:55,2020-12-01 02:48:55
+https://github.com/PaddlePaddle/PaddleFL/pull/113,[],fix ks bug & add one hot encoding map,fix ks bug & add one hot encoding mapmissing dot after utils对于不同的party，ret值里面的key是一样的吗？不是的话，clarify it~,1,True,2020-08-31 11:54:54,2020-09-02 03:47:54,2020-09-02 03:47:54
+https://github.com/PaddlePaddle/PaddleFL/pull/93,[],Update mpc scripts,"Update mpc scripts * 添加数据生成文件 prepare.py
+ * 添加解密文件decrypt_save.py， 并支持传参来指定lable文件存放路径
+ * 更新run_standlone.sh 文件
+   *  将PYTHON、REDIS_HOME、SERVER、PORT 从环境变量中获取
+   *  在运行前添加数据检查
+ * 更新mnist_demo.py
+   *  支持传入local_host
+   *  增加batch_cost打印
+   *  fix epoch_cost 打印
+* 对应更新中英文文档",1,False,2020-07-31 09:36:31,2020-07-31 09:40:56,2020-07-31 09:39:48
+https://github.com/PaddlePaddle/PaddleFL/pull/84,[],fix net io recv bug & add example for data alignment,fix net io recv bug & add example for data alignment,1,True,2020-06-17 02:50:01,2020-06-18 13:22:49,2020-06-18 13:22:49
+https://github.com/PaddlePaddle/PaddleFL/pull/77,[],update code to make test acc=0.116,"update code to make test acc=0.116miss '\n' btw ""self.correct_ = eval_metric_ops"" and ""self.input_name_list_""The `grad_clip` parameter is added to SGDOptimizer since 1.8.0, we should add a requirements(PaddlePaddle >= 1.8.0) to README.txt.Sorry, this problem has been fixedREADME has been updated",1,True,2020-05-21 13:24:19,2020-05-23 14:13:07,2020-05-23 14:13:07
+https://github.com/PaddlePaddle/PaddleFL/pull/64,[],"sigmoid op added, some bug fixed","sigmoid op added, some bug fixed",1,True,2020-04-30 14:47:41,2020-05-04 06:57:09,2020-05-04 06:57:08
+https://github.com/PaddlePaddle/PaddleFL/pull/31,[],Fix the zmq bug in python3,"Fix the zmq bug in python3When run FL demos using python3, we receive ""TypeError: unicode not allowed, use send_string"" from zmq. To fix the bug we use send_string() method instead of send() to exchange information between nodes.",1,True,2020-01-07 09:01:40,2020-05-13 05:27:52,2020-01-08 11:48:56
+https://github.com/PaddlePaddle/PaddleFL/pull/26,[],Indentation fixed,Indentation fixedIssue #25 Fixed,1,True,2019-12-11 06:47:38,2019-12-12 08:33:30,2019-12-12 08:33:29

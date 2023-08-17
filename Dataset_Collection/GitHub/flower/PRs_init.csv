@@ -1,0 +1,1656 @@
+url,label,title,all_text,comments,merged,created_time,updated_time,closed_time
+https://github.com/adap/flower/pull/1285,[],Fixing dataset common bug,"Fixing dataset common bug<!--
+Thanks for contributing a pull request! Please ensure you have taken a look at
+the contribution guidelines: https://github.com/adap/flower/blob/main/CONTRIBUTING.md
+
+Does the changelog need to be updated?
+See: https://github.com/adap/flower/blob/main/doc/source/changelog.rst
+-->
+
+#### Reference Issues/PRs
+
+<!--
+Example: Fixes #1234. See also #3456.
+Please use keywords (e.g., Fixes) to create a link to the issues or pull requests
+you resolved.
+-->
+
+Fixes a minor incoherence that was annoying mypy in datasets.
+<!--
+Explain why this PR is needed and what kind of changes have you done.
+Example: the variable rnd was not clear and therefore renamed to fl_round. 
+-->
+
+Just changed a `.shape` to an `len()`
+
+<!--
+Please be aware that it may take some time until we can check this PR. 
+If you have an urgent request or question please use the Flower Slack channel.
+The Slack channel is really active and contributors respond pretty fast. 
+
+We value your contribution and are aware of the time you put into this PR.
+Therefore, thank you for your contribution. 
+-->",1,False,2022-07-13 07:27:02,2022-07-13 14:51:29,2022-07-13 14:51:29
+https://github.com/adap/flower/pull/1266,[],Add round number to fit and eval debug messages,"Add round number to fit and eval debug messagesAdd round numbers to fit and eval debug messages in server.py to make them more informative.
+
+Used rnd variable and %s operator in keeping with existing style.",2,True,2022-06-24 09:32:02,2022-06-27 11:10:42,2022-06-27 11:09:14
+https://github.com/adap/flower/pull/1241,[],Dp,"Dp<!--
+Thanks for contributing a pull request! Please ensure you have taken a look at
+the contribution guidelines: https://github.com/adap/flower/blob/main/CONTRIBUTING.md
+
+Does the changelog need to be updated?
+See: https://github.com/adap/flower/blob/main/doc/source/changelog.rst
+-->
+
+#### Reference Issues/PRs
+
+<!--
+Example: Fixes #1234. See also #3456.
+Please use keywords (e.g., Fixes) to create a link to the issues or pull requests
+you resolved.
+-->
+
+#### What does this implement/fix? Explain your changes.
+
+<!--
+Explain why this PR is needed and what kind of changes have you done.
+Example: the variable rnd was not clear and therefore renamed to fl_round. 
+-->
+
+#### Any other comments?
+
+
+<!--
+Please be aware that it may take some time until we can check this PR. 
+If you have an urgent request or question please use the Flower Slack channel.
+The Slack channel is really active and contributors respond pretty fast. 
+
+We value your contribution and are aware of the time you put into this PR.
+Therefore, thank you for your contribution. 
+-->",2,False,2022-06-01 19:27:27,2022-06-03 14:50:48,2022-06-03 14:50:48
+https://github.com/adap/flower/pull/1233,[],Fixes metrics in the C++ implementation and example,"Fixes metrics in the C++ implementation and example#### What does this implement/fix? Explain your changes.
+
+Fixes to the C++ implementation and the quickstart C++ example:
+- Fixes metrics communication issue with pointer going out of scope
+- Adds an example metric to the quickstart C++ example
+- Fixes bug in the matrix multiplication function for the C++ example.
+- Adds double support for compatibility```suggestion
+  if (scalar_msg.getDouble() != std::nullopt) {
+```Is this still required or can we revert the changes in `transport.proto`? If we add support for `float` here, we'll have to update at least the Python-based server implementation to support it as well.We don't have to modify the proto if we drop all float support. If we want to keep only doubles, I think some changes should still be made to the interface of typing.h for consistency. I've updated the PR to reflect these changes.",2,True,2022-05-25 12:37:57,2022-06-13 07:17:59,2022-06-01 09:41:07
+https://github.com/adap/flower/pull/1220,[],Upgrade quickstart TensorFlow to Flower 0.19,"Upgrade quickstart TensorFlow to Flower 0.19<!--
+Thanks for contributing a pull request! Please ensure you have taken a look at
+the contribution guidelines: https://github.com/adap/flower/blob/main/CONTRIBUTING.md
+
+Does the changelog need to be updated?
+See: https://github.com/adap/flower/blob/main/doc/source/changelog.rst
+-->
+
+#### Reference Issues/PRs
+
+<!--
+Example: Fixes #1234. See also #3456.
+Please use keywords (e.g., Fixes) to create a link to the issues or pull requests
+you resolved.
+-->
+
+#### What does this implement/fix? Explain your changes.
+
+<!--
+Explain why this PR is needed and what kind of changes have you done.
+Example: the variable rnd was not clear and therefore renamed to fl_round. 
+-->
+
+#### Any other comments?
+
+
+<!--
+Please be aware that it may take some time until we can check this PR. 
+If you have an urgent request or question please use the Flower Slack channel.
+The Slack channel is really active and contributors respond pretty fast. 
+
+We value your contribution and are aware of the time you put into this PR.
+Therefore, thank you for your contribution. 
+-->",2,True,2022-05-18 15:41:32,2022-05-20 14:53:40,2022-05-20 14:53:40
+https://github.com/adap/flower/pull/1175,[],Update implementing-strategies.rst,"Update implementing-strategies.rstCorrection typo
+
+<!--
+Thanks for contributing a pull request! Please ensure you have taken a look at
+the contribution guidelines: https://github.com/adap/flower/blob/main/CONTRIBUTING.md
+
+Does the changelog need to be updated?
+See: https://github.com/adap/flower/blob/main/doc/source/changelog.rst
+-->
+
+#### Reference Issues/PRs
+
+<!--
+Example: Fixes #1234. See also #3456.
+Please use keywords (e.g., Fixes) to create a link to the issues or pull requests
+you resolved.
+-->
+
+#### What does this implement/fix? Explain your changes.
+
+<!--
+Explain why this PR is needed and what kind of changes have you done.
+Example: the variable rnd was not clear and therefore renamed to fl_round. 
+-->
+
+#### Any other comments?
+
+
+<!--
+Please be aware that it may take some time until we can check this PR. 
+If you have an urgent request or question please use the Flower Slack channel.
+The Slack channel is really active and contributors respond pretty fast. 
+
+We value your contribution and are aware of the time you put into this PR.
+Therefore, thank you for your contribution. 
+-->",1,True,2022-04-05 13:20:46,2022-04-05 14:30:44,2022-04-05 14:30:44
+https://github.com/adap/flower/pull/1171,[],Let simulation start server with custom ClientManager,"Let simulation start server with custom ClientManager<!--
+Thanks for contributing a pull request! Please ensure you have taken a look at
+the contribution guidelines: https://github.com/adap/flower/blob/main/CONTRIBUTING.md
+
+Does the changelog need to be updated?
+See: https://github.com/adap/flower/blob/main/doc/source/changelog.rst
+-->
+
+#### Reference Issues/PRs
+Can't start simulation with custom ClientManager.
+<!--
+Example: Fixes #1234. See also #3456.
+Please use keywords (e.g., Fixes) to create a link to the issues or pull requests
+you resolved.
+-->
+
+#### What does this implement/fix? Explain your changes.
+Adding extra parameters to default server initialization and simulation start to let users add a custom ClientManager instead of always using the SimpleClientManager.
+<!--
+Explain why this PR is needed and what kind of changes have you done.
+Example: the variable rnd was not clear and therefore renamed to fl_round. 
+-->
+
+#### Any other comments?
+
+
+<!--
+Please be aware that it may take some time until we can check this PR. 
+If you have an urgent request or question please use the Flower Slack channel.
+The Slack channel is really active and contributors respond pretty fast. 
+
+We value your contribution and are aware of the time you put into this PR.
+Therefore, thank you for your contribution. 
+-->
+
+```suggestion
+        If no implementation is provided, then `start_simulation` will use
+```Should this empty line be removed?```suggestion
+    initialized_server, initialized_config = _init_defaults(
+        None, config, strategy, client_manager
+    )
+``````suggestion
+            If no implementation is provided, then `start_server` will use
+``````suggestion
+    initialized_server, initialized_config = _init_defaults(
+        server, config, strategy, client_manager
+    )
+```",9,True,2022-04-04 10:14:24,2022-04-13 10:10:14,2022-04-13 10:10:14
+https://github.com/adap/flower/pull/1166,[],Unify documentation separator,"Unify documentation separator<!--
+Thanks for contributing a pull request! Please ensure you have taken a look at
+the contribution guidelines: https://github.com/adap/flower/blob/main/CONTRIBUTING.md
+
+Does the changelog need to be updated?
+See: https://github.com/adap/flower/blob/main/doc/source/changelog.rst
+-->
+
+#### Reference Issues/PRs
+
+This PR fixes #1083.
+
+<!--
+Example: Fixes #1234. See also #3456.
+Please use keywords (e.g., Fixes) to create a link to the issues or pull requests
+you resolved.
+-->
+
+#### What does this implement/fix? Explain your changes.
+
+In order to unify documentation, the docs that contain `_` (underscore) as separator have been renamed to use `-` (minus). Two main changes were implemented for this. 
+First, 8 fiilenames have been changed:
+
+1. /doc/source/quickstart_mxnet.rst
+2. /doc/source/quickstart_pytorch_lightning.rst
+3. /doc/source/example_walkthrough_pytorch_mnist.rst
+4. /doc/source/quickstart_huggingface.rst
+5. /doc/source/quickstart_pytorch.rst
+6. /doc/source/quickstart_tensorflow.rst
+7. /doc/source/release_process.rst
+8. /doc/source/quickstart_scikitlearn.rst
+
+The references to these files have also been updated, majorly in `README.md` and `index.rst`
+
+Secondly, for each renamed doc redirects were configured in the `conf.py` file using `sphinx_reredirects`. A new extension was also added for the same in the file. This was done to redirect from the old naming (e.g., `quickstart_pytorch`) to the new page (e.g., `quickstart-pytorch`)
+
+<!--
+Explain why this PR is needed and what kind of changes have you done.
+Example: the variable rnd was not clear and therefore renamed to fl_round. 
+-->
+
+#### Any other comments?
+-
+
+<!--
+Please be aware that it may take some time until we can check this PR. 
+If you have an urgent request or question please use the Flower Slack channel.
+The Slack channel is really active and contributors respond pretty fast. 
+
+We value your contribution and are aware of the time you put into this PR.
+Therefore, thank you for your contribution. 
+-->
+```suggestion
+    ""quickstart_mxnet"": ""quickstart-mxnet.html"",
+    ""quickstart_pytorch_lightning"": ""quickstart-pytorch-lightning.html"",
+    ""example_walkthrough_pytorch_mnist"": ""example-walkthrough-pytorch-mnist.html"",
+    ""quickstart_huggingface"": ""quickstart-huggingface.html"",
+    ""quickstart_pytorch"": ""quickstart-pytorch.html"",
+    ""quickstart_tensorflow"": ""quickstart-tensorflow.html"",
+    ""release_process"": ""release-process.html"",
+    ""quickstart_scikitlearn"": ""quickstart-scikitlearn.html""
+```",10,True,2022-03-30 13:53:22,2022-04-25 20:38:14,2022-04-25 17:47:06
+https://github.com/adap/flower/pull/1140,[],Fix an error in the quickstart_pytorch example on GPU.,"Fix an error in the quickstart_pytorch example on GPU.Fix a problem where the label tensor was not properly converted to a CUDA tensor leading to an error.
+
+<!--
+Thanks for contributing a pull request! Please ensure you have taken a look at
+the contribution guidelines: https://github.com/adap/flower/blob/main/CONTRIBUTING.md
+-->
+
+<!--
+Example: Fixes #1234. See also #3456.
+Please use keywords (e.g., Fixes) to create a link to the issues or pull requests
+you resolved.
+-->
+
+#### What does this implement/fix? Explain your changes.
+
+Running the `quickstart_pytorch/run.sh` with a CUDA-enabled GPU yields to an exception 
+
+```
+[...]
+  File ""/examples/quickstart_pytorch/client.py"", line 42, in test
+    correct += (torch.max(outputs.data, 1)[1] == labels).sum().item()
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu!
+```
+This is due to `labels` not being on the CUDA device. This PR fixes this issue.
+
+    
+
+<!--
+Explain why this PR is needed and what kind of changes have you done.
+Example: the variable rnd was not clear and therefore renamed to fl_round. 
+-->
+
+
+<!--
+Please be aware that it may take some time until we can check this PR. 
+If you have an urgent request or question please use the Flower Slack channel.
+The Slack channel is really active and contributors respond pretty fast. 
+
+We value your contribution and are aware of the time you put into this PR.
+Therefore, thank you for your contribution. 
+-->",1,True,2022-03-22 11:40:46,2022-03-22 16:43:14,2022-03-22 16:43:14
+https://github.com/adap/flower/pull/1138,[],Taking care of get_properties() by catching an AttributeError.,"Taking care of get_properties() by catching an AttributeError.<!--
+Thanks for contributing a pull request! Please ensure you have taken a look at
+the contribution guidelines: https://github.com/adap/flower/blob/main/CONTRIBUTING.md
+-->
+
+#### Reference Issues/PRs
+
+This is meant to address #1113.
+
+<!--
+Example: Fixes #1234. See also #3456.
+Please use keywords (e.g., Fixes) to create a link to the issues or pull requests
+you resolved.
+-->
+
+#### What does this implement/fix? Explain your changes.
+
+It is an improved attempt at dealing with the issue appropriately dealing with `get_properties` not being defined by a user implementation of `Client` or `NumPyClient`. In essence, the default implementation raises an `AttributeError`, which is caught and an appropriate response sent to the server.
+
+<!--
+Explain why this PR is needed and what kind of changes have you done.
+Example: the variable rnd was not clear and therefore renamed to fl_round. 
+-->
+
+#### Any other comments?
+
+This should allow a user to run multiple `Client`s in the same python process.
+
+<!--
+Please be aware that it may take some time until we can check this PR. 
+If you have an urgent request or question please use the Flower Slack channel.
+The Slack channel is really active and contributors respond pretty fast. 
+
+We value your contribution and are aware of the time you put into this PR.
+Therefore, thank you for your contribution. 
+-->",3,False,2022-03-21 17:51:27,2022-06-01 12:26:50,2022-06-01 12:26:49
+https://github.com/adap/flower/pull/1124,[],Quickstart Pytorch with ResNet18,"Quickstart Pytorch with ResNet18Changes basic example to use less-verbose ResNet18
+
+<!--
+Thanks for contributing a pull request! Please ensure you have taken a look at
+the contribution guidelines: https://github.com/adap/flower/blob/main/CONTRIBUTING.md
+-->
+
+#### Reference Issues/PRs
+
+<!--
+Example: Fixes #1234. See also #3456.
+Please use keywords (e.g., Fixes) to create a link to the issues or pull requests
+you resolved.
+-->
+
+#### What does this implement/fix? Explain your changes.
+
+<!--
+Explain why this PR is needed and what kind of changes have you done.
+Example: the variable rnd was not clear and therefore renamed to fl_round. 
+-->
+
+#### Any other comments?
+
+
+<!--
+Please be aware that it may take some time until we can check this PR. 
+If you have an urgent request or question please use the Flower Slack channel.
+The Slack channel is really active and contributors respond pretty fast. 
+
+We value your contribution and are aware of the time you put into this PR.
+Therefore, thank you for your contribution. 
+-->",1,True,2022-03-11 09:57:03,2022-03-14 23:09:35,2022-03-14 23:09:34
+https://github.com/adap/flower/pull/1122,[],Introduce the Flower Enhancement Docs process,"Introduce the Flower Enhancement Docs process<!--
+Thanks for contributing a pull request! Please ensure you have taken a look at
+the contribution guidelines: https://github.com/adap/flower/blob/main/CONTRIBUTING.md
+-->
+
+<!--
+Example: Fixes #1234. See also #3456.
+Please use keywords (e.g., Fixes) to create a link to the issues or pull requests
+you resolved.
+-->
+
+#### What does this implement/fix? Explain your changes.
+
+To document motivations and decisions for larger changes or features to Flower, an Enhancement Document process (FED) is proposed. This process is heavily influenced by similar processes in the Python language (https://peps.python.org) as well as in Kubernetes (https://git.k8s.io/enhancements/keps).
+The goal of this process is to provide insight and transparency on upcoming features that might change how users or developers have to interact with Flower. By storing proposals as part of Flower's repository, the community has an easy and accessible way to understand and influence these important changes to Flower.
+
+<!--
+Explain why this PR is needed and what kind of changes have you done.
+Example: the variable rnd was not clear and therefore renamed to fl_round. 
+-->
+
+#### Any other comments?
+
+This is very similar in style to the [Kubernetes Enhancement Proposal Process](https://github.com/kubernetes/enhancements/blob/master/keps/sig-architecture/0000-kep-process/README.md). That process has been slightly simplified, as some parts only made sense in a project as large as Kubernetes.
+
+
+<!--
+Please be aware that it may take some time until we can check this PR. 
+If you have an urgent request or question please use the Flower Slack channel.
+The Slack channel is really active and contributors respond pretty fast. 
+
+We value your contribution and are aware of the time you put into this PR.
+Therefore, thank you for your contribution. 
+-->```suggestion
+For far-fetching changes or features proposed to Flower, an abstraction beyond a single Github issue or pull request is required in order to understand and communicate upcoming changes to the project.
+``````suggestion
+The purpose of this process is to reduce the amount of ""tribal knowledge"" in our community. By moving decisions from Slack threads, video calls, and hallway conversations into a well tracked artifact, this process aims to enhance communication and discoverability.
+```
+(we lean towards using Oxford commas)```suggestion
+For small changes and additions, going through the Enhancement Proposal process would be time-consuming and unnecessary. This includes, for example, adding new Federated Learning algorithms, as these only add features without changing how Flower works or is used.
+``````suggestion
+  A list of authors of the proposal. This is simply the GitHub ID.
+``````suggestion
+  A list of other proposals that are relevant to this one.
+``````suggestion
+The idea forming the enhancement should already have been discussed or pitched in the comminuty. As such, it needs a champion, usually the author, who shepherds the proposal. This person also has to find committers to Flower willing to review the proposal.
+``````suggestion
+### GitHub Issues
+``````suggestion
+Using GitHub Issues for these kinds of proposals is doable. One could use, for example, tags, to differentiate and filter them from other issues. The main issue is in discussing and reviewing a proposal: GitHub issues only have a single thread for comments. Proposals usually have multiple threads of discussion at the same time for various parts of the proposal. Managing these multiple discussions can be confusing when using GitHub Issues.
+```Flower Enhancements Design?
+Flower Enhancements Doc?I like ""Flower Enhancement Doc""```suggestion
+  - [GitHub Issues](#github-issues)
+``````suggestion
+For far-fetching changes or features proposed to Flower, an abstraction beyond a single GitHub issue or pull request is required in order to understand and communicate upcoming changes to the project.
+``````suggestion
+  A list of authors of the proposal. This is simply the GitHub ID.
+``````suggestion
+The purpose of this process is to reduce the amount of ""tribal knowledge"" in our community. By moving decisions from Slack threads, video calls, and hallway conversations into a well tracked artifact, this process aims to enhance communication and discoverability.
+```",2,True,2022-03-11 08:17:24,2022-04-06 11:37:08,2022-04-06 11:37:07
+https://github.com/adap/flower/pull/1084,[],Optprops review code,"Optprops review code<!--
+Thanks for contributing a pull request! Please ensure you have taken a look at
+the contribution guidelines: https://github.com/adap/flower/blob/main/CONTRIBUTING.md
+-->
+
+#### Reference Issues/PRs
+
+This is code created in the review process of  #1068 
+
+<!--
+Example: Fixes #1234. See also #3456.
+Please use keywords (e.g., Fixes) to create a link to the issues or pull requests
+you resolved.
+-->
+
+#### What does this implement/fix? Explain your changes.
+
+Showcases how to use the feature and tests if it really is optional. Unfortunately not yet.
+
+@danieljanes this is still an error:
+
+```bash
+Traceback (most recent call last):
+  File ""client.py"", line 109, in <module>
+    main()
+  File ""client.py"", line 92, in main
+    fl.client.start_numpy_client(""[::]:8080"", client=client)
+  File ""/workspace/flower/src/py/flwr/client/app.py"", line 169, in start_numpy_client
+    del flower_client.get_properties
+AttributeError: get_properties
+```
+
+When commenting out the lines 20-24 in advanced_tensorflow client.py
+
+
+<!--
+Explain why this PR is needed and what kind of changes have you done.
+Example: the variable rnd was not clear and therefore renamed to fl_round. 
+-->
+
+#### Any other comments?
+
+
+<!--
+Please be aware that it may take some time until we can check this PR. 
+If you have an urgent request or question please use the Flower Slack channel.
+The Slack channel is really active and contributors respond pretty fast. 
+
+We value your contribution and are aware of the time you put into this PR.
+Therefore, thank you for your contribution. 
+-->",2,False,2022-02-22 13:38:07,2022-06-03 15:29:08,2022-06-03 15:29:08
+https://github.com/adap/flower/pull/1054,[],Fix typo in tf quickstart doc,"Fix typo in tf quickstart doc<!--
+Thanks for contributing a pull request! Please ensure you have taken a look at
+the contribution guidelines: https://github.com/adap/flower/blob/main/CONTRIBUTING.md
+-->
+
+#### Reference Issues/PRs
+This typo was introduced in #522 
+<!--
+Example: Fixes #1234. See also #3456.
+Please use keywords (e.g., Fixes) to create a link to the issues or pull requests
+you resolved.
+-->
+
+#### What does this implement/fix? Explain your changes.
+Removes an extra space after the `code:` block which prevented the code from being formatted properly.
+<!--
+Explain why this PR is needed and what kind of changes have you done.
+Example: the variable rnd was not clear and therefore renamed to fl_round. 
+-->
+
+#### Any other comments?
+
+
+<!--
+Please be aware that it may take some time until we can check this PR. 
+If you have an urgent request or question please use the Flower Slack channel.
+The Slack channel is really active and contributors respond pretty fast. 
+
+We value your contribution and are aware of the time you put into this PR.
+Therefore, thank you for your contribution. 
+-->",1,True,2022-02-09 09:29:52,2022-02-11 10:10:03,2022-02-11 10:10:03
+https://github.com/adap/flower/pull/1007,"['documentation', 'enhancement']",Adding advanced_pytorch example,"Adding advanced_pytorch example<!--
+Thanks for contributing a pull request! Please ensure you have taken a look at
+the contribution guidelines: https://github.com/adap/flower/blob/main/CONTRIBUTING.md
+-->
+
+#### Reference Issues/PRs
+https://github.com/adap/flower/pull/803
+
+<!--
+Example: Fixes #1234. See also #3456.
+Please use keywords (e.g., Fixes) to create a link to the issues or pull requests
+you resolved.
+-->
+
+#### What does this implement/fix? Explain your changes.
+Implements an advaned_pytorch example. Closely duplicates the advanced_tensorflow example.
+<!--
+Explain why this PR is needed and what kind of changes have you done.
+Example: the variable rnd was not clear and therefore renamed to fl_round. 
+-->
+
+#### Any other comments?
+
+I added a `--toy` flag since my machine can't run the full 10 client simulation.
+Please run the full simulation and let me know how it works. Happy to make any required changes.
+I had a notebook for prototyping, removed it. Can add it in a later PR if needed.
+
+<!--
+Please be aware that it may take some time until we can check this PR. 
+If you have an urgent request or question please use the Flower Slack channel.
+The Slack channel is really active and contributors respond pretty fast. 
+
+We value your contribution and are aware of the time you put into this PR.
+Therefore, thank you for your contribution. 
+-->Removing `model` attribute
+```suggestion
+```Remove `model` attribute. 
+```suggestion
+```
+model can be created when calling `fit`Create a model when needed
+```suggestion
+        model = utils.load_efficientnet(classes=10) 
+        model.load_state_dict(state_dict, strict=True)
+        return model
+```Get returned model
+```suggestion
+        model = self.set_parameters(parameters)
+```Removing `self`
+```suggestion
+        results = utils.train(model, trainLoader, valLoader, epochs)
+```Using returned model
+```suggestion
+        model = self.set_parameters(parameters)
+```Removing `self`
+```suggestion
+        loss, accuracy = utils.test(model, testloader, steps)
+```No need to pass a model anymore. But we might need the device
+```suggestion
+    client = CifarClient(trainset, testset, device)
+```No need to pass a model anymore, but device might be needed.
+```suggestion
+    client = CifarClient(trainset, testset, device)
+```This looks a bit obscure... Should this become a function like `load_weights(model)` or something?  
+```suggestion
+        [val.cpu().numpy() for _, val in model.state_dict().items()],
+```No need to create the model anymore
+```suggestion
+
+```Making sure `train` receives a device. 
+```suggestion
+def train(net, trainloader, valloader, epochs, device= ""cpu""):
+    """"""Train the network on the training set.""""""
+    print(""Starting training..."")
+    net.to(device)  # move model to GPU if available
+    criterion = torch.nn.CrossEntropyLoss().to(device)
+    optimizer = torch.optim.SGD(
+        net.parameters(), lr=0.1, momentum=0.9, weight_decay=1e-4
+    )
+    net.train()
+    for _ in range(epochs):
+        for images, labels in trainloader:
+            images, labels = images.to(device), labels.to(device)
+            optimizer.zero_grad()
+            loss = criterion(net(images), labels)
+            loss.backward()
+            optimizer.step()
+``````suggestion
+def test(net, testloader, device = ""cpu"", steps: int = None):
+    """"""Validate the network on the entire test set.""""""
+    print(""Starting evalutation..."")
+    net.to(device)  # move model to GPU if available
+    criterion = torch.nn.CrossEntropyLoss()
+    correct, total, loss = 0, 0, 0.0
+    net.eval()
+    with torch.no_grad():
+        for batch_idx, (images, labels) in enumerate(testloader):
+            images, labels = images.to(device), labels.to(device)
+```Allow user to decide whether or not to use GPU (cuda). 
+```suggestion
+    parser.add_argument(
+        ""--use_cuda"",
+        type=bool,
+        default=False,
+        required=False,
+        help=""Set to true to use GPU. Default: False"",
+    )
+```Choose device based on availability and if the flag `use_cuda` was set. 
+```suggestion
+# Use GPU if available and needed
+device = torch.device(""cuda:0"" if torch.cuda.is_available() and args.use_cuda else ""CPU"")
+
+```Include `device` as parameter.
+```suggestion
+        device: str = ""cpu"",
+        validation_split: int = 0.1,
+``````suggestion
+        self.testset = testset
+        self.device = device
+```Pass `device` to `train`
+```suggestion
+        results = utils.train(self.model, trainLoader, valLoader, epochs, self.device)
+```Pass `device` to to `test`
+```suggestion
+        loss, accuracy = utils.test(self.model, testloader, steps, self.device)
+```Add device to `dry_run`
+```suggestion
+def client_dry_run(device = ""cpu""):
+```",20,True,2022-01-16 11:40:17,2022-05-05 11:22:01,2022-05-05 11:21:33
+https://github.com/adap/flower/pull/1001,[],Fix to the tfltransfer library,"Fix to the tfltransfer libraryFixes #956 
+
+There was a problem with the tfltransfer library in the Android example, which was causing the .tflite conversion to fail.  The library files are now changed and .tflite generation should work.",1,True,2022-01-12 01:24:24,2022-01-17 14:18:57,2022-01-17 14:18:54
+https://github.com/adap/flower/pull/982,[],Fix missing type error thrown by mypy,"Fix missing type error thrown by mypyThis PR fixes the typing error by using `numpy.typing` types. To ensure they are available we have to set the minimum required numpy version to `^1.20.0`
+
+@pedropgusmao please have a look at the dtype I have set. I think you can judge best if its correct.",2,True,2022-01-03 10:48:35,2022-01-04 09:01:20,2022-01-04 09:01:19
+https://github.com/adap/flower/pull/980,[],refactor/Fix typos at comments and variable names in Python files,"refactor/Fix typos at comments and variable names in Python filesSome typos were found in the Python comments by using the next method:
+
+1. Create `extractcomments.py` file with the next content:
+```python3
+#!/usr/bin/env python3
+import argparse
+import io
+import tokenize
+
+
+if __name__ == ""__main__"":
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument('filename')
+    args = parser.parse_args()
+
+    with io.open(args.filename, ""r"", encoding=""utf-8"") as sourcefile:
+        for t in tokenize.generate_tokens(sourcefile.readline):
+            if t.type == tokenize.COMMENT: # We changed this line by using tokenize.NAME at a second run
+                print(t.string.lstrip(""#"").strip())
+```
+2. Run the next bash script supposing you could access the repository root folder by using `../flower`:
+```bash
+for f in ../flower/src/py/**/*.py; do ./extractcomments.py $f >> ~/comments.txt; done
+aspell <~/comments.txt --lang=en list | sort | uniq -c | sort -n > ~/typos.txt
+```
+3. Review `~/comments.txt` file and fix the corresponding issues manually by using `grep -iRn`, if the number of issues is high then use `sed -i`.
+
+I attach the referred `typos.txt` output file.
+<details> <summary>Click here to see typos.txt for comments</summary>
+
+```text
+      1 accross
+      1 Adagrad
+      1 CIFAR
+      1 ClientManager
+      1 corosponding
+      1 cpu
+      1 cv
+      1 deserialize
+      1 deserialized
+      1 FastAndSlow
+      1 flwr
+      1 fontsize
+      1 formatter
+      1 GetParameters
+      1 GetWeights
+      1 GRPCBridge
+      1 GrpcClientProxy
+      1 hostname
+      1 idx
+      1 ImageNet
+      1 InstanceId
+      1 InstanceStatus
+      1 Instanstiate
+      1 JSON
+      1 linecharts
+      1 Lipschitz
+      1 logfiles
+      1 mapLogRecords
+      1 Mem
+      1 ndarrays
+      1 noqa
+      1 np
+      1 NumPy
+      1 NumPyClient
+      1 permuations
+      1 Pre
+      1 Prepae
+      1 PrivateIpAddress
+      1 PublicIpAddress
+      1 RayClientProxy
+      1 reachability
+      1 rnd
+      1 RPCs
+      1 Runtime
+      1 setFormatter
+      1 Simluate
+      1 SSHPort
+      1 StopIteration
+      1 stutdown
+      1 subdir
+      1 tearDown
+      1 toplevel
+      1 Uncomment
+      1 utf
+      1 vCPU
+      1 xticklabels
+      1 xticks
+      2 args
+      2 cid
+      2 datasets
+      2 durations
+      2 environ
+      2 FedAvg
+      2 FitIns
+      2 FitRes
+      2 FlowerServiceServicer
+      2 GRPC
+      2 init
+      2 logfile
+      2 logserver
+      2 MNIST
+      2 os
+      2 positiv
+      2 ProtoBuf
+      2 ServerMessage
+      2 Teardown
+      2 unselected
+      3 Deserialize
+      3 FedFS
+      3 http
+      3 initializer
+      3 Keras
+      3 logdir
+      4 docstring
+      4 gRPC
+      4 isinstance
+      4 lr
+      4 msg
+      5 mypy
+      5 proto
+      6 unsubscriptable
+     10 num
+     20 dataset
+     32 config
+    125 pylint
+    160 Adap
+    160 GmbH
+```
+</details>
+
+<details> <summary>Click here to see typos.txt for names</summary>
+
+```text
+      1 ABCMeta
+      1 AdapterIntegrationTestCase
+      1 AdapterTestCase
+      1 APIClient
+      1 assertGreater
+      1 AssertionError
+      1 baseurl
+      1 basicConfig
+      1 BlockDeviceMappings
+      1 CategoricalAccuracy
+      1 CenterCrop
+      1 CifarTestCase
+      1 ClusterIntegrationTestCase
+      1 ConfigError
+      1 ConfigParser
+      1 CreateInstancesTestCase
+      1 css
+      1 DockerAdapterIntegrationTestCase
+      1 DPModelInspector
+      1 EnumDescriptor
+      1 EnumTypeWrapper
+      1 ExtraArgs
+      1 FashionMnistPartitionedTestCase
+      1 FastAndSlowTestCase
+      1 favicon
+      1 fedadam
+      1 fedyogi
+      1 FileDescriptor
+      1 FileHandler
+      1 finfo
+      1 FlowerService
+      1 FlowerServiceServicerTestCase
+      1 fname
+      1 frombuffer
+      1 getcwd
+      1 getvalue
+      1 GlobalAveragePooling
+      1 GradientTape
+      1 GrpcClientProxyTestCase
+      1 hasattr
+      1 IamInstanceProfile
+      1 ImageClassificationPartitionedTestCase
+      1 ImageDataGenerator
+      1 ImageId
+      1 IncludeAllInstances
+      1 InstanceInitiatedShutdownBehavior
+      1 InstanceType
+      1 isabs
+      1 isclose
+      1 isfile
+      1 itertools
+      1 kaiming
+      1 KeyName
+      1 LightningModule
+      1 listdir
+      1 LogserverTest
+      1 LSTM
+      1 mapLogRecord
+      1 markersize
+      1 MaxCount
+      1 maxpool
+      1 MaxPooling
+      1 maxsize
+      1 metaclass
+      1 MethodDescriptor
+      1 MinCount
+      1 mul
+      1 multinomial
+      1 ncol
+      1 NodeDef
+      1 nonlinearity
+      1 NotFound
+      1 OpsSet
+      1 preprocessing
+      1 prog
+      1 PropertiesEntry
+      1 pyplot
+      1 RandomHorizontalFlip
+      1 RandomResizedCrop
+      1 RegisterEnumDescriptor
+      1 RegisterFileDescriptor
+      1 RegisterServiceDescriptor
+      1 rescale
+      1 rfile
+      1 rpcs
+      1 savez
+      1 SecurityGroupIds
+      1 ServiceDescriptor
+      1 shakespeare
+      1 ShakespeareDataset
+      1 simplefilter
+      1 sint
+      1 staticmethod
+      1 StatusCode
+      1 StreamHandler
+      1 SubnetId
+      1 subprocess
+      1 TagSpecifications
+      1 Tanh
+      1 TestStringMethods
+      1 TF
+      1 UC
+      1 uint
+      1 urlretrieve
+      1 UserData
+      1 util
+      1 vectorized
+      1 VersionInfo
+      1 wfile
+      1 WhichOneof
+      2 abspath
+      2 ACK
+      2 Adadelta
+      2 AdamW
+      2 adp
+      2 argsort
+      2 asnumpy
+      2 ast
+      2 autograd
+      2 AutoModelForSequenceClassification
+      2 AutoTokenizer
+      2 AUTOTUNE
+      2 BaseHTTPRequestHandler
+      2 BinaryIO
+      2 CifarPartitionedTestCase
+      2 CifarRayClient
+      2 classmethod
+      2 configparser
+      2 continous
+      2 ConvTranspose
+      2 CreateInstanceFailure
+      2 DataCollatorWithPadding
+      2 demominator
+      2 deserialisation
+      2 deserializer
+      2 edgecolor
+      2 EfficientNetB
+      2 el
+      2 eq
+      2 FashionMnistClient
+      2 fedadagrad
+      2 fll
+      2 FlowerClient
+      2 FlwrClient
+      2 Formatter
+      2 FORMATTER
+      2 fromarray
+      2 frozenset
+      2 fss
+      2 functools
+      2 getattr
+      2 getitem
+      2 getLogger
+      2 groupby
+      2 hostname
+      2 HTTPHandler
+      2 HTTPServer
+      2 IgnoreHostKeyPolicy
+      2 ImageNetClient
+      2 IMDBClient
+      2 ImportError
+      2 INI
+      2 InstanceIdNotFound
+      2 iw
+      2 jsons
+      2 keepdim
+      2 lfd
+      2 lgd
+      2 linestyle
+      2 linewidth
+      2 LogRecord
+      2 LogServer
+      2 LongTensor
+      2 lss
+      2 lstm
+      2 MARKERSIZE
+      2 matmul
+      2 maxk
+      2 memoize
+      2 MetricsEntry
+      2 mhat
+      2 mobilenetv
+      2 nll
+      2 NoMatchingInstanceType
+      2 NoPublicFacingPortFound
+      2 NotImplementedError
+      2 opacus
+      2 paramiko
+      2 paramseters
+      2 ParseFromString
+      2 PIL
+      2 preds
+      2 pretrained
+      2 PrivacyEngine
+      2 proba
+      2 ps
+      2 pytest
+      2 pytorch
+      2 PytorchMNISTClient
+      2 qfedavg
+      2 QFFEDAVG
+      2 quantized
+      2 randn
+      2 readlines
+      2 ReconnectResultsAndFailures
+      2 rect
+      2 rects
+      2 reparametrize
+      2 RequestHandler
+      2 ResourceWarning
+      2 RunInstancesResult
+      2 SaveModelStrategy
+      2 semver
+      2 serializer
+      2 setattr
+      2 setFormatter
+      2 ShakespeareLeafNet
+      2 SoftmaxCrossEntropyLoss
+      2 StartFailed
+      2 StepLR
+      2 TBWrapper
+      2 TerminationFailure
+      2 TestCriterion
+      2 TimeoutError
+      2 tmpdir
+      2 tokenize
+      2 traindir
+      2 TypeVar
+      2 UnFlatten
+      2 UnknownServerMessage
+      2 urls
+      2 UserWarning
+      2 valdir
+      2 valset
+      2 VectorizedDPKerasSGDOptimizer
+      2 vhat
+      2 VisionDataset
+      2 xaxis
+      2 xticklabels
+      3 adam
+      3 addHandler
+      3 ArgumentTypeError
+      3 asarray
+      3 assertEqual
+      3 BaseSetting
+      3 BytesIO
+      3 ConfigEntry
+      3 crossentropy
+      3 CustomHTTPHandler
+      3 dataclasses
+      3 datagen
+      3 datetime
+      3 DefaultStrategy
+      3 dest
+      3 endswith
+      3 ExponentialDecay
+      3 FailingCLient
+      3 FedAdam
+      3 FEDBN
+      3 fedopt
+      3 FedYogi
+      3 ffl
+      3 figsize
+      3 FitResultsAndFailures
+      3 FLOWERSERVICE
+      3 FlowerServiceStub
+      3 FormatStrFormatter
+      3 FromString
+      3 getCIFAR
+      3 getenv
+      3 GetParameters
+      3 getsockname
+      3 glorot
+      3 gpus
+      3 GraphDef
+      3 INET
+      3 initializers
+      3 InstanceIds
+      3 KerasClientWrapper
+      3 keyfunc
+      3 LitAutoEncoder
+      3 LOGDIR
+      3 LogitsSavedModelHead
+      3 LogRegParams
+      3 makedirs
+      3 microbatches
+      3 MNISTNet
+      3 normpath
+      3 numel
+      3 OneofDescriptor
+      3 partitioner
+      3 preprocess
+      3 protoc
+      3 QffedAvg
+      3 qs
+      3 QuantizableBase
+      3 RayClientProxy
+      3 realpath
+      3 ResNet
+      3 REUSEADDR
+      3 RuntimeError
+      3 savefig
+      3 SerializeToString
+      3 ServicerContext
+      3 setsockopt
+      3 sgd
+      3 SSHCredentials
+      3 startswith
+      3 StatusTimeout
+      3 strftime
+      3 SUBNET
+      3 SuccessClient
+      3 tearDown
+      3 TemporaryDirectory
+      3 TensorDataset
+      3 TensorSpec
+      3 tolist
+      3 TorchVision
+      3 uuid
+      3 valloader
+      3 xlabel
+      3 xlim
+      3 xticks
+      3 Xy
+      3 ylabel
+      3 ylim
+      3 yticklabels
+      4 Accuracies
+      4 ag
+      4 argmax
+      4 argv
+      4 astype
+      4 BatchNorm
+      4 bbox
+      4 casted
+      4 CategoricalCrossentropy
+      4 coef
+      4 CompositeEvalMetric
+      4 conn
+      4 contextmanager
+      4 CopyFrom
+      4 CrossEntropy
+      4 dataloader
+      4 dataloaders
+      4 del
+      4 DescribeInstancesResult
+      4 distro
+      4 dl
+      4 dp
+      4 Enum
+      4 EvaluateResultsAndFailures
+      4 ExecInfo
+      4 expanduser
+      4 FedAvgAndroid
+      4 filepath
+      4 filterwarnings
+      4 fs
+      4 http
+      4 ImageFolder
+      4 InstanceMismatch
+      4 ips
+      4 isdir
+      4 js
+      4 KerasModelHead
+      4 kld
+      4 loc
+      4 MNISTClient
+      4 mse
+      4 openml
+      4 pre
+      4 probs
+      4 PROTO
+      4 quantizable
+      4 rcParams
+      4 rmtree
+      4 setUpClass
+      4 SFTPAttributes
+      4 sqrt
+      4 SSHClient
+      4 SubsetRandomSampler
+      4 TBW
+      4 tcp
+      4 TestTfliteTransferConverter
+      4 tokenizer
+      4 tqdm
+      4 urllib
+      4 yticks
+      5 atleast
+      5 attr
+      5 barwidth
+      5 contextlib
+      5 DockerAdapter
+      5 DPCifarClient
+      5 EnumValueDescriptor
+      5 FedAdagrad
+      5 formatter
+      5 GETPARAMETERS
+      5 hs
+      5 LegendLoc
+      5 metavar
+      5 MissingHostKeyPolicy
+      5 mkdtemp
+      5 ModelCorrectnessTest
+      5 NumPyClientWrapper
+      5 perf
+      5 protobuf
+      5 ReLU
+      5 SimpleNet
+      5 sklearn
+      5 tobytes
+      5 yaxis
+      6 arg
+      6 ClientSettingNotFound
+      6 const
+      6 DATASET
+      6 dpsgd
+      6 env
+      6 environ
+      6 FastAndSlow
+      6 func
+      6 kwargs
+      6 logfile
+      6 MNIST
+      6 MnistClient
+      6 Namespace
+      6 nd
+      6 PARAMETERSRES
+      6 PathLike
+      6 QFedAvg
+      6 rdp
+      6 topk
+      6 trainings
+      6 tt
+      6 unregister
+      6 url
+      7 assertModelAchievesAccuracy
+      7 ClientFn
+      7 cmd
+      7 compat
+      7 deserialized
+      7 FedOpt
+      7 HasField
+      7 imagenet
+      7 imgs
+      7 importlib
+      7 LOGFILE
+      7 mkdir
+      7 ndim
+      7 PROPERTIESENTRY
+      7 sftp
+      7 shutil
+      7 StopIteration
+      7 TFLiteConverter
+      7 TransferModel
+      8 accuracies
+      8 bn
+      8 cls
+      8 ctx
+      8 dirname
+      8 fedfs
+      8 FlowerServiceServicer
+      8 html
+      8 KerasClient
+      8 ModuleList
+      8 ok
+      8 regularizers
+      8 rpc
+      8 SavedModelBase
+      8 servicer
+      8 sess
+      8 subnet
+      8 tensorboard
+      9 cen
+      9 FedFSv
+      9 GRPCBridgeClosed
+      9 logdir
+      9 pathlib
+      9 stderr
+      9 TFLiteTransferConverter
+      9 ThreadPoolExecutor
+      9 unpartitioned
+      9 VisionClassificationClient
+     10 boto
+     10 cids
+     10 Config
+     10 contribs
+     10 LogisticRegression
+     10 matplotlib
+     10 NDArrayIter
+     10 qffl
+     10 regularizer
+     10 stdout
+     11 abc
+     11 AdapterInstance
+     11 Dataset
+     11 pred
+     11 rng
+     11 tokenized
+     12 bs
+     12 dirichlet
+     12 eps
+     12 frac
+     12 fvalue
+     12 gca
+     12 GRPC
+     12 ip
+     12 repr
+     12 resnet
+     12 setLevel
+     12 SoftmaxClassifierHead
+     12 tempfile
+     12 tflite
+     12 ws
+     13 assertRaises
+     13 exc
+     13 iter
+     13 logvar
+     13 tmp
+     14 FaultTolerantFedAvg
+     14 GRPCBridge
+     14 logserver
+     14 METRICSENTRY
+     14 PROPERTIESINS
+     14 PROPERTIESRES
+     14 setUp
+     15 EVALUATEINS
+     15 EVALUATERES
+     15 FITINS
+     15 fontsize
+     15 gpu
+     15 MobileNetV
+     15 oneof
+     15 sys
+     16 assertSignatureEqual
+     16 cv
+     16 durations
+     16 io
+     16 PartitionedDataset
+     16 SimpleClientManager
+     17 arange
+     17 FITRES
+     17 MaxPool
+     17 TestCase
+     17 ToTensor
+     18 dataclass
+     18 PARAMS
+     20 CONFIG
+     20 CrossEntropyLoss
+     20 GeneratedProtocolMessageType
+     20 mobilenet
+     20 mxnet
+     20 RegisterMessage
+     20 serde
+     20 tfltransfer
+     21 CONFIGENTRY
+     21 cuda
+     22 nb
+     23 elif
+     24 CifarClient
+     24 optim
+     24 pb
+     24 SGD
+     24 sym
+     25 cnn
+     26 ArgumentParser
+     26 ClientSetting
+     26 GrpcClientProxy
+     27 logits
+     28 NumPyClient
+     28 optimizers
+     28 PropertiesIns
+     29 acc
+     29 MagicMock
+     29 XYList
+     30 isinstance
+     30 plt
+     30 PropertiesRes
+     31 img
+     31 initializer
+     31 softmax
+     32 lda
+     32 timeit
+     34 Conv
+     36 ValueError
+     37 BaseException
+     37 CIFAR
+     37 OrderedDict
+     38 ec
+     38 param
+     39 ClientManager
+     39 relu
+     40 tfv
+     41 fedavg
+     41 ParametersRes
+     42 conv
+     43 abstractmethod
+     43 mx
+     47 cpp
+     47 ds
+     47 FieldDescriptor
+     47 nda
+     50 ceil
+     50 oneofs
+     51 FedAvg
+     52 EvaluateIns
+     53 trainset
+     55 IID
+     55 unittest
+     57 tensorflow
+     58 json
+     59 ServerSetting
+     60 mnist
+     60 ServerMessage
+     61 argparse
+     61 FitIns
+     63 testset
+     64 fc
+     65 torchvision
+     67 params
+     68 os
+     73 enum
+     74 DataLoader
+     76 EvaluateRes
+     79 XY
+     82 bool
+     82 cifar
+     82 ClientMessage
+     83 NUM
+     86 dtype
+     86 FitRes
+     88 SERVERMESSAGE
+     92 CLIENTMESSAGE
+     93 dir
+     94 trainloader
+     96 msg
+     97 lr
+     99 grpc
+    106 testloader
+    109 ClientProxy
+    109 iid
+    113 cpu
+    113 datasets
+    114 utils
+    116 numpy
+    123 init
+    128 FN
+    132 rnd
+    136 proto
+    177 dataset
+    179 keras
+    195 nn
+    196 cid
+    217 args
+    226 idx
+    226 ndarray
+    226 xy
+    252 eval
+    256 len
+    286 flwr
+    290 fn
+    328 tf
+    401 config
+    583 str
+    632 np
+   1097 num
+```
+</details>",4,True,2022-01-01 02:22:59,2022-01-04 13:42:25,2022-01-04 09:28:54
+https://github.com/adap/flower/pull/979,[],Fixed max_workers mypy related error,"Fixed max_workers mypy related errorRelated to https://github.com/adap/flower/pull/978.
+There was an error about the default value for the optional `max_workers` parameter when running `mypy` as pointed out by our _Continuous Integration_ system.
+The proposed fix has been tested successfully in a local environment without inconvenience.",3,True,2022-01-01 02:01:03,2022-01-02 16:19:20,2022-01-02 16:14:13
+https://github.com/adap/flower/pull/963,[],Update CI Python patch versions to latest,"Update CI Python patch versions to latestSome tests in current Python patch versions failed in a recent PR because the GitHub CI wasn't able to install our current version. We had this issue a while ago and updating fixed it at that time. I thought its a good idea to update the patch versions again.
+
+Example from #952 => https://github.com/adap/flower/runs/4638198208
+
+Merging this PR should fix that issue.",3,True,2021-12-26 23:45:24,2021-12-28 15:03:10,2021-12-28 15:03:09
+https://github.com/adap/flower/pull/952,[],Added __version__ to Flower,"Added __version__ to FlowerAdded `__version__` using `importlib.metadata` to retrieve installed package information. This pull request accomplishes https://github.com/adap/flower/issues/883 duty.
+
+A screenshot of the testing process is attached below.
+![image](https://user-images.githubusercontent.com/25695302/146700941-6cce1c56-77f8-47a6-a900-0b52b1ef06ab.png)",9,True,2021-12-20 01:55:46,2021-12-28 18:35:34,2021-12-28 15:32:33
+https://github.com/adap/flower/pull/950,[],Fix Android example server comment,Fix Android example server commentThe comment on the Android server number of rounds has been updated to match the source code line below it. This _pull request_ solves https://github.com/adap/flower/issues/949.,1,True,2021-12-19 23:27:44,2021-12-28 20:29:28,2021-12-22 11:47:32
+https://github.com/adap/flower/pull/945,['documentation'],Fix typos in pytorch example,"Fix typos in pytorch exampleSimple fixes for a few typos.
+- Removing double `the`
+- `backpropagetes` to `backpropagates`
+- `evalution` to `evaluation`
+-  Adding missing `the`
+- Removing double `defining`",1,True,2021-12-15 23:22:26,2021-12-17 16:32:17,2021-12-17 16:32:17
+https://github.com/adap/flower/pull/906,"['documentation', 'enhancement']",Jax Example,"Jax Example- create a ""from centralized to federated"" code example with JAX and linear regression
+- add a README for code example
+- add pyproject.toml for code example
+- add jax documentation
+- add jax links to Flower documentation index```suggestion
+We are using JAX to train a linear regression model on a scikit-learn dataset.
+``````suggestion
+Before we start building our JAX example, we need install the packages :code:`jax`, :code:`jaxlib`, :code:`scikit-learn`, and :code:`flwr`:
+``````suggestion
+  $ pip install jax jaxlib scikit-learn flwr
+``````suggestion
+================================
+``````suggestion
+--------------------------
+``````suggestion
+Let's create a new file called :code:`jax_training.py` with all the components required for a traditional (centralized) linear regression training. 
+``````suggestion
+First, the JAX packages :code:`jax` and :code:`jaxlib` need to be imported. In addition, we need to import :code:`sklearn` since we use :code:`make_regression` for the dataset and :code:`train_test_split` to split the dataset into a training and test set. 
+``````suggestion
+We now need to define the training (function :code:`train()`) which loops over the training set and measures the loss (function :code:`loss_fn()`) for each batch of training examples. The loss function is separate since JAX takes derivatives with a :code:`grad()` function (defined in the :code:`main()` function and called in :code:`train()`). 
+``````suggestion
+            # if epochs % 10 == 9:
+            #     print(f'For Epoch {epochs} loss {loss}')
+``````suggestion
+The evaluation of the model is defined in the function :code:`evaluation()`. The function takes all test examples and measures the loss of the linear regression model. 
+``````suggestion
+        # print(f'Test loss {loss_test}')
+``````suggestion
+Having defined the data loading, model architecture, training, and evaluation we can put everything together and train our model using JAX. As already mentioned, the :code:`jax.grad()` function is defined in :code:`main()` and passed to :code:`train()`.
+``````suggestion
+The concept of federating an existing workload is always the same and easy to understand.
+``````suggestion
+Our implementation will be based on :code:`flwr.client.NumPyClient` and we'll call it :code:`FlowerClient`.
+``````suggestion
+:code:`FlowerClient` needs to implement four methods, two methods for getting/setting model parameters, one method for training the model, and one method for testing the model:
+```MXNet?```suggestion
+    * get the updated local model parameters and return them to the server
+```We don't have `accuracy` in this workload```suggestion
+The challenging part is to transform the JAX model parameters from :code:`DeviceArray` to :code:`NumPy ndarray` to make them compatible with `NumPyClient`. 
+``````suggestion
+The two :code:`NumPyClient` methods :code:`fit` and :code:`evaluate` make use of the functions :code:`train()` and :code:`evaluate()` previously defined in :code:`jax_training.py`.
+```This is not accurate```suggestion
+            self.train_y = train_y
+``````suggestion
+            # Return model parameters as a list of NumPy ndarrays
+``````suggestion
+            # Collect model parameters and update the parameters of the local model
+```Isn't this the same sentence as above? Should we mention that it's now federated?```suggestion
+        client = FlowerClient(params, grad_fn, train_x, train_y, test_x, test_y)
+``````suggestion
+    class FlowerClient(fl.client.NumPyClient):
+```MXNet?```suggestion
+Our example is of course somewhat over-simplified because both clients load the same dataset. 
+``````suggestion
+You're now prepared to explore this topic further. How about using a more sophisticated model or using a different dataset? How about adding more clients?
+```MXNet?```suggestion
+This MXNet example is based on the [Linear Regression with JAX](https://coax.readthedocs.io/en/latest/examples/linear_regression/jax.html) tutorial and uses a sklearn dataset (generating a random dataset for a regression pronlem). Feel free to consult the tutorial if you want to get a better understanding of JAX. If you play around with the dataset, please keep in mind that the data samples are generated randomly depending on the settings being done while calling the dataset function. Please checkout out the [scikit-learn tutorial for further information](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_regression.html). The file `jax_training.py` contains all the steps that are described in the tutorial. It loads the train and test dataset and a linear regression model, trains the model with the training set, and evaluates the trained model on the test set.
+``````suggestion
+You are now training a JAX-based linear regression model, federated across two clients. The setup is of course simplified since both clients hold a similar dataset, but you can now continue with your own explorations. How about changing from a linear regression to a more sophisticated model? How about adding more clients?
+``````suggestion
+class FlowerClient(fl.client.NumPyClient):
+``````suggestion
+    """"""Flower client implementing using linear regression using JAX""""""
+``````suggestion
+        # Return model parameters as a list of NumPy ndarrays
+``````suggestion
+        # Collect model parameters and update the parameters of the local model
+```Does this work?```suggestion
+    """"""Load data, start FlowerClient.""""""
+``````suggestion
+    client = FlowerClient(params, grad_fn, train_x, train_y, test_x, test_y)
+``````suggestion
+description = ""JAX example training a linear regression model with federated learning""
+``````suggestion
+python = ""^3.7""
+```
+```suggestion
+flwr = ""^0.18.0""
+```This can be removed```suggestion
+    # print(f'Test loss {loss_test}')
+```",1,True,2021-11-19 11:12:18,2022-03-21 15:00:00,2022-03-21 14:59:59
+https://github.com/adap/flower/pull/886,[],Changed tensor convertor from torch.Tensor() to torch.tensor(),"Changed tensor convertor from torch.Tensor() to torch.tensor()So I was working with this repo : https://github.com/amirhosseinh77/UNet-AerialSegmentation
+I cloned it and refactored it to train the model over flower. I used the code provided in the flower pytorch quickstart example.
+
+However, the load_state_dict method threw the following error :
+```IndexError: index 0 is out of bounds for dimension 0 with size 0```
+
+Seemed like an issue of shape mismatch. So I changed the set_parameters method to the following to analyse the situation:
+```py
+        def set_parameters(self, parameters):
+            params_dict = zip(model.state_dict().keys(), parameters)
+            state_dict = OrderedDict({k: torch.Tensor(v) for k, v in params_dict})
+
+            it1 = model.state_dict().items()
+            it2 = state_dict.items()
+
+            l1 = len(it1)
+            l2 = len(it2)
+
+            if l1!=l2 :
+                print(f""{l1} : {l2} length do not match"")
+            else :
+                for i in model.state_dict() :
+                    if not model.state_dict()[i].shape == state_dict[i].shape:
+                        print(i, model.state_dict()[i].shape, state_dict[i].shape,""Different"")
+
+            model.load_state_dict(state_dict, strict=False)
+```
+
+And I get the following output from the if-else block :
+```
+inc.double_conv.1.num_batches_tracked torch.Size([]) torch.Size([0]) Different
+inc.double_conv.4.num_batches_tracked torch.Size([]) torch.Size([0]) Different
+down1.maxpool_conv.1.double_conv.1.num_batches_tracked torch.Size([]) torch.Size([0]) Different
+down1.maxpool_conv.1.double_conv.4.num_batches_tracked torch.Size([]) torch.Size([0]) Different
+down2.maxpool_conv.1.double_conv.1.num_batches_tracked torch.Size([]) torch.Size([0]) Different
+down2.maxpool_conv.1.double_conv.4.num_batches_tracked torch.Size([]) torch.Size([0]) Different
+down3.maxpool_conv.1.double_conv.1.num_batches_tracked torch.Size([]) torch.Size([0]) Different
+down3.maxpool_conv.1.double_conv.4.num_batches_tracked torch.Size([]) torch.Size([0]) Different
+down4.maxpool_conv.1.double_conv.1.num_batches_tracked torch.Size([]) torch.Size([0]) Different
+down4.maxpool_conv.1.double_conv.4.num_batches_tracked torch.Size([]) torch.Size([0]) Different
+up1.conv.double_conv.1.num_batches_tracked torch.Size([]) torch.Size([0]) Different
+up1.conv.double_conv.4.num_batches_tracked torch.Size([]) torch.Size([0]) Different
+up2.conv.double_conv.1.num_batches_tracked torch.Size([]) torch.Size([0]) Different
+up2.conv.double_conv.4.num_batches_tracked torch.Size([]) torch.Size([0]) Different
+up3.conv.double_conv.1.num_batches_tracked torch.Size([]) torch.Size([0]) Different
+up3.conv.double_conv.4.num_batches_tracked torch.Size([]) torch.Size([0]) Different
+up4.conv.double_conv.1.num_batches_tracked torch.Size([]) torch.Size([0]) Different
+up4.conv.double_conv.4.num_batches_tracked torch.Size([]) torch.Size([0]) Different
+``` 
+
+So, it turns out to be a case of mismatch when the client side expects torch.Size([]) but the server side message is parsed to torch.Size([0]). On checking online, I found this link : https://discuss.pytorch.org/t/what-does-torch-size-0-means/21559
+
+and tried to come up with a solution, and turn out it was just changing the wrapper : 
+![image](https://user-images.githubusercontent.com/58355527/137803936-6154e7ba-1323-41cd-82fa-449f35f1614d.png)
+
+ Here you can see that torch.tensor() preserves the shape properly in both cases. But torch.Tensor() is unable to handle empty tensors. So, when I changed my code to : 
+```py
+        def set_parameters(self, parameters):
+            params_dict = zip(model.state_dict().keys(), parameters)
+            state_dict = OrderedDict({k: torch.tensor(v) for k, v in params_dict})
+
+            it1 = model.state_dict().items()
+            it2 = state_dict.items()
+
+            l1 = len(it1)
+            l2 = len(it2)
+
+            if l1!=l2 :
+                print(f""{l1} : {l2} length do not match"")
+            else :
+                for i in model.state_dict() :
+                    if not model.state_dict()[i].shape == state_dict[i].shape:
+                        print(i, model.state_dict()[i].shape, state_dict[i].shape,""Different"")
+
+            model.load_state_dict(state_dict, strict=False)
+```
+The code executed without any errors.
+
+I believe making this small change in the example will make the it more deployment ready and error free.",6,True,2021-10-18 21:38:30,2021-11-11 02:48:27,2021-11-10 20:35:12
+https://github.com/adap/flower/pull/885,[],Fix FedYogi to match the paper,Fix FedYogi to match the paperThere was a `nan` issue in the aggregated model so I found an error in the code.Fixes sign to reflect page 4 of https://openreview.net/pdf?id=LkFG3lB13U5 .,2,True,2021-10-18 06:13:53,2021-10-28 05:31:26,2021-10-28 05:31:26
+https://github.com/adap/flower/pull/862,[],Fix typos & edit link in docs,"Fix typos & edit link in docsWhile learning about flower, I saw this typo in the docs.
+
+I also noticed that the ""Suggest edit"" functionality in the docs currently causes a 404 because there is a component missing in the URL. E.g., on the ""evaluation"" page, the link points to https://github.com/adap/flower/edit/main/doc/evaluation.rst although the actual file is located at https://github.com/adap/flower/edit/main/doc/**source**/evaluation.rst. The responsible HTML partial does not seem to be in the public flower repo but I would assume that the bug is in topbar.html:
+
+https://github.com/lbhm/flower/blob/a5b21ca4204d1138bf49d2efbc333171056e8ac1/doc/source/_templates/layout.html#L37",1,True,2021-10-01 13:47:54,2021-10-12 07:56:55,2021-10-04 19:49:33
+https://github.com/adap/flower/pull/859,[],Upgrades poetry to version 1.1.10. It fixes some weird bugs during,Upgrades poetry to version 1.1.10. It fixes some weird bugs duringinstall related to https://github.com/python-poetry/poetry/issues/4085,1,True,2021-09-28 11:29:53,2021-10-12 07:56:54,2021-09-28 14:14:47
+https://github.com/adap/flower/pull/826,[],Fixing script to work with Ray ^1.6.0 without mypy `--no-implicit-reexport` issues.,Fixing script to work with Ray ^1.6.0 without mypy `--no-implicit-reexport` issues.This took a long time. Ray changed the way it structures the internal imports. Now one should call directly the submodule `ray.worker` to access `get`.,1,True,2021-08-30 20:12:30,2021-09-01 07:41:46,2021-09-01 07:41:45
+https://github.com/adap/flower/pull/814,[],Activate gRPC retry mechanism,Activate gRPC retry mechanismThis will enable the clients to retry in case the server can not be reached when establishing the initial stream connection. It should reduce errors where the server started up slowly or the network connection was unstable for few seconds.,1,False,2021-08-10 14:43:46,2021-08-12 08:59:27,2021-08-12 08:59:27
+https://github.com/adap/flower/pull/753,[],Add option to skip final distributed evaluation,Add option to skip final distributed evaluationThis PR adds an optional argument `force_final_distributed_eval` to start_server so that the final distributed evaluation step can be skipped. Note that this currently defaults to true in order to avoid changing the current behavior of start_server.This will fail the formatting check - you can fix it by running `./dev/format.sh` (make sure to have the dev dependencies installed beforehand),3,False,2021-06-08 22:03:32,2021-07-26 15:47:42,2021-07-26 15:47:42
+https://github.com/adap/flower/pull/748,[],Adding sklearn logreg example,"Adding sklearn logreg exampleAdding a scikit-learn logistic regression example using MNIST dataset.
+The openml helper in scikit-learn is broken, so I used the openml python library directly.
+I tried to make this as simple as possible following the quickstart examples but it turned out little complicated since model initialisation and parameter setting is a not so obvious with scikit-learn.```suggestion
+This example of Flower uses `scikit-learn`'s `LogisticRegression` model to train a federated learning system. It will help you understand how to adapt Flower for use with `scikit-learn`.
+``````suggestion
+            # Ignore convergence failure due to low local epochs
+``````suggestion
+    Sets initial parameters as zeros
+    Required for since model params are uninitialized until model.fit is called
+    But server asks for initial parameters from clients at launch
+    Refer to sklearn.linear_model.LogisticRegression documentation
+    for more information.
+```",4,True,2021-06-06 11:15:29,2022-01-03 16:07:27,2021-06-30 20:15:02
+https://github.com/adap/flower/pull/739,[],Fix pytorch quickstart,"Fix pytorch quickstartFixes:
+
+    AttributeError: 'CifarClient' object has no attribute 'testloader'",1,True,2021-05-25 10:51:34,2021-05-25 12:04:32,2021-05-25 11:31:00
+https://github.com/adap/flower/pull/673,[],Fix Mxnet loss and accuracy calculation,"Fix Mxnet loss and accuracy calculation- change Loss to CrossEntropyLoss in ""from_centralized_to_federated""
+- create eval metric and add Loss and Accuracy
+- adjust return values to eval metric",1,True,2021-03-11 10:27:58,2021-03-12 17:03:08,2021-03-12 17:03:07
+https://github.com/adap/flower/pull/394,[],Change Setting to Baseline,"Change Setting to BaselineThis PR addresses [this issue](https://github.com/adap/flower/issues/345). This is my first PR and I've tried adhering to most guidelines, apologies for any mistakes in that. I'm looking forward to contributing and submitting PRs to solve more of these issues.",2,True,2020-09-01 11:27:54,2020-09-01 15:35:56,2020-09-01 15:35:56
+https://github.com/adap/flower/pull/78,[],Add possibility to enable faulthandler,Add possibility to enable faulthandler,1,False,2020-03-18 19:40:50,2020-05-21 10:28:52,2020-03-20 17:21:57

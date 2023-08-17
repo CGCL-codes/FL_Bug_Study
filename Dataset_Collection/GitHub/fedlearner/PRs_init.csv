@@ -1,0 +1,111 @@
+url,label,title,all_text,comments,merged,created_time,updated_time,closed_time
+https://github.com/bytedance/fedlearner/pull/1015,[],fix(data_join): hot-fix fpath is none,fix(data_join): hot-fix fpath is nonefix logic bug when fpath is none,1,True,2022-07-14 05:27:15,2022-07-14 08:34:25,2022-07-14 08:34:25
+https://github.com/bytedance/fedlearner/pull/915,[],Add two way SGX-RA-TLS support for Worker2Worker,"Add two way SGX-RA-TLS support for Worker2Worker* Upgrade gramine version
+* Add two way SGX-RA-TLS support for Worker2Worker
+* Update gramine examples我们能不能不直接在测试的时候复制代码/软链接过来？ 实际代码库里面还只保留examples目录下面的example？之后可以把这些源码移动到fedleaner的example目录中 这里改下？  统一都放到use_tls这个函数里面去进行加载？ use_tls第二个参数返回下creds？这个你把老的给覆盖了我们只修改了generate_cc_env_fix.patch这个文件在哪？这里还是把第二个return删掉吧，在use_tls()中创建会浪费资源这部分没有特殊的代码吧？现在example下面就有这里我觉得可以直接返回null或者creds？",1,True,2021-11-09 20:44:04,2021-11-12 02:44:57,2021-11-12 02:44:57
+https://github.com/bytedance/fedlearner/pull/900,[],feat(charts): update nfs client image to solve k8s 1.20 self link issue,feat(charts): update nfs client image to solve k8s 1.20 self link issueupgrade nfs-client-provisioner image version to compatible with kubernetes 1.20.,1,True,2021-10-25 04:24:53,2021-10-25 05:55:52,2021-10-25 05:55:52
+https://github.com/bytedance/fedlearner/pull/897,[],fix(log): support containerd,"fix(log): support containerdfilebeat的配置添加了支持containerd运行时的input，升级filebeat版本到7.10。
+ES query匹配的field从*变成了message，防止field数目（5000）超过7.10版本1024的限制这个镜像push了吗",1,True,2021-10-09 08:53:51,2021-10-25 15:38:03,2021-10-25 15:38:03
+https://github.com/bytedance/fedlearner/pull/852,[],feat(tree): enable label select,"feat(tree): enable label select1. support label selection in tree model
+2. treat '' as 'nan'是因为label这个名字被占用了吗？不是，是想让用户选择哪个列做y",1,True,2021-07-09 09:17:37,2021-07-21 06:51:15,2021-07-21 06:51:15
+https://github.com/bytedance/fedlearner/pull/844,[],[WebConsoleV2] fix(deloy): operator ingress tls,[WebConsoleV2] fix(deloy): operator ingress tls这个名字对吗？我怎么记得挺长的后面还会拼一个泛域名,2,True,2021-06-07 08:25:11,2021-06-11 04:54:53,2021-06-11 04:54:53
+https://github.com/bytedance/fedlearner/pull/775,[],[WebConsoleV2] Fixes client's CI by locking pnpm version.,[WebConsoleV2] Fixes client's CI by locking pnpm version.,1,True,2021-04-06 15:16:43,2021-04-06 15:20:46,2021-04-06 15:20:43
+https://github.com/bytedance/fedlearner/pull/769,[],[Do not merge][WebConsoleV2]make coordinator commit  Idempotent,[Do not merge][WebConsoleV2]make coordinator commit  Idempotentfake fix,1,False,2021-04-03 20:21:41,2021-04-03 20:22:49,2021-04-03 20:22:27
+https://github.com/bytedance/fedlearner/pull/749,[],[WebConsoleV2] Fix codetar encoding and get workflows,[WebConsoleV2] Fix codetar encoding and get workflows,1,True,2021-03-30 12:49:32,2021-03-31 03:25:53,2021-03-31 03:25:53
+https://github.com/bytedance/fedlearner/pull/730,[],[WebConsoleV2] Fix CODE encoding,[WebConsoleV2] Fix CODE encoding,1,True,2021-03-25 09:11:23,2021-03-25 09:15:09,2021-03-25 09:15:08
+https://github.com/bytedance/fedlearner/pull/726,[],pack_grad_hess,"pack_grad_hessPack Grad and Hessnit: 写个注释？二进制位数这种是不是让需要的地方生成就好了？nit: class名字最好叫名词吧，比如GradHessPacker或者GradHessEncryptor之类的注释这些再整理一下吧mod _n还需要吗？建议assert一下ciphertexts size大于0建议直接用public_key里的nsquare更自洽一点，这里设置这个参数是有什么考量吗？函数名改一下(没有在这里面send)
+nit: 感觉取点有意义的名字？比如 public_key, numbers, part_index这里还是得线性发送是吧，原因是因为开了进程所以不能在进程里搞吗？我也忘了当时为啥设置这个参数了，不过这个函数我整个去掉了，一开始是为了做测试加的后台有个锁，不过线性发送效率应该差不多？这里pk和sk能不能作为pack or unpack的参数？让人误以为pack也需要私钥等48是怎么来的？ 增加下下packing溢出的test case?这个48是为了防止多个负数相加导致结果溢出，从hess的位置溢出到grad的位置。现在只有2^48个数相加才有可能发生前面说的那种溢出。2^48差不多万亿规模了，实际中应该不会发生。具体那个文档中有写。这个大概是个啥样的？
+溢出不就出错了吗？可以把private_key作为decrypt_and_unpack_grad_hess那个函数的参数。需要的，有可能会出现decrypt([[-1]]*[[1]]%nsquare)等于n的情况。",1,True,2021-03-25 03:16:56,2021-03-29 07:10:47,2021-03-29 07:10:47
+https://github.com/bytedance/fedlearner/pull/719,[],[WebConsoleV2] Fix Client CI build failed due to console.log,[WebConsoleV2] Fix Client CI build failed due to console.log,2,True,2021-03-24 04:19:27,2021-03-24 04:59:30,2021-03-24 04:59:30
+https://github.com/bytedance/fedlearner/pull/676,[],Fix Nginx DNS error log,"Fix Nginx DNS error logReference:
+https://kubernetes.io/docs/concepts/services-networking/service/#services-without-selectors如果是域名怎么办？域名好像创建就会失败了",1,False,2021-03-15 05:37:54,2021-03-17 06:19:38,2021-03-17 06:19:38
+https://github.com/bytedance/fedlearner/pull/626,[],[WebConsoleV2] add uuid for workflow,"[WebConsoleV2] add uuid for workflow直接精确查找吧1. GetWorkflow是不是也可以改成uuid了
+2. workflow_name还需要吗大写不支持吗直接把key改成  config.job_definitions[index].job_name ?uuid mock一把测试一下吧不支持workflow_name还是需要的，不然对侧突然多一个没名字的workflow有点奇怪。把所有用name交互的改成uuid ，我整个TODO吧前端应该增加一个修改workflow name的功能？k8s的限制吗？这个错误信息不对了吧 应该是31？这个错误信息有点问题，job_def.name不用返回了，然后错误信息可以改成：
+`Only letters(a-z), numbers(0-9) and dashes(-) are supported.`这个测试写得有点绕了
+```
+@patch('fedlearner_webconsole.workflow.apis.scheduler.wakeup')
+@patch('uuid.uuid4')
+def test_create_new_workflow(self, mock_uuid4, mock_wakeup):
+    mock_uuid4.return_value = UUID('12345678123456781234567812345678')
+    # ....
+    'uuid': '12345678123456781234567812345678'
+```是的写个注释吧彻底用name一致了应该是可以的",1,True,2021-03-02 07:38:34,2021-03-16 07:36:55,2021-03-04 07:19:49
+https://github.com/bytedance/fedlearner/pull/610,[],[WebConsoleV2] Fix imported_file_num to num_imported_file,[WebConsoleV2] Fix imported_file_num to num_imported_file,1,True,2021-02-24 13:48:22,2021-02-25 01:23:33,2021-02-25 01:23:33
+https://github.com/bytedance/fedlearner/pull/605,[],[WebConsoleV2] Adds modification time in file info.,[WebConsoleV2] Adds modification time in file info.,1,True,2021-02-22 10:23:15,2021-02-22 13:32:41,2021-02-22 13:32:37
+https://github.com/bytedance/fedlearner/pull/600,[],[WebConsoleV2] Fixes the scheduler starting issue.,[WebConsoleV2] Fixes the scheduler starting issue.Separates the configs of command app and prod app.,2,True,2021-02-19 11:03:56,2021-02-19 14:13:45,2021-02-19 14:13:42
+https://github.com/bytedance/fedlearner/pull/583,[],fix(webconsole_v1): implement pagination & type & keyword filters for job list query,"fix(webconsole_v1): implement pagination & type & keyword filters for job list query- jobs 接口添加分页
+- jobs 接口去除部分冗余信息 (k8s_meta_snapshot)
+- jobs 接口添加关键词/job_type筛选",1,True,2021-02-05 09:03:10,2021-02-07 07:01:21,2021-02-07 07:01:21
+https://github.com/bytedance/fedlearner/pull/542,[],[WebConsoleV2] Fixes db migrations.,[WebConsoleV2] Fixes db migrations.,1,True,2021-01-24 10:46:06,2021-01-24 13:07:41,2021-01-24 13:07:37
+https://github.com/bytedance/fedlearner/pull/523,[],[WebConsoleV2] Unifies error messages for auth errors.,[WebConsoleV2] Unifies error messages for auth errors.,2,True,2021-01-18 07:19:11,2021-01-18 08:42:18,2021-01-18 08:42:14
+https://github.com/bytedance/fedlearner/pull/521,[],[WebConsoleV2] Add Yaml formatter for job run stage,"[WebConsoleV2] Add Yaml formatter for job run stage‘’就行了不用这么搞吧，直接把所有variable都更新到dict里，然后yaml.format（dict）就完了
+OK确实，不过用这种 . 的方式解析dict还是要重载下这个get_field的，之后我把解析variable的逻辑拆出去吧不需要解析吧你dict里就是
+{'workflow.jobs.raw_datajob.xxxx': 1},
+然后template就是
+‘FLapp:
+     replicas: {workflow.jobs.raw_datajob.xxxx}
+`.format(**dict)
+就完事了不行的吧，你这个例子就会报错，{}里面有点，会被识别成属性的，然后按点把field_name spilit 成 几个 i 循环找。
+ def get_field(self, field_name, args, kwargs):
+        first, rest = _string.formatter_field_name_split(field_name)
+
+        obj = self.get_value(first, args, kwargs)
+
+        # loop through the rest of the field_name, doing
+        #  getattr or getitem as needed
+        for is_attr, i in rest:
+            if is_attr:
+                obj = getattr(obj, i)
+            else:
+                obj = obj[i]
+
+        return obj, first
+做个正则替换就好了，比如workflow_jobs_xxxx这样不也一样吗，还省的拼字典，为啥不能直接用对象呢？不一样，简单不容易出错。
+
+1. 把所有的variable读出来放进字典里按照 workfow_jobs_xxx 的形式
+2. 把yaml里的所有 {xxx.yy.zzz} 形式的变量做个正则替换
+3. format一下done这不是dep_job吧，就叫job就行了。dep_job.name.split('-')[-1] -> job.get_config().name可以直接用proto;以及不要修改函数参数里的内容。
+```
+def _make_variables_dict(self, variables):
+  var_dict = {
+    var.name: var.value
+    for var in variables
+  }
+  return var_dict
+```函数名也改一下吧YamlFormatter没有format这个函数啊装一个DotMap: https://github.com/drgrib/dotmap
+
+然后这里
+```
+job.yaml_template.format(workflow=DotMap(workflow),
+                                            project=DotMap(project),
+                                            system=DotMap(system_dict))
+```继承的 python原生的 formatter的donedone",1,True,2021-01-15 10:50:19,2021-03-16 07:36:36,2021-01-19 13:00:32
+https://github.com/bytedance/fedlearner/pull/519,[],[WebConsoleV2] Refactor job scheduling logic and fix test.,[WebConsoleV2] Refactor job scheduling logic and fix test.,1,True,2021-01-15 08:45:34,2021-01-15 12:13:49,2021-01-15 12:13:46
+https://github.com/bytedance/fedlearner/pull/498,[],[WebConsoleV2] Throws parsing error details to FE if workflow templat…,[WebConsoleV2] Throws parsing error details to FE if workflow templat……e is invalid.,1,True,2021-01-07 08:53:41,2021-01-07 09:54:49,2021-01-07 09:36:41
+https://github.com/bytedance/fedlearner/pull/353,[],fix typo,fix typo,1,False,2020-10-09 03:22:40,2020-12-15 08:42:16,2020-12-15 08:42:16
+https://github.com/bytedance/fedlearner/pull/341,[],fix: fix completed app state,fix: fix completed app state,1,True,2020-09-24 03:40:21,2020-09-24 04:37:07,2020-09-24 04:10:48
+https://github.com/bytedance/fedlearner/pull/210,[],fix: add notes and grpc service,fix: add notes and grpc service,1,True,2020-08-03 13:57:28,2020-08-04 02:42:06,2020-08-04 02:42:05
+https://github.com/bytedance/fedlearner/pull/199,[],optimize fedlearner-add-on,"optimize fedlearner-add-onOptimize fedleaner add on to make it simpler.
+
+helm install fedlearner-add-on ./fedlearner-add-on \
+  --set imageCredentials.registry=xxxx \
+  --set imageCredentials.username=xxxx \
+  --set imageCredentials.password=xxxx \
+  --set service.externalName=xxxx这个好像是.pem不是.crtThe certs assigned by dongyu is readly pem format. I'll fix it.change t to true, t is a workaround to pass params to yamlfixed",1,True,2020-07-29 05:52:54,2020-07-29 12:45:46,2020-07-29 12:45:45
+https://github.com/bytedance/fedlearner/pull/182,[],add scripts to deploy the infras in aliyun,"add scripts to deploy the infras in aliyun这里是不是不再需要了？如果已经是默认的 true？k8s1.11 这个版本与 k8s 1.16 是否兼容呢？nfs-client-provisioner/values.yaml 中的配置为
+image:
+  repository: quay.io/external_storage/nfs-client-provisioner
+  tag: v3.1.0-k8s1.11
+  pullPolicy: IfNotPresent
+
+此处仅把镜像切换至阿里云，版本未做改变，测试 ok。true 会报错如下错误。
+
+Error: UPGRADE FAILED: unable to decode """": resource.metadataOnlyObject.ObjectMeta: v1.ObjectMeta.Annotations: ReadString: expects "" or n, but found t, error found in #10 byte of ...|re-port"":true,""nginx|..., bigger context ...|nginx.ingress.kubernetes.io/http2-insecure-port"":true,""nginx.ingress.kubernetes.io/proxy-body-size"":|...我是看 add-on ingress 已经有了这个：""nginx.ingress.kubernetes.io/http2-insecure-port"": true；所以是不是可以删掉这行？
+删掉这行就会报如上错误啊",1,True,2020-07-23 10:34:56,2020-07-30 12:01:21,2020-07-30 12:01:21
+https://github.com/bytedance/fedlearner/pull/167,[],fix missing update the replica status,"fix missing update the replica statusThis may not work because it only update app's status in memory, however we want to persist it in CRD.Besides, I think this should be in `syncShuttingDownApp`. The state machine transit from `failing` to `shutingdown`",1,True,2020-07-21 13:21:23,2020-07-22 05:56:41,2020-07-22 05:55:54
+https://github.com/bytedance/fedlearner/pull/159,[],fix(db): adapt model definition to internal RDS limit,fix(db): adapt model definition to internal RDS limit,1,True,2020-07-21 03:30:38,2020-07-21 08:15:27,2020-07-21 08:15:08
+https://github.com/bytedance/fedlearner/pull/88,[],feat(web_console): job,"feat(web_console): job`/api/v1/job/:k8s_name/log?start_time=xxx` would be better, 'caz `es` query DSL is quite complicatedfor example: we might wanna indicate `end_time` somedaythe same issue`Ticket` takes priority over `Job`, return error if ticket not exits, no need for job validationwhy validate `Federation` hereonly support `index` and `options/dsl` arguments would be better, and implement a utility function for `es` dsl generationno need. `job` would be created by `federation`only use native `JSON.parse` and `JSON.stringify` for json validationuse `JSON object` type for `client_params` and `server_params` would be better@piiswrong client first or server first?应该是client收到server的response（success）以后再create的validate by server",1,True,2020-07-06 02:57:03,2020-07-06 12:17:19,2020-07-06 12:17:19
+https://github.com/bytedance/fedlearner/pull/87,[],feat: add grpc client timeout,"feat: add grpc client timeoutwhat about abstract a new func to reduce the duplicated processes.May be one second is little short for public network connection sometimes. 3-5 seconds may be better.Good point, fixed",1,True,2020-07-03 12:33:43,2020-07-06 02:53:40,2020-07-06 02:48:48
+https://github.com/bytedance/fedlearner/pull/75,[],fix(web_console): do not redirect for static file request,fix(web_console): do not redirect for static file request,2,True,2020-06-29 13:43:29,2020-07-02 03:35:43,2020-07-02 03:35:43
+https://github.com/bytedance/fedlearner/pull/52,[],fix(web_console): use official npm registry,fix(web_console): use official npm registry,1,True,2020-06-17 03:34:01,2020-06-17 08:44:47,2020-06-17 08:44:47
+https://github.com/bytedance/fedlearner/pull/20,[],fix: fix nfs provisioner option,fix: fix nfs provisioner option,2,True,2020-06-02 06:53:00,2020-06-04 08:56:13,2020-06-04 08:56:09

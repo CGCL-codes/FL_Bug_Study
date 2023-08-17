@@ -1,0 +1,280 @@
+url	label	title	all_text	comments	created_time	updated_time	closed_time
+https://github.com/PaddlePaddle/PaddleFL/issues/249	[]	greater_equal和mul不能放在一起使用的问题	"greater_equal和mul不能放在一起使用的问题您好，我在使用paddlefl框架时遇到了如下问题：下面的乘法代码运行时会报如下错误，当我注释掉“ op_ge = pfl_mpc.layers.greater_equal(x=x, y=y)”这一行代码时，乘法可以正常运行。我的理解是pfl_mpc.layers某些算法不能放在一起使用，例如基于混淆电路的greater_equal和基于算数电路的mul。如果我想在一起使用这些算法的话，需要怎么做呢？
+
+
+FAIL: test_ge (__main__.TestOptest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File ""test.py"", line 51, in test_ge
+    self.assertEqual(ret[0], True)
+AssertionError: EnforceNotMet('\n\n----------------------[5701 chars]or]') != True
+
+----------------------------------------------------------------------
+
+
+`import unittest
+from multiprocessing import Manager
+
+import numpy as np
+import paddle.fluid as fluid
+import paddle_fl.mpc as pfl_mpc
+import test_op_base
+from paddle_fl.mpc.data_utils.data_utils import get_datautils
+
+aby3 = get_datautils('aby3')
+
+
+class TestOptest(test_op_base.TestOpBase):
+
+    def ge(self, **kwargs):
+        role = kwargs['role']
+        d_1 = kwargs['data_1'][role]
+        d_2 = kwargs['data_2'][role]
+        d_3 = kwargs['data_3'][role]
+        expected_out = kwargs['expect_results'][role]
+        pfl_mpc.init(""aby3"", role, ""localhost"", self.server, int(self.port))
+        x = pfl_mpc.data(name='x', shape=[1], dtype='int64')
+        y = fluid.data(name='y', shape=[1], dtype='float32')
+        z = pfl_mpc.data(name='z', shape=[1], dtype='int64')
+        op_ge = pfl_mpc.layers.greater_equal(x=x, y=y)
+        exe = fluid.Executor(place=fluid.CPUPlace())
+        #results = exe.run(feed={'x': d_1, 'y': d_2}, fetch_list=[op_ge])
+        #print(results)
+        #self.assertEqual(results[0].shape, (1, ))
+        #self.assertTrue(np.allclose(results[0], expected_out))
+
+        print(""here"")
+        op_mul = pfl_mpc.layers.mul(x=x, y=z)
+        results2 = exe.run(feed={'x': d_1, 'z': d_1}, fetch_list=[op_mul])
+        print(results2)
+
+    def test_ge(self):
+        data_1 = np.full((1), fill_value=6553.6)
+        data_1_shares = aby3.make_shares(data_1)
+        data_1_all3shares = np.array([aby3.get_shares(data_1_shares, i) for i in range(3)])
+        data_2 = [np.array([65536]).astype('float32')] * self.party_num
+        data_3 = np.full((1), fill_value=655.36)
+        data_3_shares = aby3.make_shares(data_1)
+        data_3_all3shares = np.array([aby3.get_shares(data_1_shares, i) for i in range(3)])
+        expect_results = [np.array([0])] * self.party_num
+        ret = self.multi_party_run(target=self.ge,
+                                   data_1=data_1_all3shares,
+                                   data_2=data_2,
+                                   data_3=data_3_all3shares,
+                                   expect_results=expect_results)
+        self.assertEqual(ret[0], True)
+
+if __name__ == '__main__':
+    unittest.main()
+`目前paddlefl的比较算符内部是布尔电路但是返回结果是明文的tensor, 应该不涉及不同电路混合计算的问题
+
+另外ge和mul的复合应该可以用relu实现等价的效果> 目前paddlefl的比较算符内部是布尔电路但是返回结果是明文的tensor, 应该不涉及不同电路混合计算的问题
+> 
+> 另外ge和mul的复合应该可以用relu实现等价的效果
+
+我看了一下aby3的论文，比较确实是布尔电路，不是混淆电路，我之前的理解有一些问题；利用relu等价这部分我会研究一下，谢谢您的指点！
+另外，我认为paddlefl框架在这里可能还是存在bug，比如我连续做两次加法（乘法）或者连续做两次比较或者做一次加法再做一次乘法都不会出现问题，唯独加法（乘法）与比较放在一起不能正确运行，或许是布尔电路和算数电路混合计算的时候会出现问题？我认为是
+```py
+results2 = exe.run(feed={'x': d_1, 'z': d_1}, fetch_list=[op_mul])
+```
+这里没有feed 'y'导致的错误.
+
+改成这样是可以运行的:
+```py
+def ge(self, **kwargs):
+    role = kwargs['role']
+    d_1 = kwargs['data_1'][role]
+    d_2 = kwargs['data_2'][role]
+    d_3 = kwargs['data_3'][role]
+    expected_out = kwargs['expect_results'][role]
+    pfl_mpc.init(""aby3"", role, ""localhost"", self.server, int(self.port))
+    x = pfl_mpc.data(name='x', shape=[1], dtype='int64')
+    y = fluid.data(name='y', shape=[1], dtype='float32')
+    z = pfl_mpc.data(name='z', shape=[1], dtype='int64')
+    op_ge = pfl_mpc.layers.greater_equal(x=x, y=y)
+    exe = fluid.Executor(place=fluid.CPUPlace())
+    op_mul = pfl_mpc.layers.mul(x=x, y=z)
+    results2 = exe.run(feed={'x': d_1, 'y':d_2, 'z': d_3}, fetch_list=[op_ge,op_mul])
+```
+
+另外目前的框架在python层应该是没有“布尔电路和算数电路混合计算”的, 所有在python层可见的tensor都是算数电路或者是明文的tensor> 
+我试了一下，确实是这样，十分感谢！"	4	2022-03-02 06:58:43	2022-03-09 06:24:47	2022-03-09 06:24:47
+https://github.com/PaddlePaddle/PaddleFL/issues/224	[]	ImportError: cannot import name 'CipherUtils' from 'paddle.fluid.core_avx' (/usr/local/python/lib/python3.8/site-packages/paddle/fluid/core_avx.so)	"ImportError: cannot import name 'CipherUtils' from 'paddle.fluid.core_avx' (/usr/local/python/lib/python3.8/site-packages/paddle/fluid/core_avx.so)尊敬的开发人员你好，
+我按照步骤，使用nvidia-docker直接拉取了PaddleFL的项目,在运行ctr_demo时报错:
+找不到paddle_serving_client模块，安装好padlle_serving_client模块后,再次运行
+报了下述错误,请问是什么原因呢?
+ File ""/usr/local/python/lib/python3.8/site-packages/paddle_serving_client/io/__init__.py"", line 24, in <module>
+    from paddle.fluid.core import CipherUtils
+ImportError: cannot import name 'CipherUtils' from 'paddle.fluid.core_avx' (/usr/local/python/lib/python3.8/site-packages/paddle/fluid/core_avx.so)
+
+运行环境centos7，nvidia-docker
+python包环境只加了一个paddle_serving_client
+![wrong2](https://user-images.githubusercontent.com/13082828/133219429-d6d1f888-4c2b-4f36-885b-8880ef82081e.jpg)
+
+非常感谢> 尊敬的开发人员你好，
+> 我按照步骤，使用nvidia-docker直接拉取了PaddleFL的项目,在运行ctr_demo时报错:
+> 找不到paddle_serving_client模块，安装好padlle_serving_client模块后,再次运行
+> 报了下述错误,请问是什么原因呢?
+> File ""/usr/local/python/lib/python3.8/site-packages/paddle_serving_client/io/**init**.py"", line 24, in
+> from paddle.fluid.core import CipherUtils
+> ImportError: cannot import name 'CipherUtils' from 'paddle.fluid.core_avx' (/usr/local/python/lib/python3.8/site-packages/paddle/fluid/core_avx.so)
+> 
+> 运行环境centos7，nvidia-docker
+> python包环境只加了一个paddle_serving_client
+> ![wrong2](https://user-images.githubusercontent.com/13082828/133219429-d6d1f888-4c2b-4f36-885b-8880ef82081e.jpg)
+> 
+> 非常感谢
+
+经过不断尝试, 现在暂时放弃使用FL1.1.2版本的docker环境，改用FL1.1.0版本的docker环境后可以正常运行程序
+FL1.1.2的docker环境中python=3.8,paddlepaddle=1.8.5,运行程序时缺少paddle-serving-client包，但是支持python3.8最小的paddle-serving-client包版本为0.5.0,这个包需要依赖paddlepaddle 2.0以上的版本,因此即使安装好paddle-serving-client也会报找不到'CipherUtils'的错误，如果将paddlepaddle升级成2.0.0以上又会报其他问题，改用FL1.1.0版本的docker环境后，环境问题解决，程序正常运行
+docker拉取命令
+docker pull paddlepaddle/paddlefl:1.1.2
+改成
+docker pull paddlepaddle/paddlefl:latest
+
+我的问题暂时解决了
+尊敬的开发者您好，不知道上述的分析过程是否正确，如果正确希望能修改一下1.1.2版本的docker环境中的问题，如果我的操作有问题，希望得到回复，非常感谢您的工作"	1	2021-09-14 08:02:44	2021-09-15 05:58:44	2021-09-15 05:58:44
+https://github.com/PaddlePaddle/PaddleFL/issues/156	[]	PSI question	"PSI questionI am a bit confused with PSI tools in Paddle FL.
+When I do PSI align with two vertical divided parts of dataset, I have not the same align data in two files:
+
+![image](https://user-images.githubusercontent.com/23639951/114208574-4a77a100-9966-11eb-8255-863367a2d6e7.png)
+![image](https://user-images.githubusercontent.com/23639951/114208630-5c594400-9966-11eb-8f8b-efb8de96816b.png)
+
+As you can see the beginning of the data is different, so that we will have failure data when concating them.
+
+
+By the way, it  doesn’t happen all the time, sometimes I have the right set of align IDs.
+
+Is it problem with PSI tools or I do something wrong ?It seems that order of psi result is not preserved in python data structure 'set'.
+Fixed in pull request above.Great! Thank you."	2	2021-04-09 16:08:00	2021-04-12 08:18:55	2021-04-12 08:18:54
+https://github.com/PaddlePaddle/PaddleFL/issues/152	[]	How does PaddleFL handle unstable connection between mobile-trainer and Server.	"How does PaddleFL handle unstable connection between mobile-trainer and Server.For example, some mobiles get power down during the training process.First of all, PaddleFL does not support mobile federated training recently, mainly because we have not support distributed training among mobile devices in Paddle-Lite. 
+
+As for unstable connection, we did some experiments to test the stability of PaddleFL, deep models like Resnet and VGG can train without exception under cross-datacenter network(rate=10mbits/s & latency = 200ms).
+
+Finally, we do not support automatic recovery now (will add in following versions), so you need to restart trainer manually when it is crashed.Thanks for your reply!
+Issue closed."	2	2021-01-26 06:14:53	2021-03-02 07:18:53	2021-03-02 07:18:53
+https://github.com/PaddlePaddle/PaddleFL/issues/129	[]	Is it possible to have Federated Learning on Cloud-Edge?	"Is it possible to have Federated Learning on Cloud-Edge?Hi everyone,
+
+Currently I am working on a school project about federated learning and came across your framework during exploratory analysis. My project should utilize federated learning in this manner - I have an aggregation server (let's say in a cloud). I want this server to provide model to my 2 Raspberry PIs. These two RPIs would then train the model on a local data for x epochs and provide the trained models/gradients back to the global server. On this server, the results would be federated averaged and new model would be sent to the PIs. Is such a workflow possible with your framework? If so, could you provide me a hint?
+
+Thank you,
+Best regardsI'm afraid not for now. The workflow you mentioned is well supported in Paddle FL. You can check the examples in paddle_fl or  the mobile directory. The problem is, we are NOT sure if Paddle FL works on Raspberry Pi. Paddle FL depends on the full-functional PaddlePaddle, which is not yet migrated or tested on Raspberry Pi.
+
+You can try compiling the PaddlePaddle and the Paddle FL code on Raspberry Pi to check if it works. We have not tested this before."	1	2020-10-14 21:44:36	2020-12-16 08:30:57	2020-12-16 08:30:57
+https://github.com/PaddlePaddle/PaddleFL/issues/101	[]	detection demo训练占用显存过大，如何减小显存	"detection demo训练占用显存过大，如何减小显存在训练detection demo的时候显存达到10G，想问一下有什么办法，可以减小训练显存吗？看到fl_tarin.py里面的batch_size已经是1了，不知道还有没有其他参数可以调整。
+![image](https://user-images.githubusercontent.com/22416239/90090980-f3c6b280-dd57-11ea-8333-812509a3f5d6.png)
+这个可能需要咨询下PaddleDetection那边的同学。
+『PaddleDetection训练时显存占用的问题』"	1	2020-08-13 03:28:18	2020-08-28 08:59:31	2020-08-28 08:59:31
+https://github.com/PaddlePaddle/PaddleFL/issues/85	[]	Femnist_demo运行准确率问题	"Femnist_demo运行准确率问题在运行咱们的Femnist_demo例子的过程中，发现准确率很低，这个是正常现象嘛？参数都使用默认的，没有进行修改，trainer0.log的具体内容为：
+[trainer0.log](https://github.com/PaddlePaddle/PaddleFL/files/4803208/trainer0.log)
+感谢回复！您好，我们将femnist数据切分为35份数据。
+您可以把fl_master 里面的worker_num 改成35；run.sh 中的for loop中4改为35 试一下。
+根据我们的实验，用全量数据做联邦训练，在测试集上的accuracy可以达到78%左右。
+
+您的log我这边打不开呢，可以再提供下么非常感谢您的回复，我尝试一下您说的方法。附之前的log
+[trainer0.txt](https://github.com/PaddlePaddle/PaddleFL/files/4803400/trainer0.txt)"	2	2020-06-19 08:04:03	2020-10-16 06:06:49	2020-10-16 06:06:49
+https://github.com/PaddlePaddle/PaddleFL/issues/80	[]	ValueError when save detection model	"ValueError when save detection modelThere is a value error: ""var im_id not in this block"" when save a detection model. While ""im_id"" exists in trainer main program. 
+
+**fl_trainer.py:** 
+
+job_path = ""fl_job_config""
+job = FLRunTimeJob()
+job.load_trainer_job(job_path, trainer_id)
+job._scheduler_ep = ""127.0.0.1:9091""  # Inform scheduler IP address to trainer
+trainer = FLTrainerFactory().create_fl_trainer(job)
+trainer._current_ep = ""127.0.0.1:{}"".format(9000 + trainer_id)
+trainer.start(fluid.CUDAPlace(trainer_id+1))
+
+test_program = trainer._main_program.clone(for_test=True)
+
+image = fluid.layers.data(name='image', shape=[3, None, None], dtype = 'float32',lod_level=0)
+im_info = fluid.layers.data(name='im_info', shape=[None, 3], dtype = 'float32',lod_level=0)
+im_id = fluid.layers.data(name='im_id', shape=[None, 1], dtype = 'int64',lod_level=0)
+gt_bbox = fluid.layers.data(name='gt_bbox', shape=[None,4], dtype = 'float32', lod_level=1)
+gt_class = fluid.layers.data(name='gt_class', shape=[None,1], dtype = 'int32', lod_level=1)
+is_crowd = fluid.layers.data(name='is_crowd', shape=[None,1], dtype = 'int32', lod_level=1)
+place = fluid.CUDAPlace(trainer_id)
+feeder = fluid.DataFeeder(feed_list=[image, im_info, im_id, gt_bbox, gt_class, is_crowd], place=place)
+
+output_folder = ""model_node%d"" % trainer_id
+epoch_id = 0
+step = 0
+
+while not trainer.stop():
+    
+    epoch_id += 1
+    
+    if epoch_id > 10:
+        break
+    
+    print(""epoch %d start train"" % (epoch_id))
+    test_class = TestReader()
+    data_loader = test_class.test_loader()
+    
+    for step_id, data in enumerate(data_loader):
+        acc = trainer.run(feeder.feed(data), fetch=['sum_0.tmp_0'])
+        step += 1
+        print(""step: {}, loss: {}"".format(step, acc))
+
+    if trainer_id == 0:
+        save_dir = (output_folder + ""/epoch_%d"") % epoch_id
+        trainer.save_inference_program(output_folder)
+
+
+**Trainer main program Intercept：**
+
+vars {
+    name: ""im_id""
+    type {
+      type: LOD_TENSOR
+      lod_tensor {
+        tensor {
+          data_type: INT64
+          dims: -1
+          dims: 1
+        }
+        lod_level: 0
+      }
+    }
+    persistable: false
+    need_check_feed: true
+  }
+
+问题解决方式：detection任务中保存及验证模型模型用的是save接口所产生的.pdparams 文件，将保存模型部分代码改为:
+
+if trainer_id == 0:
+       
+        save_dir = (output_folder + ""/epoch_%d"") % epoch_id
+        fluid.save(trainer._main_program, output_folder)
+训练正常运行，模型也可以保存，模型效果验证中。。"	1	2020-05-25 08:10:30	2020-06-11 03:26:41	2020-06-11 03:26:41
+https://github.com/PaddlePaddle/PaddleFL/issues/63	[]	有没有国内的交流群啊，案例好像都没有什么文档	"有没有国内的交流群啊，案例好像都没有什么文档您好，感谢您的建议！我们会尽快提供更完善的教程，并提供更方便的交流渠道！有纵向学习的案例没纵向的方案已经开发完毕，具体的实用文档还在准备当中，将会和新版本一起发布！就是现在的代码里面还没有纵向的案例？有的，相关api以及例子在 https://github.com/PaddlePaddle/PaddleFL/tree/master/python/paddle_fl/mpc 中，使用说明及文档还在准备中好的 ，非常感谢 您好，PaddleFL已完成版本升级。在新版本中，我们完善了所有例子的文档可供参考：
+
+数据并行式联邦学习例子请参考：https://github.com/PaddlePaddle/PaddleFL/tree/master/python/paddle_fl/paddle_fl/examples/femnist_demo 
+基于多方安全计算的联邦学习例子请参考：https://github.com/PaddlePaddle/PaddleFL/tree/master/python/paddle_fl/mpc/examples/uci_demo> 您好，PaddleFL已完成版本升级。在新版本中，我们完善了所有例子的文档可供参考：
+> 
+> 数据并行式联邦学习例子请参考：https://github.com/PaddlePaddle/PaddleFL/tree/master/python/paddle_fl/paddle_fl/examples/femnist_demo
+> 基于多方安全计算的联邦学习例子请参考：https://github.com/PaddlePaddle/PaddleFL/tree/master/python/paddle_fl/mpc/examples/uci_demo
+
+UCI 的 demo 现在没有了地址有变，目前位置：
+https://github.com/PaddlePaddle/PaddleFL/tree/master/python/paddle_fl/mpc/examples/linear_reg_with_uci> 
+> 
+> 地址有变，目前位置：
+> https://github.com/PaddlePaddle/PaddleFL/tree/master/python/paddle_fl/mpc/examples/linear_reg_with_uci
+
+您好，我在import paddle_fl后会出现
+RuntimeError: (PreconditionNotMet) The third-party dynamic library (/home/ubuntu/.conda/envs/wjq-tfml/lib/python3.6/site-packages/paddle_fl/mpc/libs/libpaddle_enc.so) that Paddle depends on is not configured correctly. (error code is /home/ubuntu/.conda/envs/wjq-tfml/lib/python3.6/site-packages/paddle_fl/mpc/libs/libpaddle_enc.so: undefined symbol: _ZNK6paddle9framework12OperatorBase13DebugStringExEPKNS0_5ScopeE的问题，请问是什么原因呢"	10	2020-04-30 11:53:26	2021-04-15 13:42:24	2020-05-07 04:12:04
+https://github.com/PaddlePaddle/PaddleFL/issues/58	[]	检测任务分割成fl program后，py_reader报错	"检测任务分割成fl program后，py_reader报错![image](https://user-images.githubusercontent.com/19721227/80486656-1fcb4d00-898e-11ea-9dcf-0e554f1c43de.png)
+解决，使用iterable 的 dataloader即可"	1	2020-04-28 12:23:36	2020-08-20 02:06:08	2020-08-20 02:06:08
+https://github.com/PaddlePaddle/PaddleFL/issues/10	['bug']	运行quick start时报错AttributeError: 'FedAvgTrainer' object has no attribute 'train_inner_loop'	"运行quick start时报错AttributeError: 'FedAvgTrainer' object has no attribute 'train_inner_loop'batch 1 start train
+Traceback (most recent call last):
+  File ""2.py"", line 26, in <module>
+    trainer.train_inner_loop(reader)
+AttributeError: 'FedAvgTrainer' object has no attribute 'train_inner_loop'```while not trainer.stop():
+    step_i += 1
+    print(""batch %d start train"" % (step_i))
+    for data in reader():
+        cost,predict = trainer.run(feed=data,
+                    fetch=[])```
+如果我使用上面的代码fetch里面改怎么填写呢请参考https://github.com/PaddlePaddle/PaddleFL/blob/master/paddle_fl/examples/gru4rec_demo/fl_trainer.pyquick start还是旧的接口，我们会修正，感谢！> quick start还是旧的接口，我们会修正，感谢！
+
+你好 请问横向联邦、纵向联邦是否分别对应一个demo@HoyTiger 文档fix了。目前PaddleFL的纵向部分还在验证中，stay tuned"	5	2019-11-12 07:06:14	2020-01-03 01:41:28	2020-01-03 01:31:27

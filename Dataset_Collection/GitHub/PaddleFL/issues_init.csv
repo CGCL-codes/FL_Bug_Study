@@ -1,0 +1,1870 @@
+url,label,title,all_text,comments,created_time,updated_time,closed_time
+https://github.com/PaddlePaddle/PaddleFL/issues/249,[],greater_equal和mul不能放在一起使用的问题,"greater_equal和mul不能放在一起使用的问题您好，我在使用paddlefl框架时遇到了如下问题：下面的乘法代码运行时会报如下错误，当我注释掉“ op_ge = pfl_mpc.layers.greater_equal(x=x, y=y)”这一行代码时，乘法可以正常运行。我的理解是pfl_mpc.layers某些算法不能放在一起使用，例如基于混淆电路的greater_equal和基于算数电路的mul。如果我想在一起使用这些算法的话，需要怎么做呢？
+
+
+FAIL: test_ge (__main__.TestOptest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File ""test.py"", line 51, in test_ge
+    self.assertEqual(ret[0], True)
+AssertionError: EnforceNotMet('\n\n----------------------[5701 chars]or]') != True
+
+----------------------------------------------------------------------
+
+
+`import unittest
+from multiprocessing import Manager
+
+import numpy as np
+import paddle.fluid as fluid
+import paddle_fl.mpc as pfl_mpc
+import test_op_base
+from paddle_fl.mpc.data_utils.data_utils import get_datautils
+
+aby3 = get_datautils('aby3')
+
+
+class TestOptest(test_op_base.TestOpBase):
+
+    def ge(self, **kwargs):
+        role = kwargs['role']
+        d_1 = kwargs['data_1'][role]
+        d_2 = kwargs['data_2'][role]
+        d_3 = kwargs['data_3'][role]
+        expected_out = kwargs['expect_results'][role]
+        pfl_mpc.init(""aby3"", role, ""localhost"", self.server, int(self.port))
+        x = pfl_mpc.data(name='x', shape=[1], dtype='int64')
+        y = fluid.data(name='y', shape=[1], dtype='float32')
+        z = pfl_mpc.data(name='z', shape=[1], dtype='int64')
+        op_ge = pfl_mpc.layers.greater_equal(x=x, y=y)
+        exe = fluid.Executor(place=fluid.CPUPlace())
+        #results = exe.run(feed={'x': d_1, 'y': d_2}, fetch_list=[op_ge])
+        #print(results)
+        #self.assertEqual(results[0].shape, (1, ))
+        #self.assertTrue(np.allclose(results[0], expected_out))
+
+        print(""here"")
+        op_mul = pfl_mpc.layers.mul(x=x, y=z)
+        results2 = exe.run(feed={'x': d_1, 'z': d_1}, fetch_list=[op_mul])
+        print(results2)
+
+    def test_ge(self):
+        data_1 = np.full((1), fill_value=6553.6)
+        data_1_shares = aby3.make_shares(data_1)
+        data_1_all3shares = np.array([aby3.get_shares(data_1_shares, i) for i in range(3)])
+        data_2 = [np.array([65536]).astype('float32')] * self.party_num
+        data_3 = np.full((1), fill_value=655.36)
+        data_3_shares = aby3.make_shares(data_1)
+        data_3_all3shares = np.array([aby3.get_shares(data_1_shares, i) for i in range(3)])
+        expect_results = [np.array([0])] * self.party_num
+        ret = self.multi_party_run(target=self.ge,
+                                   data_1=data_1_all3shares,
+                                   data_2=data_2,
+                                   data_3=data_3_all3shares,
+                                   expect_results=expect_results)
+        self.assertEqual(ret[0], True)
+
+if __name__ == '__main__':
+    unittest.main()
+`目前paddlefl的比较算符内部是布尔电路但是返回结果是明文的tensor, 应该不涉及不同电路混合计算的问题
+
+另外ge和mul的复合应该可以用relu实现等价的效果> 目前paddlefl的比较算符内部是布尔电路但是返回结果是明文的tensor, 应该不涉及不同电路混合计算的问题
+> 
+> 另外ge和mul的复合应该可以用relu实现等价的效果
+
+我看了一下aby3的论文，比较确实是布尔电路，不是混淆电路，我之前的理解有一些问题；利用relu等价这部分我会研究一下，谢谢您的指点！
+另外，我认为paddlefl框架在这里可能还是存在bug，比如我连续做两次加法（乘法）或者连续做两次比较或者做一次加法再做一次乘法都不会出现问题，唯独加法（乘法）与比较放在一起不能正确运行，或许是布尔电路和算数电路混合计算的时候会出现问题？我认为是
+```py
+results2 = exe.run(feed={'x': d_1, 'z': d_1}, fetch_list=[op_mul])
+```
+这里没有feed 'y'导致的错误.
+
+改成这样是可以运行的:
+```py
+def ge(self, **kwargs):
+    role = kwargs['role']
+    d_1 = kwargs['data_1'][role]
+    d_2 = kwargs['data_2'][role]
+    d_3 = kwargs['data_3'][role]
+    expected_out = kwargs['expect_results'][role]
+    pfl_mpc.init(""aby3"", role, ""localhost"", self.server, int(self.port))
+    x = pfl_mpc.data(name='x', shape=[1], dtype='int64')
+    y = fluid.data(name='y', shape=[1], dtype='float32')
+    z = pfl_mpc.data(name='z', shape=[1], dtype='int64')
+    op_ge = pfl_mpc.layers.greater_equal(x=x, y=y)
+    exe = fluid.Executor(place=fluid.CPUPlace())
+    op_mul = pfl_mpc.layers.mul(x=x, y=z)
+    results2 = exe.run(feed={'x': d_1, 'y':d_2, 'z': d_3}, fetch_list=[op_ge,op_mul])
+```
+
+另外目前的框架在python层应该是没有“布尔电路和算数电路混合计算”的, 所有在python层可见的tensor都是算数电路或者是明文的tensor> 
+我试了一下，确实是这样，十分感谢！",4,2022-03-02 06:58:43,2022-03-09 06:24:47,2022-03-09 06:24:47
+https://github.com/PaddlePaddle/PaddleFL/issues/224,[],ImportError: cannot import name 'CipherUtils' from 'paddle.fluid.core_avx' (/usr/local/python/lib/python3.8/site-packages/paddle/fluid/core_avx.so),"ImportError: cannot import name 'CipherUtils' from 'paddle.fluid.core_avx' (/usr/local/python/lib/python3.8/site-packages/paddle/fluid/core_avx.so)尊敬的开发人员你好，
+我按照步骤，使用nvidia-docker直接拉取了PaddleFL的项目,在运行ctr_demo时报错:
+找不到paddle_serving_client模块，安装好padlle_serving_client模块后,再次运行
+报了下述错误,请问是什么原因呢?
+ File ""/usr/local/python/lib/python3.8/site-packages/paddle_serving_client/io/__init__.py"", line 24, in <module>
+    from paddle.fluid.core import CipherUtils
+ImportError: cannot import name 'CipherUtils' from 'paddle.fluid.core_avx' (/usr/local/python/lib/python3.8/site-packages/paddle/fluid/core_avx.so)
+
+运行环境centos7，nvidia-docker
+python包环境只加了一个paddle_serving_client
+![wrong2](https://user-images.githubusercontent.com/13082828/133219429-d6d1f888-4c2b-4f36-885b-8880ef82081e.jpg)
+
+非常感谢> 尊敬的开发人员你好，
+> 我按照步骤，使用nvidia-docker直接拉取了PaddleFL的项目,在运行ctr_demo时报错:
+> 找不到paddle_serving_client模块，安装好padlle_serving_client模块后,再次运行
+> 报了下述错误,请问是什么原因呢?
+> File ""/usr/local/python/lib/python3.8/site-packages/paddle_serving_client/io/**init**.py"", line 24, in
+> from paddle.fluid.core import CipherUtils
+> ImportError: cannot import name 'CipherUtils' from 'paddle.fluid.core_avx' (/usr/local/python/lib/python3.8/site-packages/paddle/fluid/core_avx.so)
+> 
+> 运行环境centos7，nvidia-docker
+> python包环境只加了一个paddle_serving_client
+> ![wrong2](https://user-images.githubusercontent.com/13082828/133219429-d6d1f888-4c2b-4f36-885b-8880ef82081e.jpg)
+> 
+> 非常感谢
+
+经过不断尝试, 现在暂时放弃使用FL1.1.2版本的docker环境，改用FL1.1.0版本的docker环境后可以正常运行程序
+FL1.1.2的docker环境中python=3.8,paddlepaddle=1.8.5,运行程序时缺少paddle-serving-client包，但是支持python3.8最小的paddle-serving-client包版本为0.5.0,这个包需要依赖paddlepaddle 2.0以上的版本,因此即使安装好paddle-serving-client也会报找不到'CipherUtils'的错误，如果将paddlepaddle升级成2.0.0以上又会报其他问题，改用FL1.1.0版本的docker环境后，环境问题解决，程序正常运行
+docker拉取命令
+docker pull paddlepaddle/paddlefl:1.1.2
+改成
+docker pull paddlepaddle/paddlefl:latest
+
+我的问题暂时解决了
+尊敬的开发者您好，不知道上述的分析过程是否正确，如果正确希望能修改一下1.1.2版本的docker环境中的问题，如果我的操作有问题，希望得到回复，非常感谢您的工作",1,2021-09-14 08:02:44,2021-09-15 05:58:44,2021-09-15 05:58:44
+https://github.com/PaddlePaddle/PaddleFL/issues/219,[],Run youtubenn_with_movielens example  in docker no module named '_bz2',"Run youtubenn_with_movielens example  in docker no module named '_bz2'my docker images:paddlepaddle/paddlefl:1.1.2
+When I run youtubenn_with_movieslens example case, I get belows
+  File ""train_youtubednn.py"", line 148, in train
+    f.write(np.array(video_array).tobytes())
+TypeError: write() argument must be str, not bytes ?
+so I try to convert bytes to str,I get belows
+
+  File ""train_youtubednn.py"", line 148, in train
+    f.write(np.array(video_array).tobytes().decode())
+    train(args)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+  File ""train_youtubednn.py"", line 148, in train
+    f.write(np.array(video_array).tobytes().decode())
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xbf in position 0: invalid start byte
+
+How to solve the Problems?
+
+![image](https://user-images.githubusercontent.com/22990858/131776542-f13bc2ab-ad0c-4a24-9241-fdea76452038.png)
+
+
+
+![image](https://user-images.githubusercontent.com/22990858/131776520-d6c34331-59df-4d20-abca-89f16459b9ca.png)
+
+
+![image](https://user-images.githubusercontent.com/22990858/131797950-401408cd-d30f-49f1-8db5-3c6e4817120c.png)
+![image](https://user-images.githubusercontent.com/22990858/131798688-2c2dfb6b-2151-4e89-a78c-1af3b0e0a269.png)
+Please modify the code in file ""train_youtubednn.py"", line 148, in train from ""with open(video_vec_part_filepath, 'w') as f: f.write(np.array(video_array).tobytes())"" to **""with open(video_vec_part_filepath, 'wb') as f: f.write(np.array(video_array).tobytes())""**, the problem is caused by the change between python2 and python3.
+In addition, to solve the question raised in your title. Use the command **""yum -y install bzip2 bzip2-devel""** then recompile and install Python3 will help.OK，Thx，I follow your instructions，the code is running normally",2,2021-09-02 03:22:47,2021-09-03 05:35:29,2021-09-03 05:35:29
+https://github.com/PaddlePaddle/PaddleFL/issues/218,[],youtubednn_with_movielens example run Error?,"youtubednn_with_movielens example run Error?my environment is:
+paddle-fl 1.1.2
+paddlepaddle-gpu 1.8.0.post107
+cuda 10.0.130
+cudnn 7.6
+![c5f454b4cce0a0662cdb42358ce2ce2](https://user-images.githubusercontent.com/22990858/131472283-3e299c91-75e4-469e-8c3c-0cbc323d1c86.png)
+When I run youtubenn_with_movielens example,I get Error
+![8cafc722b4d02238228c9b0e61b69d8](https://user-images.githubusercontent.com/22990858/131473242-5a3d7a1a-5b2f-4c38-89e6-8110f64fe097.png)
+
+
+you're using the incorrect version of PaddlePaddle. PFL 1.1.2 requires PaddlePaddle 1.8.5. Please follow the installation instruction to reinstall paddlepaddle and try again. Still strongly recommend using our docker image directly.",1,2021-08-31 08:54:14,2021-09-03 05:36:24,2021-09-03 05:36:24
+https://github.com/PaddlePaddle/PaddleFL/issues/156,[],PSI question,"PSI questionI am a bit confused with PSI tools in Paddle FL.
+When I do PSI align with two vertical divided parts of dataset, I have not the same align data in two files:
+
+![image](https://user-images.githubusercontent.com/23639951/114208574-4a77a100-9966-11eb-8255-863367a2d6e7.png)
+![image](https://user-images.githubusercontent.com/23639951/114208630-5c594400-9966-11eb-8f8b-efb8de96816b.png)
+
+As you can see the beginning of the data is different, so that we will have failure data when concating them.
+
+
+By the way, it  doesn’t happen all the time, sometimes I have the right set of align IDs.
+
+Is it problem with PSI tools or I do something wrong ?It seems that order of psi result is not preserved in python data structure 'set'.
+Fixed in pull request above.Great! Thank you.",2,2021-04-09 16:08:00,2021-04-12 08:18:55,2021-04-12 08:18:54
+https://github.com/PaddlePaddle/PaddleFL/issues/153,[],Installing paddle in docker container fails.,"Installing paddle in docker container fails.`docker pull paddlepaddle/paddlefl:latest`
+`docker run  --network=host -it --name my_paddle_fl paddlepaddle/paddlefl:latest /bin/bash`
+OS: ubuntu 16.04
+
+After `pip install paddle`, the error is below:
+```
+Collecting paddle
+  Downloading https://files.pythonhosted.org/packages/55/cf/e4b6b9a54d2f072e4491e34317bf5f5fea260da8a3072e641832dc9ce770/paddle-1.0.2.tar.gz (579kB)
+    100% |████████████████████████████████| 583kB 24kB/s
+    Complete output from command python setup.py egg_info:
+    Traceback (most recent call last):
+      File ""<string>"", line 1, in <module>
+      File ""/tmp/pip-install-T3GpzM/paddle/setup.py"", line 3, in <module>
+        import paddle
+      File ""paddle/__init__.py"", line 5, in <module>
+        import common, dual, tight, data, prox
+      File ""paddle/common.py"", line 8, in <module>
+        import pylab
+      File ""/opt/_internal/cpython-2.7.11-ucs4/lib/python2.7/site-packages/pylab.py"", line 1, in <module>
+        from matplotlib.pylab import *
+      File ""/opt/_internal/cpython-2.7.11-ucs4/lib/python2.7/site-packages/matplotlib/pylab.py"", line 252, in <module>
+        from matplotlib import cbook, mlab, pyplot as plt
+      File ""/opt/_internal/cpython-2.7.11-ucs4/lib/python2.7/site-packages/matplotlib/pyplot.py"", line 115, in <module>
+        _backend_mod, new_figure_manager, draw_if_interactive, _show = pylab_setup()
+      File ""/opt/_internal/cpython-2.7.11-ucs4/lib/python2.7/site-packages/matplotlib/backends/__init__.py"", line 62, in pylab_setup
+        [backend_name], 0)
+      File ""/opt/_internal/cpython-2.7.11-ucs4/lib/python2.7/site-packages/matplotlib/backends/backend_tkagg.py"", line 4, in <module>
+        from . import tkagg  # Paint image to Tk photo blitter extension.
+      File ""/opt/_internal/cpython-2.7.11-ucs4/lib/python2.7/site-packages/matplotlib/backends/tkagg.py"", line 5, in <module>
+        from six.moves import tkinter as Tk
+      File ""/opt/_internal/cpython-2.7.11-ucs4/lib/python2.7/site-packages/six.py"", line 203, in load_module
+        mod = mod._resolve()
+      File ""/opt/_internal/cpython-2.7.11-ucs4/lib/python2.7/site-packages/six.py"", line 115, in _resolve
+        return _import_module(self.mod)
+      File ""/opt/_internal/cpython-2.7.11-ucs4/lib/python2.7/site-packages/six.py"", line 82, in _import_module
+        __import__(name)
+      File ""/opt/_internal/cpython-2.7.11-ucs4/lib/python2.7/lib-tk/Tkinter.py"", line 39, in <module>
+        import _tkinter # If this fails your Python may not be configured for Tk
+    ImportError: libtk8.5.so: cannot open shared object file: No such file or directory
+
+    ----------------------------------------
+Command ""python setup.py egg_info"" failed with error code 1 in /tmp/pip-install-T3GpzM/paddle/
+
+```
+
+What's the reason of this? 
+I refered to the instruction in [https://paddlefl.readthedocs.io/en/latest/compile_and_intall.html](https://paddlefl.readthedocs.io/en/latest/compile_and_intall.html)By the way, docker's container already have paddle and paddle_fl installed.
+> By the way, docker's container already have paddle and paddle_fl installed.
+
+My bad. The paddle is al.ready installed. But when I run `from paddle_fl.core.master.job_generator import JobGenerator`, the issue is 
+```
+>>> from paddle_fl.core.master.job_generator import JobGenerator
+Traceback (most recent call last):
+  File ""<stdin>"", line 1, in <module>
+ImportError: No module named core.master.job_generator
+```
+This is the python code from [https://paddlefl.readthedocs.io/en/latest/data_parallel_instruction.html](https://paddlefl.readthedocs.io/en/latest/data_parallel_instruction.html)> > By the way, docker's container already have paddle and paddle_fl installed.
+> 
+> My bad. The paddle is al.ready installed. But when I run `from paddle_fl.core.master.job_generator import JobGenerator`, the issue is
+> 
+> ```
+> >>> from paddle_fl.core.master.job_generator import JobGenerator
+> Traceback (most recent call last):
+>   File ""<stdin>"", line 1, in <module>
+> ImportError: No module named core.master.job_generator
+> ```
+> 
+> This is the python code from https://paddlefl.readthedocs.io/en/latest/data_parallel_instruction.html
+
+Thanks for figuring out the bug in our document, please try the following method. 
+```
+from paddle_fl.paddle_fl.core.master.job_generator import JobGenerator
+```Issue closed",4,2021-02-26 09:58:17,2021-03-04 01:57:50,2021-03-04 01:57:50
+https://github.com/PaddlePaddle/PaddleFL/issues/152,[],How does PaddleFL handle unstable connection between mobile-trainer and Server.,"How does PaddleFL handle unstable connection between mobile-trainer and Server.For example, some mobiles get power down during the training process.First of all, PaddleFL does not support mobile federated training recently, mainly because we have not support distributed training among mobile devices in Paddle-Lite. 
+
+As for unstable connection, we did some experiments to test the stability of PaddleFL, deep models like Resnet and VGG can train without exception under cross-datacenter network(rate=10mbits/s & latency = 200ms).
+
+Finally, we do not support automatic recovery now (will add in following versions), so you need to restart trainer manually when it is crashed.Thanks for your reply!
+Issue closed.",2,2021-01-26 06:14:53,2021-03-02 07:18:53,2021-03-02 07:18:53
+https://github.com/PaddlePaddle/PaddleFL/issues/151,[],1.1.0 version in paddle_fl module,"1.1.0 version in paddle_fl moduleBug with serving_api still here in` paddle_fl == 1.1.0`
+
+ ```
+File ""fl_trainer.py"", line 1, in <module>
+    from paddle_fl.paddle_fl.core.trainer.fl_trainer import FLTrainerFactory
+  File ""/opt/conda/envs/python27-paddle120-env/lib/python2.7/site-packages/paddle_fl/paddle_fl/core/trainer/fl_trainer.py"", line 22, in <module>
+    import paddle_serving_client.io as serving_io
+ImportError: No module named paddle_serving_client.io
+```
+I tried to install this package in AI Studio and have next:
+![image](https://user-images.githubusercontent.com/23639951/104934537-4c5f4300-59bb-11eb-8a1d-19c25a3b9335.png)
+
+Later give info about installing at my machine.
+![image](https://user-images.githubusercontent.com/23639951/104938918-ce059f80-59c0-11eb-8305-4fc7910bf797.png)",2,2021-01-18 15:14:50,2021-01-18 16:10:21,2021-01-18 16:10:21
+https://github.com/PaddlePaddle/PaddleFL/issues/150,[],femnist 例子跑不通,"femnist 例子跑不通已经尝试过 pip install paddle_fl 和 在python 目录下运行 python setup.py  install
+ubuntu 18.04
+python3.8
+
+>>> from paddle_fl.core.trainer.fl_trainer import FLTrainerFactory
+sh: 1: patchelf: not found
+sh: 1: patchelf: not found
+Traceback (most recent call last):
+  File ""<stdin>"", line 1, in <module>
+  File ""/home/gjh/Projects/PaddleFL/python/paddle_fl/__init__.py"", line 15, in <module>
+    from . import mpc
+  File ""/home/gjh/Projects/PaddleFL/python/paddle_fl/mpc/__init__.py"", line 59, in <module>
+    fluid.load_op_library(_paddle_enc_lib)
+  File ""/home/gjh/Projects/PaddleFL/python/py38/lib/python3.8/site-packages/paddlepaddle-2.0.0rc1-py3.8-linux-x86_64.egg/paddle/fluid/framework.py"", line 5503, in load_op_library
+    core.load_op_library(lib_filename)
+RuntimeError: (PreconditionNotMet) The third-party dynamic library (/home/gjh/Projects/PaddleFL/python/py38/lib/python3.8/site-packages/paddle_fl/mpc/libs/libpaddle_enc.so) that Paddle depends on is not configured correctly. (error code is /home/gjh/Projects/PaddleFL/python/py38/lib/python3.8/site-packages/paddle_fl/mpc/libs/libpaddle_enc.so: cannot open shared object file: No such file or directory)
+您好，我这里遇到了同样的错误，请问您是怎么解决的？
+`PreconditionNotMetError: The third-party dynamic library (/usr/local/python38/lib/python3.8/site-packages/paddle_fl/mpc/libs/libpaddle_enc.so) that Paddle depends on is not configured correctly. (error code is /usr/local/python38/lib/python3.8/site-packages/paddle_fl/mpc/libs/libpaddle_enc.so: cannot open shared object file: No such file or directory)
+  Suggestions:
+  1. Check if the third-party dynamic library (e.g. CUDA, CUDNN) is installed correctly and its version is matched with paddlepaddle you installed.
+  2. Configure third-party dynamic library environment variables as follows:
+  - Linux: set LD_LIBRARY_PATH by `export LD_LIBRARY_PATH=...`
+  - Windows: set PATH by `set PATH=XXX; at (/b/third_party/paddle/src/extern_paddle/paddle/fluid/platform/dynload/dynamic_loader.cc:194)
+`",1,2021-01-14 17:30:22,2021-11-15 03:49:49,2021-01-14 17:35:09
+https://github.com/PaddlePaddle/PaddleFL/issues/129,[],Is it possible to have Federated Learning on Cloud-Edge?,"Is it possible to have Federated Learning on Cloud-Edge?Hi everyone,
+
+Currently I am working on a school project about federated learning and came across your framework during exploratory analysis. My project should utilize federated learning in this manner - I have an aggregation server (let's say in a cloud). I want this server to provide model to my 2 Raspberry PIs. These two RPIs would then train the model on a local data for x epochs and provide the trained models/gradients back to the global server. On this server, the results would be federated averaged and new model would be sent to the PIs. Is such a workflow possible with your framework? If so, could you provide me a hint?
+
+Thank you,
+Best regardsI'm afraid not for now. The workflow you mentioned is well supported in Paddle FL. You can check the examples in paddle_fl or  the mobile directory. The problem is, we are NOT sure if Paddle FL works on Raspberry Pi. Paddle FL depends on the full-functional PaddlePaddle, which is not yet migrated or tested on Raspberry Pi.
+
+You can try compiling the PaddlePaddle and the Paddle FL code on Raspberry Pi to check if it works. We have not tested this before.",1,2020-10-14 21:44:36,2020-12-16 08:30:57,2020-12-16 08:30:57
+https://github.com/PaddlePaddle/PaddleFL/issues/101,[],detection demo训练占用显存过大，如何减小显存,"detection demo训练占用显存过大，如何减小显存在训练detection demo的时候显存达到10G，想问一下有什么办法，可以减小训练显存吗？看到fl_tarin.py里面的batch_size已经是1了，不知道还有没有其他参数可以调整。
+![image](https://user-images.githubusercontent.com/22416239/90090980-f3c6b280-dd57-11ea-8333-812509a3f5d6.png)
+这个可能需要咨询下PaddleDetection那边的同学。
+『PaddleDetection训练时显存占用的问题』",1,2020-08-13 03:28:18,2020-08-28 08:59:31,2020-08-28 08:59:31
+https://github.com/PaddlePaddle/PaddleFL/issues/98,[],如何运行detection_demo,"如何运行detection_demo我想要在docker里面跑detection demo，但是发现运行时会报ExternalError:  Cuda error(38), no CUDA-capable device is detected.这个是否需要装nvidia-docker才能运行。源码安装的方式去跑也会出现问题，报错如下 `E0810 16:09:46.794160 36124 pybind.cc:1277] Cannot use GPU because you have installed CPU version PaddlePaddle.
+If you want to use GPU, please try to install GPU version PaddlePaddle by: pip install paddlepaddle-gpu
+If you only have CPU, please change CUDAPlace(0) to be CPUPlace().
+E0810 16:09:48.875759 36419 pybind.cc:1277] Cannot use GPU because you have installed CPU version PaddlePaddle.
+If you want to use GPU, please try to install GPU version PaddlePaddle by: pip install paddlepaddle-gpu
+If you only have CPU, please change CUDAPlace(1) to be CPUPlace().` 但是paddlepaddle-gpu已经都装好了，还是找不到paddlepaddle-gpu这个包？
+![image](https://user-images.githubusercontent.com/22416239/89765557-250d6b80-db29-11ea-9e51-691bd32c167d.png)
+辛苦运行一下下面的指令：
+```
+pip uninstall -y paddlepaddle-gpu && pip install paddlepaddle-gpu
+```
+
+如果有GPU的话应该是没问题的好像有效果了，执行训练任务完之后显示这个画面一直不动了，不知道是不是正常的。另外想问一下如果要在docker中去运行detection demo的话是不是需要安装nvidia-docker才行，应该怎么去测试啊？多谢！！
+![image](https://user-images.githubusercontent.com/22416239/89771217-8f76d980-db32-11ea-8a50-0dd00979828a.png)
+建议直接跑run.sh脚本，hang住的原因是另一个服务没起来，所以server不会更新参数的。昨天忘了更新，sh run.sh之后还是hang住了。不知道是什么原因
+![image](https://user-images.githubusercontent.com/22416239/89863750-4f206580-dbdd-11ea-9846-ef9d39777784.png)
+请问有下面这个log文件么：5_trainer0.log有的，但是是个空文件，并没有内容。
+![image](https://user-images.githubusercontent.com/22416239/89864450-8c392780-dbde-11ea-8af5-d60c5c2c0560.png)
+请问有下载PaddleDetection的代码库么？有下载PaddleDetection的代码库，而且也在run.sh中指定了PaddleDetection的绝对路径
+![image](https://user-images.githubusercontent.com/22416239/89864987-7aa44f80-dbdf-11ea-84af-82bb2d37b685.png)
+![image](https://user-images.githubusercontent.com/22416239/89865146-c525cc00-dbdf-11ea-8685-43f0f02853db.png)
+
+好的，我这边试一下~ 如果我这边不能复现方便提供个复现环境么怎么提供复现环境啊？给你pip list么？
+现在不知道hang在哪里了，能在fl_trainer 里面打印点log么？我这边好排查下问题我在如下的代码段加了一些log，看起来应该都没有进入到trainer 
+job，或者您是否可以提示一下应该在哪打印点log，我再试试
+![image](https://user-images.githubusercontent.com/22416239/89868074-ca394a00-dbe4-11ea-9567-7bf9dfbf1584.png)
+![image](https://user-images.githubusercontent.com/22416239/89868113-dcb38380-dbe4-11ea-8ba8-b01371d1b470.png)
+![image](https://user-images.githubusercontent.com/22416239/89869216-9fe88c00-dbe6-11ea-8e71-bf8610eaefde.png)
+在看5_trainer0.log里面就有内容了，是我刚才加的注释。是已经在开始训练了么  PID为10638和15280的两个任务就是起的两个trainer的任务
+
+![image](https://user-images.githubusercontent.com/22416239/89869370-d58d7500-dbe6-11ea-9d17-b14cde2e37f7.png)
+但是应该没有开始训练，因为没有执行到print(""epoch %d start train"" % (epoch_id))
+好的好的，我这边马上看下这边麻烦再帮忙：
+
+1. 
+```
+# 杀掉所有python进程后，运行run.sh
+killall python
+sh run.sh
+```
+
+2. 若还不能成功，运行：`ps -x` 看scheduler和server是否正常运行
+
+3. 如果scheduler和server正常：
+
+找到Python lib：
+```
+import sysconfig
+sysconfig.get_paths()[""purelib""]
+```
+结果会是一个名为site-packages的文件夹，进入site-packages/paddle_fl/paddle_fl/core/trainer/
+
+将fl_trainer.py 的 136 & 138行修改为print，然后运行run.sh 查看log中结果。
+按上述方法修改之后的log，看样子还是没有开始训练。
+![image](https://user-images.githubusercontent.com/22416239/89874323-46845b00-dbee-11ea-9486-a78ba19f5c1c.png)
+![image](https://user-images.githubusercontent.com/22416239/89874360-5308b380-dbee-11ea-801a-63e0d738f84c.png)
+请问前两个都试了么，输出结果是什么呢？因为没有办法杀掉所有的python程序，只是手动杀掉了fl_server、fl_schuler、fl_trainer0、fl_trainer1这四个相关任务，然后再run run.sh的时候还是之前那样的。scheduler和server这两个任务，打了ps -x之后输出了一大堆，我又用ps -aux|grep python3看了结果，看样子应该是正常的
+![image](https://user-images.githubusercontent.com/22416239/89875065-551f4200-dbef-11ea-9997-e10fc6ee1a64.png)
+
+![image](https://user-images.githubusercontent.com/22416239/89874934-24d7a380-dbef-11ea-860f-f3dd8ef3b6f9.png)
+![image](https://user-images.githubusercontent.com/22416239/89875757-41c0a680-dbf0-11ea-82c4-328af750508f.png)
+![image](https://user-images.githubusercontent.com/22416239/89875778-484f1e00-dbf0-11ea-9ec2-3c0e25b601e8.png)
+这是ps -x的输出
+看样子是卡在这里了：
+https://github.com/PaddlePaddle/PaddleFL/blob/master/python/paddle_fl/paddle_fl/core/scheduler/agent_master.py#L105
+
+可以还像刚才一样打印下，尤其是函数里接收到的value值，看看是否init成功。
+
+btw，看下scheduler.log里面是否有内容，如果初始化成功会打印""init env done.""![image](https://user-images.githubusercontent.com/22416239/89877448-b3015900-dbf2-11ea-89e4-9fb6ffeb1cd6.png)
+这是修改完之后的scheduler.log， 
+![image](https://user-images.githubusercontent.com/22416239/89877523-c90f1980-dbf2-11ea-8581-d44150d09939.png)
+打印了一些这个key变量的值，是 JOIN
+![image](https://user-images.githubusercontent.com/22416239/89878152-bea14f80-dbf3-11ea-84ba-24ac160b549b.png)
+目前的问题是server没有完成注册，所以不会开始训练，trainer是没有问题的。
+
+https://github.com/PaddlePaddle/PaddleFL/blob/6a502bf836c342b6f1c83ea9c99bd47b4479bd99/python/paddle_fl/paddle_fl/core/scheduler/agent_master.py#L41
+
+只启动scheduler 和 server看下server会不会去注册呢？能否进入这一行：
+https://github.com/PaddlePaddle/PaddleFL/blob/6a502bf836c342b6f1c83ea9c99bd47b4479bd99/python/paddle_fl/paddle_fl/core/scheduler/agent_master.py#L112![image](https://user-images.githubusercontent.com/22416239/89879298-505d8c80-dbf5-11ea-893f-112b440b0814.png)
+这是只启动scheduler 和 server的log，并没有进入  elif key == SERVER_EP: 这一行。
+![image](https://user-images.githubusercontent.com/22416239/89879394-78e58680-dbf5-11ea-8b3f-fd12ff750cd3.png)
+嗯嗯，有两种可能，一种是server没发出去，一种是scheduler没收到
+
+1. 排查第一种：看看server有没有进入while True这个loop
+
+2. 排查第二种：写一个简单的socket程序，看8181号端口是否可以向9091号端口发送信息```
+(base) [root@slave01 detection_demo]# sh run.sh 
+get_pserver_program() is deprecated, call get_pserver_programs() to get pserver main and startup in a single call.
+E0811 17:26:25.781018707   54284 server_chttp2.cc:38]        {""created"":""@1597137985.780941954"",""description"":""No address added out of total 1 resolved"",""file"":""src/core/ext/transport/chttp2/server/chttp2_server.cc"",""file_line"":305,""referenced_errors"":[{""created"":""@1597137985.780933664"",""description"":""Unable to configure socket"",""fd"":24,""file"":""src/core/lib/iomgr/tcp_server_utils_posix_common.cc"",""file_line"":202,""referenced_errors"":[{""created"":""@1597137985.780921489"",""description"":""OS Error"",""errno"":98,""file"":""src/core/lib/iomgr/tcp_server_utils_posix_common.cc"",""file_line"":180,""os_error"":""Address already in use"",""syscall"":""listen""}]}]}
+W0811 17:26:25.781142 54284 grpc_server.cc:483] Server listening on 127.0.0.1:8181 failed, selected port: 0, retry after 3 seconds!
+W0811 17:26:26.536232 53860 device_context.cc:252] Please NOTE: device: 0, CUDA Capability: 35, Driver API Version: 10.2, Runtime API Version: 10.0
+W0811 17:26:26.543087 53860 device_context.cc:260] device: 0, cuDNN Version: 7.6.
+(base) [root@slave01 detection_demo]# W0811 17:26:28.666165 55239 device_context.cc:252] Please NOTE: device: 1, CUDA Capability: 35, Driver API Version: 10.2, Runtime API Version: 10.0
+W0811 17:26:28.672140 55239 device_context.cc:260] device: 1, cuDNN Version: 7.6.
+E0811 17:26:28.781581536   54284 server_chttp2.cc:38]        {""created"":""@1597137988.781523703"",""description"":""No address added out of total 1 resolved"",""file"":""src/core/ext/transport/chttp2/server/chttp2_server.cc"",""file_line"":305,""referenced_errors"":[{""created"":""@1597137988.781516983"",""description"":""Unable to configure socket"",""fd"":24,""file"":""src/core/lib/iomgr/tcp_server_utils_posix_common.cc"",""file_line"":202,""referenced_errors"":[{""created"":""@1597137988.781502733"",""description"":""OS Error"",""errno"":98,""file"":""src/core/lib/iomgr/tcp_server_utils_posix_common.cc"",""file_line"":180,""os_error"":""Address already in use"",""syscall"":""listen""}]}]}
+W0811 17:26:28.781672 54284 grpc_server.cc:483] Server listening on 127.0.0.1:8181 failed, selected port: 0, retry after 3 seconds!
+/opt/anaconda3/lib/python3.6/site-packages/paddle/fluid/executor.py:1070: UserWarning: The following exception is not an EOF exception.
+  ""The following exception is not an EOF exception."")
+Traceback (most recent call last):
+  File ""fl_trainer.py"", line 127, in <module>
+    acc = trainer.run(feeder.feed(data), fetch=['sum_0.tmp_0'])
+  File ""/opt/anaconda3/lib/python3.6/site-packages/paddle_fl/paddle_fl/core/trainer/fl_trainer.py"", line 184, in run
+    self.exe.run(self._recv_program)
+  File ""/opt/anaconda3/lib/python3.6/site-packages/paddle/fluid/executor.py"", line 1071, in run
+    six.reraise(*sys.exc_info())
+  File ""/opt/anaconda3/lib/python3.6/site-packages/six.py"", line 703, in reraise
+    raise value
+  File ""/opt/anaconda3/lib/python3.6/site-packages/paddle/fluid/executor.py"", line 1066, in run
+    return_merged=return_merged)
+  File ""/opt/anaconda3/lib/python3.6/site-packages/paddle/fluid/executor.py"", line 1154, in _run_impl
+    use_program_cache=use_program_cache)
+  File ""/opt/anaconda3/lib/python3.6/site-packages/paddle/fluid/executor.py"", line 1229, in _run_program
+    fetch_var_name)
+paddle.fluid.core_avx.EnforceNotMet: 
+
+--------------------------------------------
+C++ Call Stacks (More useful to developers):
+--------------------------------------------
+0   std::string paddle::platform::GetTraceBackString<std::string const&>(std::string const&, char const*, int)
+1   paddle::platform::EnforceNotMet::EnforceNotMet(std::string const&, char const*, int)
+2   paddle::operators::RecvOp::RunImpl(paddle::framework::Scope const&, paddle::platform::Place const&) const
+3   paddle::framework::OperatorBase::Run(paddle::framework::Scope const&, paddle::platform::Place const&)
+4   paddle::framework::Executor::RunPartialPreparedContext(paddle::framework::ExecutorPrepareContext*, paddle::framework::Scope*, long, long, bool, bool, bool)
+5   paddle::framework::Executor::RunPreparedContext(paddle::framework::ExecutorPrepareContext*, paddle::framework::Scope*, bool, bool, bool)
+6   paddle::framework::Executor::Run(paddle::framework::ProgramDesc const&, paddle::framework::Scope*, int, bool, bool, std::vector<std::string, std::allocator<std::string> > const&, bool, bool)
+
+------------------------------------------
+Python Call Stacks (More useful to users):
+------------------------------------------
+  File ""/opt/anaconda3/lib/python3.6/site-packages/paddle/fluid/framework.py"", line 2610, in append_op
+    attrs=kwargs.get(""attrs"", None))
+  File ""/opt/anaconda3/lib/python3.6/site-packages/paddle_fl/paddle_fl/core/strategy/fl_distribute_transpiler.py"", line 304, in transpile
+    ""sync_mode"": not self.sync_mode
+  File ""/opt/anaconda3/lib/python3.6/site-packages/paddle_fl/paddle_fl/core/strategy/fl_strategy_base.py"", line 256, in _build_trainer_program_for_job
+    startup_program=startup_program)
+  File ""/opt/anaconda3/lib/python3.6/site-packages/paddle_fl/paddle_fl/core/master/job_generator.py"", line 298, in generate_fl_job_from_program
+    job=local_job)
+  File ""fl_master.py"", line 35, in <module>
+    output=output)
+
+----------------------
+Error Message Summary:
+----------------------
+ExecutionTimeoutError: internal error in RPCClient
+  [Hint: Expected rets[i]->Wait() != 0U, but received rets[i]->Wait():0 == 0U:0.] at (/paddle/paddle/fluid/operators/distributed_ops/recv_op.cc:89)
+  [operator < recv > error]
+/opt/anaconda3/lib/python3.6/site-packages/paddle/fluid/executor.py:1070: UserWarning: The following exception is not an EOF exception.
+  ""The following exception is not an EOF exception."")
+Traceback (most recent call last):
+  File ""fl_trainer.py"", line 127, in <module>
+    acc = trainer.run(feeder.feed(data), fetch=['sum_0.tmp_0'])
+  File ""/opt/anaconda3/lib/python3.6/site-packages/paddle_fl/paddle_fl/core/trainer/fl_trainer.py"", line 184, in run
+    self.exe.run(self._recv_program)
+  File ""/opt/anaconda3/lib/python3.6/site-packages/paddle/fluid/executor.py"", line 1071, in run
+    six.reraise(*sys.exc_info())
+  File ""/opt/anaconda3/lib/python3.6/site-packages/six.py"", line 703, in reraise
+    raise value
+  File ""/opt/anaconda3/lib/python3.6/site-packages/paddle/fluid/executor.py"", line 1066, in run
+    return_merged=return_merged)
+  File ""/opt/anaconda3/lib/python3.6/site-packages/paddle/fluid/executor.py"", line 1154, in _run_impl
+    use_program_cache=use_program_cache)
+  File ""/opt/anaconda3/lib/python3.6/site-packages/paddle/fluid/executor.py"", line 1229, in _run_program
+    fetch_var_name)
+paddle.fluid.core_avx.EnforceNotMet: 
+
+--------------------------------------------
+C++ Call Stacks (More useful to developers):
+--------------------------------------------
+0   std::string paddle::platform::GetTraceBackString<std::string const&>(std::string const&, char const*, int)
+1   paddle::platform::EnforceNotMet::EnforceNotMet(std::string const&, char const*, int)
+2   paddle::operators::RecvOp::RunImpl(paddle::framework::Scope const&, paddle::platform::Place const&) const
+3   paddle::framework::OperatorBase::Run(paddle::framework::Scope const&, paddle::platform::Place const&)
+4   paddle::framework::Executor::RunPartialPreparedContext(paddle::framework::ExecutorPrepareContext*, paddle::framework::Scope*, long, long, bool, bool, bool)
+5   paddle::framework::Executor::RunPreparedContext(paddle::framework::ExecutorPrepareContext*, paddle::framework::Scope*, bool, bool, bool)
+6   paddle::framework::Executor::Run(paddle::framework::ProgramDesc const&, paddle::framework::Scope*, int, bool, bool, std::vector<std::string, std::allocator<std::string> > const&, bool, bool)
+
+------------------------------------------
+Python Call Stacks (More useful to users):
+------------------------------------------
+  File ""/opt/anaconda3/lib/python3.6/site-packages/paddle/fluid/framework.py"", line 2610, in append_op
+    attrs=kwargs.get(""attrs"", None))
+  File ""/opt/anaconda3/lib/python3.6/site-packages/paddle_fl/paddle_fl/core/strategy/fl_distribute_transpiler.py"", line 304, in transpile
+    ""sync_mode"": not self.sync_mode
+  File ""/opt/anaconda3/lib/python3.6/site-packages/paddle_fl/paddle_fl/core/strategy/fl_strategy_base.py"", line 256, in _build_trainer_program_for_job
+    startup_program=startup_program)
+  File ""/opt/anaconda3/lib/python3.6/site-packages/paddle_fl/paddle_fl/core/master/job_generator.py"", line 298, in generate_fl_job_from_program
+    job=local_job)
+  File ""fl_master.py"", line 35, in <module>
+    output=output)
+
+----------------------
+Error Message Summary:
+----------------------
+ExecutionTimeoutError: internal error in RPCClient
+  [Hint: Expected rets[i]->Wait() != 0U, but received rets[i]->Wait():0 == 0U:0.] at (/paddle/paddle/fluid/operators/distributed_ops/recv_op.cc:89)
+  [operator < recv > error]
+E0811 17:26:31.782143805   54284 server_chttp2.cc:38]        {""created"":""@1597137991.782076845"",""description"":""No address added out of total 1 resolved"",""file"":""src/core/ext/transport/chttp2/server/chttp2_server.cc"",""file_line"":305,""referenced_errors"":[{""created"":""@1597137991.782056682"",""description"":""Unable to configure socket"",""fd"":24,""file"":""src/core/lib/iomgr/tcp_server_utils_posix_common.cc"",""file_line"":202,""referenced_errors"":[{""created"":""@1597137991.782038798"",""description"":""OS Error"",""errno"":98,""file"":""src/core/lib/iomgr/tcp_server_utils_posix_common.cc"",""file_line"":180,""os_error"":""Address already in use"",""syscall"":""listen""}]}]}
+W0811 17:26:31.782261 54284 grpc_server.cc:483] Server listening on 127.0.0.1:8181 failed, selected port: 0, retry after 3 seconds!
+terminate called after throwing an instance of 'paddle::platform::EnforceNotMet'
+  what():  
+
+--------------------------------------------
+C++ Call Stacks (More useful to developers):
+--------------------------------------------
+0   std::string paddle::platform::GetTraceBackString<std::string const&>(std::string const&, char const*, int)
+1   paddle::platform::EnforceNotMet::EnforceNotMet(std::string const&, char const*, int)
+2   paddle::operators::distributed::AsyncGRPCServer::StartServer()
+3   std::thread::_Impl<std::_Bind_simple<void (*(std::shared_ptr<paddle::operators::distributed::RPCServer>))(std::shared_ptr<paddle::operators::distributed::RPCServer>)> >::_M_run()
+
+----------------------
+Error Message Summary:
+----------------------
+Error: can't bind to address:127.0.0.1:8181
+  [Hint: Expected selected_port_ != 0, but received selected_port_:0 == 0:0.] at (/paddle/paddle/fluid/operators/distributed/grpc/grpc_server.cc:491)
+
+W0811 17:26:34.799566 54284 init.cc:216] Warning: PaddlePaddle catches a failure signal, it may not work properly
+W0811 17:26:34.799626 54284 init.cc:218] You could check whether you killed PaddlePaddle thread/process accidentally or report the case to PaddlePaddle
+W0811 17:26:34.799659 54284 init.cc:221] The detail failure signal is:
+
+W0811 17:26:34.799721 54284 init.cc:224] *** Aborted at 1597137994 (unix time) try ""date -d @1597137994"" if you are using GNU date ***
+W0811 17:26:34.805169 54284 init.cc:224] PC: @                0x0 (unknown)
+W0811 17:26:34.805349 54284 init.cc:224] *** SIGABRT (@0xcc27) received by PID 52263 (TID 0x7f112176f700) from PID 52263; stack trace: ***
+W0811 17:26:34.809895 54284 init.cc:224]     @     0x7f11a9b92630 (unknown)
+W0811 17:26:34.814242 54284 init.cc:224]     @     0x7f11a97eb387 __GI_raise
+W0811 17:26:34.818013 54284 init.cc:224]     @     0x7f11a97eca78 __GI_abort
+W0811 17:26:34.820119 54284 init.cc:224]     @     0x7f10a11e084a __gnu_cxx::__verbose_terminate_handler()
+W0811 17:26:34.821506 54284 init.cc:224]     @     0x7f10a11def47 __cxxabiv1::__terminate()
+W0811 17:26:34.823457 54284 init.cc:224]     @     0x7f10a11def7d std::terminate()
+W0811 17:26:34.825057 54284 init.cc:224]     @     0x7f10a11df15a __cxa_throw
+W0811 17:26:34.831650 54284 init.cc:224]     @     0x7f10500db225 paddle::operators::distributed::AsyncGRPCServer::StartServer()
+W0811 17:26:34.839433 54284 init.cc:224]     @     0x7f104eee8cd7 std::thread::_Impl<>::_M_run()
+W0811 17:26:34.840577 54284 init.cc:224]     @     0x7f10a11fb421 execute_native_thread_routine_compat
+W0811 17:26:34.843531 54284 init.cc:224]     @     0x7f11a9b8aea5 start_thread
+W0811 17:26:34.846952 54284 init.cc:224]     @     0x7f11a98b38dd __clone
+W0811 17:26:34.849900 54284 init.cc:224]     @                0x0 (unknown)
+
+(base) [root@slave01 detection_demo]# ls
+5_trainer0.log  download.sh          faster_rcnn_program.tar.gz  fl_fruit.tar.gz  fl_master.py     fl_server.py   README.md  scheduler.log
+5_trainer1.log  faster_rcnn_program  fl_fruit                    fl_job_config    fl_scheduler.py  fl_trainer.py  run.sh     server0.log
+(base) [root@slave01 detection_demo]# cat scheduler.log 
+start init
+value: 127.0.0.1:8181
+key=SERVER_EP: SERVER_EP
+value: 127.0.0.1:9000
+key=WORKER_EP: WORKER_EP
+value: 127.0.0.1:9001
+key=WORKER_EP: WORKER_EP
+init env done.
+(base) [root@slave01 detection_demo]# cat server0.log 
+connect scheduler
+start connect scheduler
+group[0] INIT
+(base) [root@slave01 detection_demo]# cat 5_trainer0.log 
+job start
+create trainer job
+init test program
+start output
+start train
+ready to train
+epoch 1 start train
+(base) [root@slave01 detection_demo]# cat 5_trainer1.log 
+job start
+create trainer job
+init test program
+start output
+start train
+ready to train
+epoch 1 start train
+(base) [root@slave01 detection_demo]# 
+```
+看起来开始训练了，但是又报了新的错误
+----------------------
+Error Message Summary:
+----------------------
+Error: can't bind to address:127.0.0.1:8181
+----------------------
+Error Message Summary:
+----------------------
+ExecutionTimeoutError: internal error in RPCClient
+  [Hint: Expected rets[i]->Wait() != 0U, but received rets[i]->Wait():0 == 0U:0.] at (/paddle/paddle/fluid/operators/distributed_ops/recv_op.cc:89)
+  [operator < recv > error]
+是需要安装RPC client么？
+server启动时报了一个Address already in use 的错误。
+是不是运行run.sh的时候没有kill掉之前的server进程呢？
+
+或者8181端口被其他进程占用了？应该是已经被占用了，8181这个端口可以用更大一点的端口号替代吗？可以的，将以下代码的8181替换成空闲的端口即可：
+
+https://github.com/PaddlePaddle/PaddleFL/blob/master/python/paddle_fl/paddle_fl/examples/detection_demo/fl_master.py#L26
+https://github.com/PaddlePaddle/PaddleFL/blob/master/python/paddle_fl/paddle_fl/examples/detection_demo/fl_server.py#L28
+多谢指导！！另外想问一下，如果要在docker里面去运行这个demo的话，是不是需要安装nvidia-docker，我看官方提供的docker并没有cuda/nvidia driver，是需要自己的配置的把？不客气~ 建议还是安装下nvidia-docker，至于docker中的nvidia driver 可以尝试直接在docker里面安装驱动？
+
+麻烦给个star，近期还会发布更多功能：）训练完成之后发现只有保存了一个训练节点的模型文件夹5_model_node0 ，正常有两个训练节点任务trainer0和trainer1，应该会保存两个节点下的模型文件吧，为什么就只有一个训练节点的模型文件？ 另外想问一下fl_trainer训练得到的模型梯度如何上传到server，好像这个demo只有训练节点任务，没有把训练之后的模型加密上传到server的步骤是么？多谢！！
+![image](https://user-images.githubusercontent.com/22416239/90119772-9436ca00-dd8c-11ea-8cef-c47992213dac.png)
+![image](https://user-images.githubusercontent.com/22416239/90120194-10c9a880-dd8d-11ea-88a6-b0d9aab3131f.png)
+该例子使用的是FedAvg优化器，训练过程如下：
+trainer从server拉取参数
+trainer在本地训练自己的模型n个step（fl_master中定义）
+trainer将本地的diff 传到server，server做平均后将新的参数传回trainer
+
+第一个问题：因为所有trainer会从server不断拉取最新模型，所以两个trainer的模型其实是一样的，所以保存一个即可
+第二个问题：server和trainer的通信在底层C++代码中实现的，这个操作是不暴露给用户的
+server监听及更新的代码：
+
+https://github.com/PaddlePaddle/Paddle/blob/develop/paddle/fluid/operators/distributed_ops/fl_listen_and_serv_op.cc你好，想请问下，您这边用PaddleFL有具体的场景么？目前还没有特别好的场景，还是处于前期调研阶段，主要想看看视觉算法这块有没有比较好的切入点，不知道您这边目前有没有一些实际的场景案例呢？
+我们目前也在开发阶段~ 所以也想了解下用户的需求，如果有机会可以一起合作:P",39,2020-08-10 08:47:43,2020-08-28 08:58:20,2020-08-28 08:58:19
+https://github.com/PaddlePaddle/PaddleFL/issues/92,[],PaddleFL in docker ,"PaddleFL in docker Hello. Its me again.
+
+Wanna ask you about work with PaddleFL in docker.
+Do I need to pull only paddlepaddle/paddlefl image.
+Or I also need something else?
+
+What I need to do after: `docker run --name paddleFL --net=host -it -v $PWD:/paddle 00f3ce75fc83 /bin/bash`
+00f3ce75fc83 - image id of paddlefl
+Conatiner is started but I didnt work with docker before ans dont know what next.
+
+How can I run for example uci_demo script?Firstly, you need to download and compile the redis package which is necessary to run PaddleFL job: 
+```
+wget --no-check-certificate https://paddlefl.bj.bcebos.com/redis-stable.tar
+tar -xf redis-stable.tar
+cd redis-stable &&  make
+```
+After that, start a redis service:
+`cd /path/to/redis-stable/src && ./redis-server &`
+
+Finally, you can go to the uci_demo dir, and start your job: 
+1. change the configs in run_standalone.sh file: 
+```
+REDIS_HOME=""/path/to/redis-stable/src""
+port=6379(It is the port num  of your redis server, default is 6379 please check)
+```
+2. Try to run the job:
+`sh run_standalone.sh uci_housing_demo.py`> Firstly, you need to download and compile the redis package which is necessary to run PaddleFL job:
+> 
+> ```
+> wget --no-check-certificate https://paddlefl.bj.bcebos.com/redis-stable.tar
+> tar -xf redis-stable.tar
+> cd redis-stable &&  make
+> ```
+> 
+> After that, start a redis service:
+> `cd /path/to/redis-stable/src && ./redis-server &`
+> 
+> Finally, you can go to the uci_demo dir, and start your job:
+> 
+> 1. change the configs in run_standalone.sh file:
+> 
+> ```
+> REDIS_HOME=""/path/to/redis-stable/src""
+> port=6379(It is the port num  of your redis server, default is 6379 please check)
+> ```
+> 
+> 1. Try to run the job:
+>    `sh run_standalone.sh uci_housing_demo.py`
+
+Sure, I installed redis.
+Also I edit run_stanaldone.sh PYTHON=""python3"" cause in default ""python"" it use pytnon 2.7 but Im using 3.6
+Have problem with PATH to libs, but alreade tried some methods to fix it and it doesnt work anyway.
+![Screenshot_8](https://user-images.githubusercontent.com/23639951/88885547-66f10480-d241-11ea-99b0-03974099656c.png)
+
+Have you ever got problem like this?
+
+Did you try it in our docker？This problem is system does not find the dynamic library, Please try this: 
+
+`export LD_LIBRARY_PATH=/usr/lib/python3.6/site-packages/paddle_fl/mpc/libs:$LD_LIBRARY_PATH `Look like your job is not run in docker~ We recommend you to use our docker which will help you to avoid many unexpected errors :P> Look like your job is not run in docker~ We recommend you to use our docker which will help you to avoid many unexpected errors :P
+
+So, I tun this:
+`docker run --name paddleFL --net=host -it -v $PWD:/paddle 00f3ce75fc83 /bin/bash`
+00f3ce75fc83 - image id of paddlefl
+
+Checked:
+`docker ps`
+![Screenshot_9](https://user-images.githubusercontent.com/23639951/88887160-8a697e80-d244-11ea-9e2e-4b81f1de92ed.png)
+
+So it means it works I think.
+
+After docker start I stsay here
+![Screenshot_10](https://user-images.githubusercontent.com/23639951/88887311-d4eafb00-d244-11ea-8e7f-7fa517217eb7.png)
+
+
+Im a bit confused how I can run that script in your docker :s
+check the path '/paddle'. 
+
+When you start docker, there is an option: `-v $PWD:/paddle`, this means ""put the files in your current path into the '/paddle' in docker""~> check the path '/paddle'.
+> 
+> When you start docker, there is an option: `-v $PWD:/paddle`, this means ""put the files in your current path into the '/paddle' in docker""~
+
+Trying to run uci_housing_demo in docker 
+
+![11](https://user-images.githubusercontent.com/23639951/88901972-36699480-d25a-11ea-8e19-ffe1a39c631e.png)
+![12](https://user-images.githubusercontent.com/23639951/88901975-379ac180-d25a-11ea-9195-7b566dec0338.png)
+![13](https://user-images.githubusercontent.com/23639951/88901978-379ac180-d25a-11ea-9c82-6fe665088a6e.png)
+
+Could you please try again？Sometimes the core error is accidental. > Could you please try again？Sometimes the core error is accidental.
+
+Tried many times.
+Also I have installed docker and redis-stable in new OS (Ubuntu 20.04) and tried there - the same Error.
+
+Btw, file run_standalone.sh cannot find redis-cli in  path/redis-stable/src
+![Снимок экрана от 2020-07-30 12-53-31](https://user-images.githubusercontent.com/23639951/88909390-b2b4a580-d263-11ea-843d-2fd75c938803.png)
+
+The same at the other OS, I run script with redis installed by pip command.
+
+And have you got any ideas with `Illegal instruction (core dumped)`. What I also can do ? Maybe I miss some libs ?
+
+Environment:
+- Ubuntu 20.04
+- python3 (tried 3.6 and 3.8 , same result)
+- docker
+- paddleFL in docker
+- redis-stable
+Next, Im running docker in uci_demo folder and `./redis-server ` in `/redis-satble/src ` **result  is above on screens.**
+_PATH_TO_REDIS = ""/home/dima/redis-stable/src""
+PYTHON =""python3""_
+
+
+
+
+
+It's a little bit strange, there should be redis-cli in /path/to/redis-stable/src:
+![image](https://user-images.githubusercontent.com/19721227/88919491-c3820d00-d29d-11ea-8c43-cde76a899407.png)
+
+Could you Please try another Python version in docker please for the core dumped？(If you use python, change to python3; otherview change to python)
+By the way, you can also run the unittests first. 
+
+```
+#firstly 
+cd /path/to/PaddleFL/python/paddle_fl/mpc/tests/unittests
+#second 
+vim run_test_example.sh 
+# and change TEST_REDIS_IP=""127.0.0.1"", TEST_REDIS_PORT=""6379""
+#Finally, run the tests
+sh run_test_example.sh
+```> By the way, you can also run the unittests first.
+> 
+> ```
+> #firstly 
+> cd /path/to/PaddleFL/python/paddle_fl/mpc/tests/unittests
+> #second 
+> vim run_test_example.sh 
+> # and change TEST_REDIS_IP=""127.0.0.1"", TEST_REDIS_PORT=""6379""
+> #Finally, run the tests
+> sh run_test_example.sh
+> ```
+
+The same problem with python and python3 :/ 
+If I use docker I have core dumped.
+If I run via from foder I have problem with export like [here](https://github.com/PaddlePaddle/PaddleFL/issues/92#issuecomment-666134895)
+I tried to solve problem with LD_LIBRARY_PATH with  many methods and anyway have it.
+> It's a little bit strange, there should be redis-cli in /path/to/redis-stable/src:
+> ![image](https://user-images.githubusercontent.com/19721227/88919491-c3820d00-d29d-11ea-8c43-cde76a899407.png)
+> 
+> Could you Please try another Python version in docker please for the core dumped？(If you use python, change to python3; otherview change to python)
+
+Yea, I am really confused about it cause it does not see the file redis-cli in redis-stable folder, but it exists here :/ 😢 
+Check if your cpu support AES-NI by ‘grep aes /proc/cpuinfo’ ?
+> Check if your cpu support AES-NI by ‘grep aes /proc/cpuinfo’ ?
+
+
+It does not.
+Does it mean that I cant run PaddleFL?
+@SaviorD7 Maybe I can provide you a link that you can run PaddleFL online~> @SaviorD7 Maybe I can provide you a link that you can run PaddleFL online~
+
+Yes, please! It will be great.@qjing666 so, could you?@SaviorD7 Sure, I'm preparing an instruction for you to follow, will provide it to you today~> @SaviorD7 Sure, I'm preparing an instruction for you to follow, will provide it to you today~
+
+Okay, thank you!  @SaviorD7  Here is the link for you to run PaddleFL online: https://aistudio.baidu.com/aistudio/projectdetail/617501?_=1596530433101&lang=en
+
+Here is the instructions for you: 
+1. Select english and login with your github account(also baidu account if you want :P)
+![1](https://user-images.githubusercontent.com/19721227/89273249-e0d62300-d671-11ea-8178-16f9fa2ba702.jpg)
+
+2. select ""EnglishVersion"" and press ""Try it now""
+![2](https://user-images.githubusercontent.com/19721227/89273490-30b4ea00-d672-11ea-9244-d35c0995a58e.jpg)
+
+3. CPU is ok for you to run the job: 
+![3](https://user-images.githubusercontent.com/19721227/89273697-7bcefd00-d672-11ea-92c4-db55cd1a0bbc.jpg)
+
+4. enter the example: 
+![4](https://user-images.githubusercontent.com/19721227/89273819-a6b95100-d672-11ea-81da-2f851dff8e81.jpg)
+
+5. Finally, you can see a notebook and terminal, you can see the instructions in notebook(ignore the Chinese words, they are just the same meaning with the english ones), necessary files are prepared in terminal and you can run the job with the help of instructions! 
+![5](https://user-images.githubusercontent.com/19721227/89274269-437bee80-d673-11ea-8f90-8f0df12e3c0e.jpg)
+
+Feel free to contact us if you have any question~~
+> @SaviorD7 Here is the link for you to run PaddleFL online: https://aistudio.baidu.com/aistudio/projectdetail/617501?_=1596530433101&lang=en
+> 
+> Here is the instructions for you:
+> 
+> 1. Select english and login with your github account(also baidu account if you want :P)
+>    ![1](https://user-images.githubusercontent.com/19721227/89273249-e0d62300-d671-11ea-8178-16f9fa2ba702.jpg)
+> 2. select ""EnglishVersion"" and press ""Try it now""
+>    ![2](https://user-images.githubusercontent.com/19721227/89273490-30b4ea00-d672-11ea-9244-d35c0995a58e.jpg)
+> 3. CPU is ok for you to run the job:
+>    ![3](https://user-images.githubusercontent.com/19721227/89273697-7bcefd00-d672-11ea-92c4-db55cd1a0bbc.jpg)
+> 4. enter the example:
+>    ![4](https://user-images.githubusercontent.com/19721227/89273819-a6b95100-d672-11ea-81da-2f851dff8e81.jpg)
+> 5. Finally, you can see a notebook and terminal, you can see the instructions in notebook(ignore the Chinese words, they are just the same meaning with the english ones), necessary files are prepared in terminal and you can run the job with the help of instructions!
+>    ![5](https://user-images.githubusercontent.com/19721227/89274269-437bee80-d673-11ea-8f90-8f0df12e3c0e.jpg)
+> 
+> Feel free to contact us if you have any question~~
+
+Great! Thank you a lot! 
+
+One question: how many disk size I have to upload my datasets and work with them?The default disk size is 100GB, that's enough~@qjing666 oh, nvm, i found it. Thanks again.@SaviorD7 Did the example works for you? :P> @SaviorD7 Did the example works for you? :P
+
+Yeah, thank you!
+Now Im trying to work with my data and Im a bit stuck in data and label reader. Okay! The following codes are the example that we use to generate our vertical separated data, hope it helps you in your problem! 
+```
+import numpy as np
+import paddle
+
+paddle.dataset.uci_housing.train()
+SOURCE_DATA = paddle.dataset.uci_housing.UCI_TRAIN_DATA
+
+
+def generate_vertical_data_file(ratio=0.8, alice_file='alice.dat', bob_file='bob.dat'):
+    """"""
+    Generate vertical data for two parties named alice and bob, where alice has all labels
+    and bob has all features. The data are based on uci housing training data.
+
+    Args:
+        ratio: The ratio of data that are owned by alice and bob. alice owns the front
+        part of the whole data, while bob owns the latter.
+        alice_file: The file that save data of alice.
+        bob_file: The file that save data of bob.
+
+    Examples:
+        Suppose there are 100 data records in the whole data and ratio=0.8, in this case,
+        alice would have the front 80 records and bob would have the latter 80 records, which
+        means that there are 60 common records between alice and bob.
+    """"""
+    data_length = int(np.array(SOURCE_DATA).shape[0] * ratio)
+    alice_data = SOURCE_DATA[:data_length]
+    bob_data = SOURCE_DATA[-data_length:]
+    # data number for each record of alice_data
+    alice_data_number = np.arange(data_length, dtype=np.int)
+    numbered_alice_data = np.insert(alice_data[:, -1:], 0, values=alice_data_number, axis=1)
+    numbered_alice_data.tofile(alice_file, sep=' ')
+
+    bob_data_number = np.arange(start=np.array(SOURCE_DATA).shape[0] - data_length,
+                                stop=np.array(SOURCE_DATA).shape[0]).astype(np.int)
+    numbered_bob_data = np.insert(bob_data[:, :-1], 0, values=bob_data_number, axis=1)
+    numbered_bob_data.tofile(bob_file, sep=' ')
+
+
+generate_vertical_data_file(ratio=0.8)
+```> Okay! The following codes are the example that we use to generate our vertical separated data, hope it helps you in your problem!
+> 
+> ```
+> import numpy as np
+> import paddle
+> 
+> paddle.dataset.uci_housing.train()
+> SOURCE_DATA = paddle.dataset.uci_housing.UCI_TRAIN_DATA
+> 
+> 
+> def generate_vertical_data_file(ratio=0.8, alice_file='alice.dat', bob_file='bob.dat'):
+>     """"""
+>     Generate vertical data for two parties named alice and bob, where alice has all labels
+>     and bob has all features. The data are based on uci housing training data.
+> 
+>     Args:
+>         ratio: The ratio of data that are owned by alice and bob. alice owns the front
+>         part of the whole data, while bob owns the latter.
+>         alice_file: The file that save data of alice.
+>         bob_file: The file that save data of bob.
+> 
+>     Examples:
+>         Suppose there are 100 data records in the whole data and ratio=0.8, in this case,
+>         alice would have the front 80 records and bob would have the latter 80 records, which
+>         means that there are 60 common records between alice and bob.
+>     """"""
+>     data_length = int(np.array(SOURCE_DATA).shape[0] * ratio)
+>     alice_data = SOURCE_DATA[:data_length]
+>     bob_data = SOURCE_DATA[-data_length:]
+>     # data number for each record of alice_data
+>     alice_data_number = np.arange(data_length, dtype=np.int)
+>     numbered_alice_data = np.insert(alice_data[:, -1:], 0, values=alice_data_number, axis=1)
+>     numbered_alice_data.tofile(alice_file, sep=' ')
+> 
+>     bob_data_number = np.arange(start=np.array(SOURCE_DATA).shape[0] - data_length,
+>                                 stop=np.array(SOURCE_DATA).shape[0]).astype(np.int)
+>     numbered_bob_data = np.insert(bob_data[:, :-1], 0, values=bob_data_number, axis=1)
+>     numbered_bob_data.tofile(bob_file, sep=' ')
+> 
+> 
+> generate_vertical_data_file(ratio=0.8)
+> ```
+
+Btw, what format of data I need?  I see files.dat
+Can I upload in csv, for example?
+And if I have features and label name in a first row I need to delete those, yep? For the first question, you can upload csv files, but may transfer them into numpy array and feed into the model. you can see the code below, the ""sample"" is a numpy array. https://github.com/PaddlePaddle/PaddleFL/blob/master/python/paddle_fl/mpc/examples/uci_demo/uci_housing_demo.py#L90
+
+For the second, yep! If you have names of features and label, you need to remove them.@qjing666 这个例子好像跑不了了，提示 Python 版本过老
+
+> > @SaviorD7 Here is the link for you to run PaddleFL online: https://aistudio.baidu.com/aistudio/projectdetail/617501?_=1596530433101&lang=en
+> > Here is the instructions for you:
+> > 
+> > 1. Select english and login with your github account(also baidu account if you want :P)
+> >    ![1](https://user-images.githubusercontent.com/19721227/89273249-e0d62300-d671-11ea-8178-16f9fa2ba702.jpg)
+> > 2. select ""EnglishVersion"" and press ""Try it now""
+> >    ![2](https://user-images.githubusercontent.com/19721227/89273490-30b4ea00-d672-11ea-9244-d35c0995a58e.jpg)
+> > 3. CPU is ok for you to run the job:
+> >    ![3](https://user-images.githubusercontent.com/19721227/89273697-7bcefd00-d672-11ea-92c4-db55cd1a0bbc.jpg)
+> > 4. enter the example:
+> >    ![4](https://user-images.githubusercontent.com/19721227/89273819-a6b95100-d672-11ea-81da-2f851dff8e81.jpg)
+> > 5. Finally, you can see a notebook and terminal, you can see the instructions in notebook(ignore the Chinese words, they are just the same meaning with the english ones), necessary files are prepared in terminal and you can run the job with the help of instructions!
+> >    ![5](https://user-images.githubusercontent.com/19721227/89274269-437bee80-d673-11ea-8f90-8f0df12e3c0e.jpg)
+> > 
+> > Feel free to contact us if you have any question~~
+> 
+> Great! Thank you a lot!
+> 
+> One question: how many disk size I have to upload my datasets and work with them?",30,2020-07-30 04:58:17,2020-12-30 07:36:06,2020-08-28 08:58:00
+https://github.com/PaddlePaddle/PaddleFL/issues/90,[],install paddleFL / make -j$(nproc),"install paddleFL / make -j$(nproc)I trie to install PaddleFL:
+
+Did it:
+`cmake ../ -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE} -DPYTHON_INCLUDE_DIRS=${python_include_dir} -DCMAKE_CXX_COMPILER=${g++_path}`
+Get it: [screen](https://imgur.com/a/g2AUHDi)
+
+Did it:
+`make -j$(nproc)`
+
+Get Error: [screen](https://imgur.com/a/froN1WM)
+
+Which means It cant see op_registry.h file in paddle/fluid/framework
+
+But this file exists! What can I do to fix it?sorry, I cannot open the two links. Could you please put the screenshots directly on this page?> 
+> 
+> sorry, I cannot open the two links. Could you please put the screenshots directly on this page?
+
+![1](https://user-images.githubusercontent.com/23639951/88753986-39835880-d166-11ea-92e2-d1b3befe35c8.png)
+![2](https://user-images.githubusercontent.com/23639951/88753987-3a1bef00-d166-11ea-998c-0680c79aebb5.png)
+> 
+> 
+> sorry, I cannot open the two links. Could you please put the screenshots directly on this page?
+
+I solved this by copying PaddleFL into paddle folder.
+But got new problem like `'glog/logging.h' file not found`
+
+Can u give me an advice to fix it?Also I tried to install paddleFL in docker, and got this:
+It pulling almost all packages and give unexpecting error ;/
+![Screenshot_6](https://user-images.githubusercontent.com/23639951/88754229-d219d880-d166-11ea-9753-ffd7b60875b6.png)
+Hello, thank you for using PaddleFL.  Here are my advise towards your problems:
+
+Firstly, due to different path in different environment, we highly recommend user to use our docker (for the error during docker pull, would you please try again with a linux system?)
+
+Next, let us figure out your purpose of using PaddleFL. 
+
+If you just want to train data with current  supported models, you can directly install PaddleFL with `pip install paddle_fl` and use the python APIs to define your model. 
+
+C++ code compile is only necessary when users want to develop new operators(like relu_op in: https://github.com/PaddlePaddle/PaddleFL/blob/master/core/paddlefl_mpc/operators/mpc_relu_op.cc). If you are interested to contribute new ops, feel free to contact us for more details. 
+
+Hope my reply is helpful for you~> 
+> 
+> Hello, thank you for using PaddleFL. Here are my advise towards your problems:
+> 
+> Firstly, due to different path in different environment, we highly recommend user to use our docker (for the error during docker pull, would you please try again with a linux system?)
+> 
+> Next, let us figure out your purpose of using PaddleFL.
+> 
+> If you just want to train data with current supported models, you can directly install PaddleFL with `pip install paddle_fl` and use the python APIs to define your model.
+> 
+> C++ code compile is only necessary when users want to develop new operators(like relu_op in: https://github.com/PaddlePaddle/PaddleFL/blob/master/core/paddlefl_mpc/operators/mpc_relu_op.cc). If you are interested to contribute new ops, feel free to contact us for more details.
+> 
+> Hope my reply is helpful for you~
+
+I will try to use existing models. Thanks.
+
+But, about docker: 
+I tried it on Win10, Ubuntu 20.04 and Centos 7.
+All the same like on the screen I sent.Sorry, we cannot recurrent your problem in our environment. 
+
+We will provide you with a new site to pull the image shortly. > Sorry, we cannot recurrent your problem in our environment.
+> 
+> We will provide you with a new site to pull the image shortly.
+
+_**Thank you !**_@SaviorD7 please try this command :P
+
+`docker pull paddlepaddle/paddlefl:latest`> @SaviorD7 please try this command :P
+> 
+> `docker pull paddlepaddle/paddlefl:latest`
+
+### **_Thank you!_**",10,2020-07-28 15:41:33,2020-07-30 03:35:35,2020-07-30 03:35:35
+https://github.com/PaddlePaddle/PaddleFL/issues/86,[],使用docker image安装时报错，疑似由于Python版本为2.6.6过低,"使用docker image安装时报错，疑似由于Python版本为2.6.6过低开发者你好，我通过readme里面的docker image安装方式，在container的bash4.1环境里执行pip install paddle_fl，结果报错：
+bash-4.1# pip install paddlepaddle-gpu==1.8.
+DEPRECATION: Python 2.6 is no longer supported by the Python core team, please upgrade your Python. A future version of pip will drop support for Python 2.6
+Collecting paddlepaddle-gpu==1.8.
+  Could not find a version that satisfies the requirement paddlepaddle-gpu==1.8. (from versions: )
+No matching distribution found for paddlepaddle-gpu==1.8.
+
+找了Paddle的同学说是因为Python版本过低只有2.6。由于这个Python2.6应该是你发布的image里面配置的，以及本身image里面也没有pip，我专门去找了Python2.6的pip安装。想请问是不是我的安装出了什么问题？您好，能否提供下 ~/.bashrc文件的截图。docker里面是提供了Python2.7和Python3.6的环境的，想先确认下启动镜像的方式是否有问题![181593497984_ pic_hd](https://user-images.githubusercontent.com/40765454/86090512-c6da7b00-badc-11ea-8ed7-7f31d269538d.jpg)
+确实是这个问题，请进入docker后，将~/.bashrc改为以下内容：
+```
+# .bashrc
+
+# User specific aliases and functions
+
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+        . /etc/bashrc
+fi
+
+# python
+export PYTHON3_ROOT=/opt/_internal/cpython-3.6.0
+export PYTHON_ROOT=/opt/_internal/cpython-2.7.11-ucs4
+export PATH=$PYTHON3_ROOT/bin:$PATH
+export LD_LIBRARY_PATH=$PYTHON3_ROOT/lib:$LD_LIBRARY_PATH
+export PATH=$PYTHON_ROOT/bin:$PATH
+export LD_LIBRARY_PATH=$PYTHON_ROOT/lib:$LD_LIBRARY_PATH
+
+export PATH=/opt/rh/devtoolset-2/root/usr/lib/gcc/x86_64-redhat-linux/4.8.3/bin:/opt/rh/devtoolset-2/root/usr/lib/gcc/x86_64-redhat-linux/4.8.3:$PATH
+export LD_LIBRARY_PATH=/opt/rh/devtoolset-2/root/usr/lib/gcc/x86_64-redhat-linux/4.8.3/lib:/opt/rh/devtoolset-2/root/usr/lib/gcc/x86_64-redhat-linux/4.8.3/lib64:$LD_LIBRARY_PATH
+```
+
+保存后退出，运行
+```
+source ~/.bashrc
+```
+然后进入python编译器直接可以查看python版本，若为2.7.11则问题解决。我按照你的指示执行了之后确实为2.7.11
+[root@docker-desktop /]# python -V
+Python 2.7.11
+然而这个目录途径[root@docker-desktop /]，我不太懂是什么？
+如果实在container里面的话，就是sh-4.1#，是没有Python的，所以也无法pip install PaddleFL
+sh-4.1# python -V
+sh: python: command not found
+
+抱歉因为我对于docker和Linux编程还不是很熟练，想请你帮助一下。有点没太明白您的意思，想请问下是否启动了docker呢？
+我理解的是，您在镜像里是有python的，但是在镜像的宿主机上边是没有Python的？
+如果是我理解的意思，这个是没问题的，因为我们提供镜像就是为了让用户可以不用配环境了。运行PaddleFL任务的时候也是需要在镜像里面操作的~就是我在docker的container里面更改了~/.bashrc文件，按照你提供的内容。当时命令行的用户是sh-4.1# ，我的理解就是container里面的环境。
+但是在执行完source ~/.bashrc之后，命令行的用户变成了[root@docker-desktop /]# ，我不太清楚这个时候我是在docker的container里面还是回到了自己的主机用户应该还是在container里面的![191593504036_ pic_hd](https://user-images.githubusercontent.com/40765454/86102405-0f4e6480-baee-11ea-8ca5-6e393b2197c6.jpg)
+docker ps 和 docker image ls分别返回什么呢？![201593505930_ pic_hd](https://user-images.githubusercontent.com/40765454/86103376-42452800-baef-11ea-83b4-47c874f5b403.jpg)
+运行下docker attach PDFL，然后看下有没有python？
+没有~1. 执行docker run时的完整语句是？
+2. 如果已经在container里面，看下有没有/opt/_internal/cpython-2.7.11-ucs4/文件夹没事，我先不用了，谢谢你~",14,2020-06-30 05:31:49,2020-08-28 08:57:32,2020-08-28 08:57:32
+https://github.com/PaddlePaddle/PaddleFL/issues/85,[],Femnist_demo运行准确率问题,"Femnist_demo运行准确率问题在运行咱们的Femnist_demo例子的过程中，发现准确率很低，这个是正常现象嘛？参数都使用默认的，没有进行修改，trainer0.log的具体内容为：
+[trainer0.log](https://github.com/PaddlePaddle/PaddleFL/files/4803208/trainer0.log)
+感谢回复！您好，我们将femnist数据切分为35份数据。
+您可以把fl_master 里面的worker_num 改成35；run.sh 中的for loop中4改为35 试一下。
+根据我们的实验，用全量数据做联邦训练，在测试集上的accuracy可以达到78%左右。
+
+您的log我这边打不开呢，可以再提供下么非常感谢您的回复，我尝试一下您说的方法。附之前的log
+[trainer0.txt](https://github.com/PaddlePaddle/PaddleFL/files/4803400/trainer0.txt)",2,2020-06-19 08:04:03,2020-10-16 06:06:49,2020-10-16 06:06:49
+https://github.com/PaddlePaddle/PaddleFL/issues/80,[],ValueError when save detection model,"ValueError when save detection modelThere is a value error: ""var im_id not in this block"" when save a detection model. While ""im_id"" exists in trainer main program. 
+
+**fl_trainer.py:** 
+
+job_path = ""fl_job_config""
+job = FLRunTimeJob()
+job.load_trainer_job(job_path, trainer_id)
+job._scheduler_ep = ""127.0.0.1:9091""  # Inform scheduler IP address to trainer
+trainer = FLTrainerFactory().create_fl_trainer(job)
+trainer._current_ep = ""127.0.0.1:{}"".format(9000 + trainer_id)
+trainer.start(fluid.CUDAPlace(trainer_id+1))
+
+test_program = trainer._main_program.clone(for_test=True)
+
+image = fluid.layers.data(name='image', shape=[3, None, None], dtype = 'float32',lod_level=0)
+im_info = fluid.layers.data(name='im_info', shape=[None, 3], dtype = 'float32',lod_level=0)
+im_id = fluid.layers.data(name='im_id', shape=[None, 1], dtype = 'int64',lod_level=0)
+gt_bbox = fluid.layers.data(name='gt_bbox', shape=[None,4], dtype = 'float32', lod_level=1)
+gt_class = fluid.layers.data(name='gt_class', shape=[None,1], dtype = 'int32', lod_level=1)
+is_crowd = fluid.layers.data(name='is_crowd', shape=[None,1], dtype = 'int32', lod_level=1)
+place = fluid.CUDAPlace(trainer_id)
+feeder = fluid.DataFeeder(feed_list=[image, im_info, im_id, gt_bbox, gt_class, is_crowd], place=place)
+
+output_folder = ""model_node%d"" % trainer_id
+epoch_id = 0
+step = 0
+
+while not trainer.stop():
+    
+    epoch_id += 1
+    
+    if epoch_id > 10:
+        break
+    
+    print(""epoch %d start train"" % (epoch_id))
+    test_class = TestReader()
+    data_loader = test_class.test_loader()
+    
+    for step_id, data in enumerate(data_loader):
+        acc = trainer.run(feeder.feed(data), fetch=['sum_0.tmp_0'])
+        step += 1
+        print(""step: {}, loss: {}"".format(step, acc))
+
+    if trainer_id == 0:
+        save_dir = (output_folder + ""/epoch_%d"") % epoch_id
+        trainer.save_inference_program(output_folder)
+
+
+**Trainer main program Intercept：**
+
+vars {
+    name: ""im_id""
+    type {
+      type: LOD_TENSOR
+      lod_tensor {
+        tensor {
+          data_type: INT64
+          dims: -1
+          dims: 1
+        }
+        lod_level: 0
+      }
+    }
+    persistable: false
+    need_check_feed: true
+  }
+
+问题解决方式：detection任务中保存及验证模型模型用的是save接口所产生的.pdparams 文件，将保存模型部分代码改为:
+
+if trainer_id == 0:
+       
+        save_dir = (output_folder + ""/epoch_%d"") % epoch_id
+        fluid.save(trainer._main_program, output_folder)
+训练正常运行，模型也可以保存，模型效果验证中。。",1,2020-05-25 08:10:30,2020-06-11 03:26:41,2020-06-11 03:26:41
+https://github.com/PaddlePaddle/PaddleFL/issues/63,[],有没有国内的交流群啊，案例好像都没有什么文档,"有没有国内的交流群啊，案例好像都没有什么文档您好，感谢您的建议！我们会尽快提供更完善的教程，并提供更方便的交流渠道！有纵向学习的案例没纵向的方案已经开发完毕，具体的实用文档还在准备当中，将会和新版本一起发布！就是现在的代码里面还没有纵向的案例？有的，相关api以及例子在 https://github.com/PaddlePaddle/PaddleFL/tree/master/python/paddle_fl/mpc 中，使用说明及文档还在准备中好的 ，非常感谢 您好，PaddleFL已完成版本升级。在新版本中，我们完善了所有例子的文档可供参考：
+
+数据并行式联邦学习例子请参考：https://github.com/PaddlePaddle/PaddleFL/tree/master/python/paddle_fl/paddle_fl/examples/femnist_demo 
+基于多方安全计算的联邦学习例子请参考：https://github.com/PaddlePaddle/PaddleFL/tree/master/python/paddle_fl/mpc/examples/uci_demo> 您好，PaddleFL已完成版本升级。在新版本中，我们完善了所有例子的文档可供参考：
+> 
+> 数据并行式联邦学习例子请参考：https://github.com/PaddlePaddle/PaddleFL/tree/master/python/paddle_fl/paddle_fl/examples/femnist_demo
+> 基于多方安全计算的联邦学习例子请参考：https://github.com/PaddlePaddle/PaddleFL/tree/master/python/paddle_fl/mpc/examples/uci_demo
+
+UCI 的 demo 现在没有了地址有变，目前位置：
+https://github.com/PaddlePaddle/PaddleFL/tree/master/python/paddle_fl/mpc/examples/linear_reg_with_uci> 
+> 
+> 地址有变，目前位置：
+> https://github.com/PaddlePaddle/PaddleFL/tree/master/python/paddle_fl/mpc/examples/linear_reg_with_uci
+
+您好，我在import paddle_fl后会出现
+RuntimeError: (PreconditionNotMet) The third-party dynamic library (/home/ubuntu/.conda/envs/wjq-tfml/lib/python3.6/site-packages/paddle_fl/mpc/libs/libpaddle_enc.so) that Paddle depends on is not configured correctly. (error code is /home/ubuntu/.conda/envs/wjq-tfml/lib/python3.6/site-packages/paddle_fl/mpc/libs/libpaddle_enc.so: undefined symbol: _ZNK6paddle9framework12OperatorBase13DebugStringExEPKNS0_5ScopeE的问题，请问是什么原因呢",10,2020-04-30 11:53:26,2021-04-15 13:42:24,2020-05-07 04:12:04
+https://github.com/PaddlePaddle/PaddleFL/issues/58,[],检测任务分割成fl program后，py_reader报错,"检测任务分割成fl program后，py_reader报错![image](https://user-images.githubusercontent.com/19721227/80486656-1fcb4d00-898e-11ea-9dcf-0e554f1c43de.png)
+解决，使用iterable 的 dataloader即可",1,2020-04-28 12:23:36,2020-08-20 02:06:08,2020-08-20 02:06:08
+https://github.com/PaddlePaddle/PaddleFL/issues/56,['bug'],Paddlefl内部例子中的IP地址如何理解,"Paddlefl内部例子中的IP地址如何理解请问IP address 127.0.0.1的意义是什么该如何理解，这个是固定死的吗？scheduler以及server都是以此为基础在后面加port号。127.0.0.1这串能改动吗？127.0.0.1为本机IP地址，因为example用于单机模拟，所以所有组件的ip地址都为127.0.0.1。当各组件被部署与不同机器时，ip地址也会相应的变化。您好，在k8s例子中，使用sh run_master.sh运行fl_master.py时它会报KeyError:'FL_SERVER_SERVICE_HOST'的错误k8s例子需要用 kubectl apply -f ./paddle_fl/examples/k8s_deployment/master.yaml 运行，详情请参考主页面的README。运行前需安装kubectl，请参考https://github.com/PaddlePaddle/PaddleFL/blob/master/paddle_fl/examples/k8s_deployment/deploy_instruction.md。@Daniel-Ming 如果只是想在不同机器跑通例子，可以不用k8s例子。建议直接修改ctr_demo 中所有组件的ip 地址
+您好，也就是说多机运行情况只用修改scheduler，server，trainer的IP地址即可了吗？127.0.0.1这块是不同的节点随便改成其它的地址就可以在多机情况下运行了吗？@Daniel-Ming 是的，只要ip指定正确就好。您好，将scheduler以及trainer内的IP地址改完后，fl_master.py，fl_scheduler.py，fl_server.py在一个机器上运行，fl_trainer.py在另一台机器上运行，两边都正常运行但terminal那块并没有print出任何东西这是两台机器没链接上吗？如果链接上scheduler会打印""init env done."" 请确定输出是否打印到log中，若没有log，则未连接上您好，scheduler.log以及server0.log均在主机生成了，但里面都是空的，另一台跑trainer的PC上的trainer0.log以及trainer1.log里面是空的。这是没有连接成功是吗？
+是的，ip地址配置的可能不对我的scheduler IP设为127.0.0.1:9090，server的IP设为127.0.0.1:8081，trainer则是0.0.0.0:9000+trainer_id。fl_master，fl_scheduler，fl_server均在主机上跑，fl_trainer在另一台上跑，这样为什么没有连接起来呢？可以把代码放上来么，根据描述，trainer是找不到scheduler和Server的，因为127.0.0.1代表本机ip。scheduler/server所理解的127.0.0.1和trainer所理解的127.0.0.1是不一样的![image](https://user-images.githubusercontent.com/59012023/79947430-8808c300-84a4-11ea-890a-ac0ad886152f.png)，这是fl_trainer.py里面改的IP地址。是通过cmd ipconfig查到的另一台机器的默认网关
+_scheduler_ep设置错误，应将127.0.0.1转化为schduler所在机器的ip
+也就是说scheduler的IP应该用cmd IPconfig查到的IP进行设置，然后trainer的IP也是用trainer所在机器的IP进行设置是这样吗？是的，需要把所有的127.0.0.1全部替换掉是fl_master，fl_server，fl_scheduler里面的IP的127.0.0.1部分全部替换成主机的IP地址，然后fl_trainer的IP替换为trainer所在机器的IP是这样子吗？是的，没错。fl_trainer里面的_scheduler_ep也需要用主机的IP![image](https://user-images.githubusercontent.com/59012023/79951148-c4d7b880-84aa-11ea-8e78-6c2d71ac6a55.png)
+![image](https://user-images.githubusercontent.com/59012023/79951172-ce612080-84aa-11ea-95e6-2d8769df8187.png)
+您好，将相应的IP地址修改后两个机器的terminal部分都没有print任何东西，主机操作系统是Ubuntu，trainer所在机器用的是windows
+run.sh里面是什么呢，是否将运行trainer的代码注释掉了呢![image](https://user-images.githubusercontent.com/59012023/79951564-80005180-84ab-11ea-804e-59d55c69fc25.png)
+您好，trainer部分我已经去掉了，Ubuntu主机只跑fl_master,fl_scheduler,fl_server所有trainer都启动才开始训练，所以没有输出![image](https://user-images.githubusercontent.com/59012023/79952819-960f1180-84ad-11ea-99d6-4a1eb7894a4f.png)
+![image](https://user-images.githubusercontent.com/59012023/79952850-9effe300-84ad-11ea-93d2-a697d1faa61e.png)
+您好，trainer0以及trainer1我都在另一台windows机上的两个terminal内启动了，任然没有输出
+能看下您现在fl_master, fl_server, fl_trainer, fl_scheduler的代码么。现在问题不太好定位fl_master的代码如下：
+import paddle.fluid as fluid
+import paddle_fl as fl
+from paddle_fl.core.master.job_generator import JobGenerator
+from paddle_fl.core.strategy.fl_strategy_base import FLStrategyFactory
+
+
+class Model(object):
+    def __init__(self):
+        pass
+
+    def mlp(self, inputs, label, hidden_size=128):
+        self.concat = fluid.layers.concat(inputs, axis=1)
+        self.fc1 = fluid.layers.fc(input=self.concat, size=256, act='relu')
+        self.fc2 = fluid.layers.fc(input=self.fc1, size=128, act='relu')
+        self.predict = fluid.layers.fc(input=self.fc2, size=2, act='softmax')
+        self.sum_cost = fluid.layers.cross_entropy(
+            input=self.predict, label=label)
+        self.accuracy = fluid.layers.accuracy(input=self.predict, label=label)
+        self.loss = fluid.layers.reduce_mean(self.sum_cost)
+        self.startup_program = fluid.default_startup_program()
+
+inputs = [fluid.layers.data( \
+            name=str(slot_id), shape=[5],
+            dtype=""float32"")
+          for slot_id in range(3)]
+label = fluid.layers.data( \
+            name=""label"",
+            shape=[1],
+            dtype='int64')
+
+model = Model()
+model.mlp(inputs, label)
+
+job_generator = JobGenerator()
+optimizer = fluid.optimizer.SGD(learning_rate=0.1)
+job_generator.set_optimizer(optimizer)
+job_generator.set_losses([model.loss])
+job_generator.set_startup_program(model.startup_program)
+job_generator.set_infer_feed_and_target_names([x.name for x in inputs],
+                                              [model.predict.name])
+
+build_strategy = FLStrategyFactory()
+build_strategy.fed_avg = True
+build_strategy.inner_step = 10
+strategy = build_strategy.create_fl_strategy()
+
+
+endpoints = [""172.18.0.1:8181""]
+output = ""fl_job_config""
+job_generator.generate_fl_job(
+    strategy, server_endpoints=endpoints, worker_num=2, output=output)
+
+fl_scheduler.py代码如下:
+from paddle_fl.core.scheduler.agent_master import FLScheduler
+
+worker_num = 2
+server_num = 1
+scheduler = FLScheduler(worker_num, server_num, port=9092)
+scheduler.set_sample_worker_num(worker_num)
+scheduler.init_env()
+print(""init env done."")
+scheduler.start_fl_training()
+
+fl_server代码如下:
+import paddle_fl as fl
+import paddle.fluid as fluid
+from paddle_fl.core.server.fl_server import FLServer
+from paddle_fl.core.master.fl_job import FLRunTimeJob
+server = FLServer()
+server_id = 0
+job_path = ""fl_job_config""
+job = FLRunTimeJob()
+job.load_server_job(job_path, server_id)
+job._scheduler_ep = ""172.18.0.1:9092""  # IP address for scheduler
+server.set_server_job(job)
+server._current_ep = ""172.18.0.1:8181""  # IP address for server
+server.start()
+print(""connect"")
+
+fl_trainer的代码如下:
+from paddle_fl.core.trainer.fl_trainer import FLTrainerFactory
+from paddle_fl.core.master.fl_job import FLRunTimeJob
+import numpy as np
+import sys
+import logging
+import time
+logging.basicConfig(
+    filename=""test.log"",
+    filemode=""w"",
+    format=""%(asctime)s %(name)s:%(levelname)s:%(message)s"",
+    datefmt=""%d-%M-%Y %H:%M:%S"",
+    level=logging.DEBUG)
+
+
+def reader():
+    for i in range(1000):
+        data_dict = {}
+        for i in range(3):
+            data_dict[str(i)] = np.random.rand(1, 5).astype('float32')
+        data_dict[""label""] = np.random.randint(2, size=(1, 1)).astype('int64')
+        yield data_dict
+
+trainer_id = int(sys.argv[1])  # trainer id for each guest
+job_path = ""fl_job_config""
+job = FLRunTimeJob()
+job.load_trainer_job(job_path, trainer_id)
+job._scheduler_ep = ""172.18.0.1:9092""  # Inform the scheduler IP to trainer
+trainer = FLTrainerFactory().create_fl_trainer(job)
+trainer._current_ep = ""192.168.0.126:{}"".format(9000 + trainer_id)
+trainer.start()
+print(trainer._scheduler_ep, trainer._current_ep)
+output_folder = ""fl_model""
+epoch_id = 0
+while not trainer.stop():
+    print(""batch %d start train"" % (epoch_id))
+    train_step = 0
+    for data in reader():
+        trainer.run(feed=data, fetch=[])
+        train_step += 1
+        if train_step == trainer._step:
+            break
+    epoch_id += 1
+    if epoch_id % 5 == 0:
+        trainer.save_inference_program(output_folder)
+
+代码基本都是ctr_demo的代码，除了改变IP地址以外没做任何改动问题排查方式：
+1. 运行trainer的机器中有fl_job_config这个文件夹么
+2. 确定两个ip可以互通fl_job_config是有的，如何确定两个ip互通呢？是要确定两个ip在同一局域网下才能连接起来是这样子吗？用http.server即可
+参考 https://docs.python.org/3/library/http.server.html您好，之前发现连不上ubuntu主机发现原因是主机的port端口权限没开，使用ufw把端口打开后可以用了，现在遇到得问题是另一台机器上的两个trainer运行后无法正常进行训练，下图是报错信息：
+![image](https://user-images.githubusercontent.com/59012023/80187299-f8991680-8641-11ea-8cdc-fe5a8f3d7d70.png)
+![image](https://user-images.githubusercontent.com/59012023/80187324-03ec4200-8642-11ea-8021-87fc5bac20ff.png)
+请问是开始训练即报错，还是训练了一段时间才报错的呢看了下问题，paddle默认的编译选项是关掉了with_distributed的，所以您安装的可能不是分布式版本。需要重新编译一下Paddle，将with_distributed选项设置成ON。所以导致没有recv op
+您好，我的问题解决，解决方式是将trainer放在另一台Ubuntu的机器上去train，主机和部署机都用ubuntu的系统bug就没有了，trainer也能正常的training并将每次epoch的结果写入到log当中。好的！如果有问题请随时反馈。也请star PaddleFL关注我们的后续功能更新：）",33,2020-04-21 09:06:30,2020-04-26 03:23:28,2020-04-26 03:23:28
+https://github.com/PaddlePaddle/PaddleFL/issues/33,['bug'],femnist例子跑不通,"femnist例子跑不通femnist例子跑不通，最新paddlepaddle-gpu和paddle-fl0.1.5，
+Traceback (most recent call last):
+  File ""fl_trainer.py"", line 1, in <module>
+    from paddle_fl.core.trainer.fl_trainer import FLTrainerFactory
+  File ""<frozen importlib._bootstrap>"", line 983, in _find_and_load
+  File ""<frozen importlib._bootstrap>"", line 963, in _find_and_load_unlocked
+  File ""<frozen importlib._bootstrap>"", line 906, in _find_spec
+  File ""<frozen importlib._bootstrap_external>"", line 1280, in find_spec
+  File ""<frozen importlib._bootstrap_external>"", line 1254, in _get_spec
+  File ""<frozen importlib._bootstrap_external>"", line 1235, in _legacy_get_spec
+  File ""<frozen importlib._bootstrap>"", line 441, in spec_from_loader
+  File ""<frozen importlib._bootstrap_external>"", line 594, in spec_from_file_location
+  File ""/home/yogurt/anaconda3/envs/paddle/lib/python3.7/site-packages/paddle_fl-0.1.5-py3.7.egg/paddle_fl/core/trainer/fl_trainer.py"", line 128
+    self.exe.run(self._main_program,
+                                   ^
+TabError: inconsistent use of tabs and spaces in indentationThank you for the report. This is an indentation error, you can replace the tabs with spaces and return to the PaddleFL path and run ""python setup.py install"" to re-install paddle-fl. Then you can try the example again.",1,2020-01-13 07:15:21,2020-02-26 15:17:02,2020-02-26 15:17:02
+https://github.com/PaddlePaddle/PaddleFL/issues/23,['bug'],Prediction error on test set in training process,"Prediction error on test set in training process``` python
+    if args.do_eval:
+        dev_data_generator = processor.data_generator(batch_size=args.batch_size, phase='dev',
+                                                      with_pos=with_pos)
+        dev_loader.decorate_sample_list_generator(dev_data_generator, places=fluid.CPUPlace())
+        dev_program = trainer._main_program.clone(for_test=True)
+
+    train_loader.decorate_sample_list_generator(train_data_generator, places=fluid.CPUPlace())
+    train_fetch_list = [""accuracy_0.tmp_0"", ""accuracy_0.tmp_1"", ""create_tensor_0""]
+    steps = 0
+
+    for epoch in range(args.epoch):
+        for train_data in train_loader:
+            steps += 1
+            outputs = trainer.run(feed=train_data, fetch=train_fetch_list)
+            acc, num_seqs, loss = outputs
+            if steps % args.disp_freq == 0:
+                print(""[train] epoch: {0} step: {1}, accuray: {2}, num_seqs: {3},""
+                      "" loss: {4}"".format(epoch, steps, acc, num_seqs, loss))
+            if steps % args.valid_freq and args.do_eval:
+                total_cost, total_acc, total_num_seqs = [], [], []
+                for dev_data in dev_loader:
+                    np_acc, np_num_seqs, np_loss = trainer.exe.run(program=dev_program,
+                                                                   feed=dev_data,
+                                                                   fetch_list=train_fetch_list,
+                                                                   return_numpy=False)
+
+```
+I want to evaluate the model in the training process, and create a `dev_program ` program for test as above in `fl_trainer.py` module. However, an error occurred when the trainer is executed, the error detail is as follows:
+```
+------------------------------------------
+Python Call Stacks (More useful to users):
+------------------------------------------
+  File ""/usr/local/lib/python3.7/site-packages/paddle/fluid/framework.py"", line 2459, in append_op
+    attrs=kwargs.get(""attrs"", None))
+  File ""/usr/local/lib/python3.7/site-packages/paddle/fluid/layer_helper.py"", line 43, in append_op
+    return self.main_program.current_block().append_op(*args, **kwargs)
+  File ""/usr/local/lib/python3.7/site-packages/paddle/fluid/layers/nn.py"", line 1835, in dropout
+    'dropout_implementation': dropout_implementation,
+  File ""/Users/wangleyi/PycharmProjects/sms-ai-screening/audit/src/paddle_classifier/classifiers/textcnn.py"", line 86, in _conv_layer
+    convs_drop = fluid.layers.dropout(convs_out, self.dropout_rate)
+  File ""/Users/wangleyi/PycharmProjects/sms-ai-screening/audit/src/paddle_classifier/classifiers/textcnn.py"", line 43, in build_model
+    convs_drop = self._conv_layer(emb)
+  File ""/Users/wangleyi/PycharmProjects/sms-ai-screening/audit/src/paddle_classifier/federated/fl_master.py"", line 67, in _init_model
+    self.accuracy, self.num_seqs, self.loss = self.model.build_model()
+  File ""/Users/wangleyi/PycharmProjects/sms-ai-screening/audit/src/paddle_classifier/federated/fl_master.py"", line 35, in __init__
+    self._init_model(args.model_type)
+  File ""/Users/wangleyi/PycharmProjects/sms-ai-screening/audit/src/paddle_classifier/federated/fl_master.py"", line 83, in create_fl_job
+    model = Model(args)
+  File ""/Users/wangleyi/PycharmProjects/sms-ai-screening/audit/src/paddle_classifier/federated/fl_master.py"", line 110, in <module>
+    create_fl_job(endpoints=server_endpoint_list, output=configure_save_dir)
+  File ""/usr/local/Cellar/python/3.7.3/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py"", line 85, in _run_code
+    exec(code, run_globals)
+  File ""/usr/local/Cellar/python/3.7.3/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py"", line 193, in _run_module_as_main
+    ""__main__"", mod_spec)
+
+----------------------
+Error Message Summary:
+----------------------
+PaddleCheckError: Expected ctx->Attrs().Get<bool>(""is_test"") == false, but received ctx->Attrs().Get<bool>(""is_test""):1 != false:0.
+GradOp is only callable when is_test is false at [/home/teamcity/work/ef54dc8a5b211854/paddle/fluid/operators/dropout_op.cc:108]
+
+```
+<img width=""1318"" alt=""MacHi 2019-11-26 18-33-56"" src=""https://user-images.githubusercontent.com/10727709/69622183-72b97500-107b-11ea-8b0b-10fd3e0546e5.png"">
+
+I learned that this error is caused by the `program` define later than optimizer. However the optimizer is defined in the 'fl_master. py' module, how can I  use the `dev_program`  if  it is defined in the `fl_master.py`?
+fixed.",1,2019-11-26 09:41:48,2020-01-03 01:40:51,2020-01-03 01:32:51
+https://github.com/PaddlePaddle/PaddleFL/issues/10,['bug'],运行quick start时报错AttributeError: 'FedAvgTrainer' object has no attribute 'train_inner_loop',"运行quick start时报错AttributeError: 'FedAvgTrainer' object has no attribute 'train_inner_loop'batch 1 start train
+Traceback (most recent call last):
+  File ""2.py"", line 26, in <module>
+    trainer.train_inner_loop(reader)
+AttributeError: 'FedAvgTrainer' object has no attribute 'train_inner_loop'```while not trainer.stop():
+    step_i += 1
+    print(""batch %d start train"" % (step_i))
+    for data in reader():
+        cost,predict = trainer.run(feed=data,
+                    fetch=[])```
+如果我使用上面的代码fetch里面改怎么填写呢请参考https://github.com/PaddlePaddle/PaddleFL/blob/master/paddle_fl/examples/gru4rec_demo/fl_trainer.pyquick start还是旧的接口，我们会修正，感谢！> quick start还是旧的接口，我们会修正，感谢！
+
+你好 请问横向联邦、纵向联邦是否分别对应一个demo@HoyTiger 文档fix了。目前PaddleFL的纵向部分还在验证中，stay tuned",5,2019-11-12 07:06:14,2020-01-03 01:41:28,2020-01-03 01:31:27
+https://github.com/PaddlePaddle/PaddleFL/issues/7,['bug'],"运行fl_server报错“PaddleCheckError: Expected optimize_blocks.size() >= 1, but received optimize_blocks.size():0 < 1:1.”","运行fl_server报错“PaddleCheckError: Expected optimize_blocks.size() >= 1, but received optimize_blocks.size():0 < 1:1.”我想把现有的一个目标检测模型SSD (https://github.com/PaddlePaddle/models/tree/develop/PaddleCV/ssd) 的训练过程改写成FL的方式，目前运行fl_master没有提示出错，但是之后运行fl_server的时候报错“PaddleCheckError: Expected optimize_blocks.size() >= 1, but received optimize_blocks.size():0 < 1:1.”，不知道是哪里出的问题啊？相关的代码贴在了下面
+
+**1. fl_master.py**
+```python
+import paddle.fluid as fluid
+from paddle.fluid.initializer import MSRA
+from paddle.fluid.param_attr import ParamAttr
+import paddle_fl as fl
+from paddle_fl.core.master.job_generator import JobGenerator
+from paddle_fl.core.strategy.fl_strategy_base import FLStrategyFactory
+
+
+batch_size = 2  # 64
+train_images = 10  # 16551
+lr = 0.001
+lr_epochs = [40, 60, 80, 100]
+lr_decay = [1, 0.5, 0.25, 0.1, 0.01]
+image_shape = [3, 300, 300]
+class_num = 6 # 21
+ap_version = '11point'
+
+
+class NetSSD:
+    def __init__(self, image, class_num, image_shape):
+        self.img = image
+        self.num_classes = class_num
+        self.img_shape = image_shape
+
+    def ssd_net(self, scale=1.0):
+        # 300x300
+        tmp = self.conv_bn(self.img, 3, int(32 * scale), 2, 1)
+        # 150x150
+        tmp = self.depthwise_separable(tmp, 32, 64, 32, 1, scale)
+        tmp = self.depthwise_separable(tmp, 64, 128, 64, 2, scale)
+        # 75x75
+        tmp = self.depthwise_separable(tmp, 128, 128, 128, 1, scale)
+        tmp = self.depthwise_separable(tmp, 128, 256, 128, 2, scale)
+        # 38x38
+        tmp = self.depthwise_separable(tmp, 256, 256, 256, 1, scale)
+        tmp = self.depthwise_separable(tmp, 256, 512, 256, 2, scale)
+
+        # 19x19
+        for i in range(5):
+            tmp = self.depthwise_separable(tmp, 512, 512, 512, 1, scale)
+        module11 = tmp
+        tmp = self.depthwise_separable(tmp, 512, 1024, 512, 2, scale)
+
+        # 10x10
+        module13 = self.depthwise_separable(tmp, 1024, 1024, 1024, 1, scale)
+        module14 = self.extra_block(module13, 256, 512, 1, 2)
+        # 5x5
+        module15 = self.extra_block(module14, 128, 256, 1, 2)
+        # 3x3
+        module16 = self.extra_block(module15, 128, 256, 1, 2)
+        # 2x2
+        module17 = self.extra_block(module16, 64, 128, 1, 2)
+
+        mbox_locs, mbox_confs, box, box_var = fluid.layers.multi_box_head(
+            inputs=[
+                module11, module13, module14, module15, module16, module17
+            ],
+            image=self.img,
+            num_classes=self.num_classes,
+            min_ratio=20,
+            max_ratio=90,
+            min_sizes=[60.0, 105.0, 150.0, 195.0, 240.0, 285.0],
+            max_sizes=[[], 150.0, 195.0, 240.0, 285.0, 300.0],
+            aspect_ratios=[[2.], [2., 3.], [2., 3.], [2., 3.], [2., 3.],
+                           [2., 3.]],
+            base_size=self.img_shape[2],
+            offset=0.5,
+            flip=True)
+
+        self.loss = fluid.layers.ssd_loss(mbox_locs, mbox_confs, gt_box, gt_label, box,
+                                     box_var)
+        self.loss = fluid.layers.reduce_sum(self.loss)
+        self.startup_program = fluid.default_startup_program()
+
+    def conv_bn(self,
+                input,
+                filter_size,
+                num_filters,
+                stride,
+                padding,
+                num_groups=1,
+                act='relu',
+                use_cudnn=True):
+        parameter_attr = ParamAttr(learning_rate=0.1, initializer=MSRA())
+        conv = fluid.layers.conv2d(
+            input=input,
+            num_filters=num_filters,
+            filter_size=filter_size,
+            stride=stride,
+            padding=padding,
+            groups=num_groups,
+            act=None,
+            use_cudnn=use_cudnn,
+            param_attr=parameter_attr,
+            bias_attr=False)
+        return fluid.layers.batch_norm(input=conv, act=act)
+
+    def depthwise_separable(self, input, num_filters1, num_filters2, num_groups,
+                            stride, scale):
+        depthwise_conv = self.conv_bn(
+            input=input,
+            filter_size=3,
+            num_filters=int(num_filters1 * scale),
+            stride=stride,
+            padding=1,
+            num_groups=int(num_groups * scale),
+            use_cudnn=False)
+
+        pointwise_conv = self.conv_bn(
+            input=depthwise_conv,
+            filter_size=1,
+            num_filters=int(num_filters2 * scale),
+            stride=1,
+            padding=0)
+        return pointwise_conv
+
+    def extra_block(self, input, num_filters1, num_filters2, num_groups, stride):
+        # 1x1 conv
+        pointwise_conv = self.conv_bn(
+            input=input,
+            filter_size=1,
+            num_filters=int(num_filters1),
+            stride=1,
+            num_groups=int(num_groups),
+            padding=0)
+
+        # 3x3 conv
+        normal_conv = self.conv_bn(
+            input=pointwise_conv,
+            filter_size=3,
+            num_filters=int(num_filters2),
+            stride=2,
+            num_groups=int(num_groups),
+            padding=1)
+        return normal_conv
+
+
+def optimizer_setting():
+    iters = train_images // batch_size
+    boundaries = [i * iters  for i in lr_epochs]
+    values = [ i * lr for i in lr_decay]
+
+    optimizer = fluid.optimizer.RMSProp(
+        learning_rate=fluid.layers.piecewise_decay(boundaries, values),
+        regularization=fluid.regularizer.L2Decay(0.00005), )
+
+    return optimizer
+
+py_reader = fluid.layers.py_reader(
+            capacity=64,
+            shapes=[[-1] + image_shape, [-1, 4], [-1, 1], [-1, 1]],
+            lod_levels=[0, 1, 1, 1],
+            dtypes=[""float32"", ""float32"", ""int32"", ""int32""],
+            use_double_buffer=True)
+image, gt_box, gt_label, difficult = fluid.layers.read_file(py_reader)
+
+ssd_model = NetSSD(image, class_num, image_shape)
+ssd_model.ssd_net()
+
+job_generator = JobGenerator()
+optimizer = optimizer_setting()
+
+job_generator.set_optimizer(optimizer)
+job_generator.set_losses([ssd_model.loss])
+job_generator.set_startup_program(ssd_model.startup_program)
+job_generator.set_infer_feed_and_target_names(
+    [ssd_model.img.name], [ssd_model.loss.name])
+
+build_strategy = FLStrategyFactory()
+build_strategy.fed_avg = True
+build_strategy.inner_step = 1
+strategy = build_strategy.create_fl_strategy()
+
+# endpoints will be collected through the cluster
+# in this example, we suppose endpoints have been collected
+endpoints = [""127.0.0.1:8181""]
+output = ""fl_job_config""
+job_generator.generate_fl_job(
+    strategy, server_endpoints=endpoints, worker_num=2, output=output)
+# fl_job_config will  be dispatched to workers
+
+```
+
+**2. fl_server.py**
+```python
+import paddle_fl as fl
+import paddle.fluid as fluid
+from paddle_fl.core.server.fl_server import FLServer
+from paddle_fl.core.master.fl_job import FLRunTimeJob
+server = FLServer()
+server_id = 0
+job_path = ""fl_job_config""
+job = FLRunTimeJob()
+job.load_server_job(job_path, server_id)
+server.set_server_job(job)
+server.start()
+```
+
+**3. fl_trainer.py**
+```python
+from paddle_fl.core.trainer.fl_trainer import FLTrainerFactory
+from paddle_fl.core.master.fl_job import FLRunTimeJob
+from paddle_fl.reader.gru4rec_reader import Gru4rec_Reader
+import paddle.fluid as fluid
+import numpy as np
+import sys
+import os
+import logging
+import ssd_reader
+logging.basicConfig(filename=""test.log"", filemode=""w"", format=""%(asctime)s %(name)s:%(levelname)s:%(message)s"", datefmt=""%d-%M-%Y %H:%M:%S"", level=logging.DEBUG)
+
+
+trainer_id = int(sys.argv[1]) # trainer id for each guest
+use_gpu = False
+batch_size = 64
+epoch_num =120
+dataset = 'mydata'
+model_save_dir = 'model/model_trainer_%d' % trainer_id
+pretrained_model = 'pretrained/ssd_mobilenet_v1_coco/'
+ap_version = '11point'
+image_shape = [3, 300, 300]
+mean_BGR = [127.5, 127.5, 127.5]
+data_dir = 'data/data_%d/%s' % (trainer_id, dataset)
+label_file = 'label_list.txt'
+train_file_list = 'all.txt'
+
+
+data_args = ssd_reader.Settings(
+        dataset=dataset,
+        data_dir=data_dir,
+        label_file=label_file,
+        resize_h=image_shape[1],
+        resize_w=image_shape[2],
+        mean_value=mean_BGR,
+        apply_distort=True,
+        apply_expand=True,
+        ap_version = ap_version)
+
+
+
+place = fluid.CUDAPlace(0) if use_gpu else fluid.CPUPlace()
+job_path = ""fl_job_config""
+job = FLRunTimeJob()
+job.load_trainer_job(job_path, trainer_id)
+trainer = FLTrainerFactory().create_fl_trainer(job)
+trainer.start()
+
+train_reader = ssd_reader.train(data_args,
+                                train_file_list,
+                                batch_size,
+                                shuffle=True,
+                                use_multiprocess=False,
+                                num_workers=1,
+                                )
+
+step_i = 0
+while not trainer.stop():
+    step_i += 1
+    print(""batch %d start train"" % (step_i))
+    for data in train_reader():
+        #print(np.array(data['src_wordseq']))
+        ret_avg_cost = trainer.run(feed=data,
+                    fetch=[])
+        avg_ppl = np.exp(ret_avg_cost[0])
+        newest_ppl = np.mean(avg_ppl)
+        print(""ppl:%.3f"" % (newest_ppl))
+    save_dir = (model_save_dir + ""/epoch_%d"") % step_i
+    if trainer_id == 0:
+        print(""start save"")
+        trainer.save_inference_program(save_dir)
+    if step_i >= 40:
+        break
+
+```将上述代码修改了两点，都是在fl_master.py文件中。一个是将优化器改成了SGD，好像当前FL只支持SGD的优化器；另一点是去掉了py_reader相关的部分，改成普通的reader。
+
+修改之后可以正常运行fl_master和fl_server，但是运行trainer的时候，报错“**AssertionError: Not compiled with data parallel**”，不知道是什么原因啊？
+
+其他代码没改动，修改之后的**fl_master.py**的代码如下：
+```python
+import paddle.fluid as fluid
+from paddle.fluid.initializer import MSRA
+from paddle.fluid.param_attr import ParamAttr
+import paddle_fl as fl
+from paddle_fl.core.master.job_generator import JobGenerator
+from paddle_fl.core.strategy.fl_strategy_base import FLStrategyFactory
+
+
+batch_size = 2  # 64
+train_images = 10  # 16551
+lr = 0.001
+lr_epochs = [40, 60, 80, 100]
+lr_decay = [1, 0.5, 0.25, 0.1, 0.01]
+image_shape = [3, 300, 300]
+class_num = 6 # 21
+ap_version = '11point'
+
+
+class NetSSD:
+    def __init__(self):
+        pass
+
+    def ssd_net(self, scale=1.0):
+        self.img = fluid.layers.data(name='image', shape=image_shape, dtype='float32')
+        self.num_classes = class_num
+        self.img_shape = image_shape
+
+        self.gt_box = fluid.layers.data(name='gt_box', shape=[4], dtype='float32')
+        self.gt_label = fluid.layers.data(name='gt_label', shape=[1], dtype='int32')
+        self.difficult = fluid.layers.data(name='difficult', shape=[1], dtype='int32')
+
+        # 300x300
+        tmp = self.conv_bn(self.img, 3, int(32 * scale), 2, 1)
+        # 150x150
+        tmp = self.depthwise_separable(tmp, 32, 64, 32, 1, scale)
+        tmp = self.depthwise_separable(tmp, 64, 128, 64, 2, scale)
+        # 75x75
+        tmp = self.depthwise_separable(tmp, 128, 128, 128, 1, scale)
+        tmp = self.depthwise_separable(tmp, 128, 256, 128, 2, scale)
+        # 38x38
+        tmp = self.depthwise_separable(tmp, 256, 256, 256, 1, scale)
+        tmp = self.depthwise_separable(tmp, 256, 512, 256, 2, scale)
+
+        # 19x19
+        for i in range(5):
+            tmp = self.depthwise_separable(tmp, 512, 512, 512, 1, scale)
+        module11 = tmp
+        tmp = self.depthwise_separable(tmp, 512, 1024, 512, 2, scale)
+
+        # 10x10
+        module13 = self.depthwise_separable(tmp, 1024, 1024, 1024, 1, scale)
+        module14 = self.extra_block(module13, 256, 512, 1, 2)
+        # 5x5
+        module15 = self.extra_block(module14, 128, 256, 1, 2)
+        # 3x3
+        module16 = self.extra_block(module15, 128, 256, 1, 2)
+        # 2x2
+        module17 = self.extra_block(module16, 64, 128, 1, 2)
+
+        mbox_locs, mbox_confs, box, box_var = fluid.layers.multi_box_head(
+            inputs=[
+                module11, module13, module14, module15, module16, module17
+            ],
+            image=self.img,
+            num_classes=self.num_classes,
+            min_ratio=20,
+            max_ratio=90,
+            min_sizes=[60.0, 105.0, 150.0, 195.0, 240.0, 285.0],
+            max_sizes=[[], 150.0, 195.0, 240.0, 285.0, 300.0],
+            aspect_ratios=[[2.], [2., 3.], [2., 3.], [2., 3.], [2., 3.],
+                           [2., 3.]],
+            base_size=self.img_shape[2],
+            offset=0.5,
+            flip=True)
+
+        self.loss = fluid.layers.ssd_loss(mbox_locs, mbox_confs, self.gt_box, self.gt_label, box,
+                                     box_var)
+        self.loss = fluid.layers.reduce_sum(self.loss)
+        self.startup_program = fluid.default_startup_program()
+
+    def conv_bn(self,
+                input,
+                filter_size,
+                num_filters,
+                stride,
+                padding,
+                num_groups=1,
+                act='relu',
+                use_cudnn=True):
+        parameter_attr = ParamAttr(learning_rate=0.1, initializer=MSRA())
+        conv = fluid.layers.conv2d(
+            input=input,
+            num_filters=num_filters,
+            filter_size=filter_size,
+            stride=stride,
+            padding=padding,
+            groups=num_groups,
+            act=None,
+            use_cudnn=use_cudnn,
+            param_attr=parameter_attr,
+            bias_attr=False)
+        return fluid.layers.batch_norm(input=conv, act=act)
+
+    def depthwise_separable(self, input, num_filters1, num_filters2, num_groups,
+                            stride, scale):
+        depthwise_conv = self.conv_bn(
+            input=input,
+            filter_size=3,
+            num_filters=int(num_filters1 * scale),
+            stride=stride,
+            padding=1,
+            num_groups=int(num_groups * scale),
+            use_cudnn=False)
+
+        pointwise_conv = self.conv_bn(
+            input=depthwise_conv,
+            filter_size=1,
+            num_filters=int(num_filters2 * scale),
+            stride=1,
+            padding=0)
+        return pointwise_conv
+
+    def extra_block(self, input, num_filters1, num_filters2, num_groups, stride):
+        # 1x1 conv
+        pointwise_conv = self.conv_bn(
+            input=input,
+            filter_size=1,
+            num_filters=int(num_filters1),
+            stride=1,
+            num_groups=int(num_groups),
+            padding=0)
+
+        # 3x3 conv
+        normal_conv = self.conv_bn(
+            input=pointwise_conv,
+            filter_size=3,
+            num_filters=int(num_filters2),
+            stride=2,
+            num_groups=int(num_groups),
+            padding=1)
+        return normal_conv
+
+
+# def optimizer_setting():
+#     iters = train_images // batch_size
+#     boundaries = [i * iters  for i in lr_epochs]
+#     values = [ i * lr for i in lr_decay]
+#
+#     optimizer = fluid.optimizer.RMSProp(
+#         learning_rate=fluid.layers.piecewise_decay(boundaries, values),
+#         regularization=fluid.regularizer.L2Decay(0.00005), )
+#
+#     return optimizer
+
+# py_reader = fluid.layers.py_reader(
+#             capacity=64,
+#             shapes=[[-1] + image_shape, [-1, 4], [-1, 1], [-1, 1]],
+#             lod_levels=[0, 1, 1, 1],
+#             dtypes=[""float32"", ""float32"", ""int32"", ""int32""],
+#             use_double_buffer=True)
+# image, gt_box, gt_label, difficult = fluid.layers.read_file(py_reader)
+
+ssd_model = NetSSD()
+ssd_model.ssd_net()
+
+job_generator = JobGenerator()
+# optimizer = optimizer_setting()
+optimizer = fluid.optimizer.SGD(learning_rate=0.001)
+job_generator.set_optimizer(optimizer)
+job_generator.set_losses([ssd_model.loss])
+job_generator.set_startup_program(ssd_model.startup_program)
+job_generator.set_infer_feed_and_target_names(
+    [ssd_model.img.name, ssd_model.gt_box.name, ssd_model.gt_label.name, ssd_model.difficult.name], [ssd_model.loss.name])
+
+build_strategy = FLStrategyFactory()
+build_strategy.fed_avg = True
+build_strategy.inner_step = 1
+strategy = build_strategy.create_fl_strategy()
+
+# endpoints will be collected through the cluster
+# in this example, we suppose endpoints have been collected
+endpoints = [""127.0.0.1:8181""]
+output = ""fl_job_config""
+job_generator.generate_fl_job(
+    strategy, server_endpoints=endpoints, worker_num=2, output=output)
+# fl_job_config will  be dispatched to workers
+
+```咨询了下paddle的同学，了解到paddle1.6之后将fluid.layers.data改为了fluid.data接口，具体用法也变了，推荐参考1.6下multi_box_head的API代码示例。我参考示例代码，将**fl_master.py**重新修改了，具体详见**附件demo_code.zip**中的代码，但是运行trainer的时候还是会**报错“AssertionError: Not compiled with data parallel”**。不知道是哪里还有问题啊？
+[demo_code.zip](https://github.com/PaddlePaddle/PaddleFL/files/3802880/demo_code.zip)
+
+@XDUXK 我们会复现下@guru4elephant  我在单机版的SSD模型上试着修改了一下，发现报同样的错，所以提了另一个issue #https://github.com/PaddlePaddle/Paddle/issues/21000 先问一下那里的问题，请知晓",4,2019-10-29 02:34:23,2020-01-03 01:42:03,2020-01-03 01:34:56

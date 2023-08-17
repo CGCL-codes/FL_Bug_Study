@@ -1,0 +1,1560 @@
+url	label	title	all_text	comments	merged	created_time	updated_time	closed_time
+https://github.com/FederatedAI/FATE/pull/3919	['bug']	Fix value convert error exception	"Fix value convert error exceptionFix null value convert error when set exclusive_data_type for specify columns in DataTransform component.
+
+When the output format of data_transform is dense, and configured exclusive data type for columns , data_transform component will occur convert value error if column value is null(default data type is float). 
+
+if exclusive_data_type configured, the missing_impute value check is not worked.
+
+Signed-off-by: Atisan <ling.java@gmail.com>
+
+Changes:
+
+1. federatedml/util/data_transform.py"	4	True	2022-04-18 05:59:01	2022-06-30 07:01:59	2022-05-18 05:03:25
+https://github.com/FederatedAI/FATE/pull/3903	['bug', 'enhancement', 'arch', 'federatedml', 'document', 'deploy', 'examples']	Merge FATE-v1.8's update info Master	"Merge FATE-v1.8's update info MasterSigned-off-by: mgqa34 mgq3374541@163.com
+
+Fixes  ISSUE #3480 #3481 #3503 #3522 #3526 #3566 #3568 #3702 #3749 #3765 #3766 #3768 #3769 #3722 #3773 #3780 #3781 #3782 #3783 #3786 #3799 #3805 #3814 #3823 #3896 #3887
+
+> FederatedML
+* Add non-coordinated-version Hetero Linear Regression, based on integrated Hetero GLM framework, with mixed protocol of HE and SPDZ
+* Homo LR support one-vs-rest
+* Add SecureBoost-MO algorithm to speed up multi-class classification of Hetero & Homo SecureBoost, 1.5x-5x faster
+* Optimize Hetero SecureBoost Predict Transmission Data Size，reduce 75% bandwidth consumption if tree's max depth is small
+* Speed up DH Intersection implementation, 30%+ faster
+* Optimized Quantile Binning gk-summary structure & split point query，20%+ faster, less memory cost
+* Support weighted training in non-coordinated Hetero Logistic Regression & Linear Regression
+* Merge Hetero FastSecureBoost into Hetero SecureBoost as a boosting strategy option
+
+> Fate-ARCH
+* Adjustable task_cores for standalone FATE
+* Enable Eggroll option to make computing output ""IN_MEMORY"" by default
+
+> Fate-Test
+* Include Paillier encryption performance evaluation
+* Include SPDZ performance evaluation
+* Optimized testsuite printout
+* Include examples data upload and mnist download
+* Provide pipeline to dsl convert tools
+
+> Bug-Fix
+* Fix bug for SPDZ when using default q_filed
+* Fix multiple get problem of SPDZ
+* Fix bugs of recursive-query homo feature binning
+* Fix homo_nn's model aggregation problem
+* Fix bug for hetero feature selection when using federated filter but some party's feature is empty.
+
+FATE-Flow：https://github.com/FederatedAI/FATE-Flow/pull/225
+FATE-Board： https://github.com/FederatedAI/FATE-Board/pull/130#pullrequestreview-940528367"	1	True	2022-04-13 07:17:04	2022-04-15 09:46:32	2022-04-15 09:46:32
+https://github.com/FederatedAI/FATE/pull/3821	['bug']	Try to fix keras-based homoNN trainable variable	"Try to fix keras-based homoNN trainable variableSigned-off-by: gxcuit <gxcuit@163.com>
+
+
+
+Fixes  ISSUE #3816
+
+Changes:
+
+1. Remove the trim device name in self._trainable_weights
+
+2.
+
+3."	1	True	2022-03-24 01:58:32	2022-03-29 06:25:04	2022-03-29 06:07:47
+https://github.com/FederatedAI/FATE/pull/3753	['bug']	Develop 1.7.2	"Develop 1.7.2Signed-off-by: zhihuiwan <15779896112@163.com>
+
+Fixes  ISSUE #xxx
+
+Changes:
+
+fix bug:  circular reference
+
+
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+
+class AddressBase(AddressABC):
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        return {
+            ""host"": self.host,
+            ""port"": self.port,
+            ""username"": self.username,
+            ""password"": self.password,
+            ""auth_mechanism"": self.auth_mechanism,
+            ""database"": self.database}
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        return self.__str__()
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+
+class LinkisHiveAddress(AddressBase):
+```"	1	True	2022-03-01 09:17:37	2022-03-01 10:00:40	2022-03-01 10:00:40
+https://github.com/FederatedAI/FATE/pull/3740	[]	Incorrectly using or in exception handling fix	Incorrectly using or in exception handling fixFixes #3739	1	True	2022-02-25 07:27:21	2022-02-25 18:06:54	2022-02-25 07:42:06
+https://github.com/FederatedAI/FATE/pull/3661	[]	Feature 1.8 secureboost update	"Feature 1.8 secureboost updateSigned-off-by: githubID email
+
+secure boost update in FATE-1.8: add SBT-MO, adjust feature importance strategy
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                                                         [""cross_entropy"", ""lse"", ""lae"", ""huber"", ""fair"",
+                                                          ""log_cosh"", ""tweedie""],
+                                                         descr)
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                                                         [""lse"", ""lae"", ""huber"", ""fair"", ""log_cosh"", ""tweedie""],
+                                                         descr)
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                                                            [""xgboost""],
+                                                            descr)
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        if isinstance(self.criterion_params, list):
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        elif isinstance(self.criterion_params, dict):
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+            raise ValueError(""decision tree param's max_split_nodes {} not supported, "" +
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                                                                   [""split"", ""gain""],
+                                                                   descr)
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+    def __init__(self, task_type=consts.CLASSIFICATION,
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+            assert isinstance(self.random_seed, int) and self.random_seed >= 0, 'random seed must be an integer >= 0'
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        if not isinstance(self.use_missing, bool):
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        if not isinstance(self.zero_as_missing, bool):
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        if not isinstance(self.use_missing, bool):
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        if not isinstance(self.zero_as_missing, bool):
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+    if isinstance(encrypter, PaillierEncrypt):
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+    elif isinstance(encrypter, IterativeAffineEncrypt):
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        if isinstance(ciphers, list):
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        if isinstance(other, PackingCipherTensor):
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                new_cipher_list.append(c1 + c2)
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+            new_cipher_list.append(c * other)
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        return self.__mul__(1 / other)
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        if isinstance(decrypter, PaillierEncrypt):
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        elif isinstance(decrypter, IterativeAffineEncrypt):
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                rs.append(de_rs[idx_0: idx_0 + self.not_compress_len] + [compressed_part[idx_1]])
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+    d = PackingCipherTensor([114514])
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        if isinstance(self.calculator.encrypter, IterativeAffineEncrypt):
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        if isinstance(content, list):
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+from federatedml.ensemble.secureboost.homo_secureboost.homo_secureboost_arbiter import HomoSecureBoostingTreeArbiter
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+__all__ = [
+    ""Node"",
+    ""HeteroDecisionTreeHost"",
+    ""HeteroDecisionTreeGuest"",
+    ""Splitter"",
+    ""FeatureHistogram"",
+    ""XgboostCriterion"",
+    ""DecisionTree"",
+    'SplitInfo',
+    ""HomoDecisionTreeClient"",
+    ""HomoDecisionTreeArbiter"",
+    ""SecureBoostArbiterAggregator"",
+    ""SecureBoostClientAggregator"",
+    ""DecisionTreeArbiterAggregator"",
+    'DecisionTreeClientAggregator',
+    ""HeteroSecureBoostingTreeGuest"",
+    ""HeteroSecureBoostingTreeHost"",
+    ""HomoSecureBoostingTreeArbiter"",
+    ""HomoSecureBoostingTreeClient"",
+    ""HistogramBag"",
+    ""FeatureHistogramWeights""]
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        if isinstance(self.encrypter, PaillierEncrypt):
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        elif isinstance(self.encrypter, IterativeAffineEncrypt):
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                    if not isinstance(best_splitinfo.sum_grad, int) else best_splitinfo.sum_grad
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                    if not isinstance(best_splitinfo.sum_hess, int) else best_splitinfo.sum_hess
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                batch_splitinfo_host = [encrypted_splitinfo[k: k + consts.MAX_SPLITINFO_TO_COMPUTE]
+                                        for encrypted_splitinfo in encrypted_splitinfo_host[host_idx]]
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+            host_split_info = self.splitter.find_host_best_split_info(
+                split_info_table, self.get_host_sitename(host_idx), self.encrypter, gh_packer=self.packer)
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                next_layer_nid = HeteroDecisionTreeGuest.go_next_layer(
+                    tree_[nodeid],
+                    value[0],
+                    use_missing,
+                    zero_as_missing,
+                    bin_sparse_points,
+                    split_maskdict,
+                    missing_dir_maskdict,
+                    decoder)
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        self.missing_dir_maskdict = {}  # save missing dir
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                histograms=acc_histograms,
+                use_missing=self.use_missing,
+                valid_features=self.valid_features,
+                sitename=self.sitename,
+                left_missing_dir=self.missing_dir_mask_left[dep],
+                right_missing_dir=self.missing_dir_mask_right[dep],
+                mask_id_mapping=self.fid_bid_random_mapping,
+                batch_size=self.bin_num,
+                cipher_compressor=self.cipher_compressor,
+                shuffle_random_seed=np.abs(hash((dep, batch))))
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                                         node_map=self.get_node_map(self.cur_to_split_nodes),
+                                         dep=dep, batch=batch)
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                                           dep: int, batch_idx: int, mode=consts.MIX_TREE):
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        return isinstance(data, np.ndarray)
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+            self.node_gain(right_node_sum_grad, right_node_sum_hess) - \
+            self.node_gain(sum_grad, sum_hess)
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        return weight
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        if isinstance(node.weight, np.ndarray) and len(node.weight) > 1:
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        def func(x1, x2): return x1 + a * x2
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        if isinstance(g_h_example[0][1][0], np.ndarray) and len(g_h_example[0][1][0]) > 1:
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        value = [partition_id_list_1 + partition_id_list_2, hist_val_list_1 + hist_val_list_2]
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                            zero_optim[node_idx][fid][
+                            0]
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                            zero_optim[node_idx][fid][
+                            1]
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                            zero_optim[node_idx][fid][
+                            2]
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                            zero_optim[node_idx][fid][0]
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                            zero_optim[node_idx][fid][1]
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                            zero_optim[node_idx][fid][2]
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+    Histogram with sparse optimization
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        return [GHPacker.fixedpoint_encode(g + g_offset, mul), GHPacker.fixedpoint_encode(h, mul)]
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+            en_g_h = self.packer.pack_and_encrypt(large_int_gh,
+                                                  post_process_func=post_func)  # take cipher out from list
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                   self.best_fid, self.best_bid, self.sum_grad, self.sum_hess, self.gain, self.sitename, self.missing_dir,
+                   self.mask_id, self.sample_count)
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                    if isinstance(criterion_params, list):
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                except BaseException:
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        if isinstance(l_h, np.ndarray):
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                if self._check_min_child_weight(
+                        sum_hess_l,
+                        sum_hess_r) and self._check_sample_num(
+                        node_cnt_l,
+                        node_cnt_r):
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                    if self._check_sample_num(
+                            node_cnt_l,
+                            node_cnt_r) and self._check_min_child_weight(
+                            sum_hess_l,
+                            sum_hess_r):
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+            split_info_list, g_h_sum_info = self.construct_feature_split_points(
+                value, valid_features, sitename, use_missing, left_missing_dir, right_missing_dir, mask_id_mapping)
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                # add an empty split info list if no split info available
+                result_list.append(((nid, partition_key + '-empty'), []))
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                key = (nid, (partition_key + '-{}'.format(batch_idx)))  # nid, batch_id
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                batch_split_info_list = split_info_list[i: i + batch_size]
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                split_info.sum_grad, split_info.sum_hess = decrypter.decrypt(
+                    split_info.sum_grad), decrypter.decrypt(split_info.sum_hess)
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        gain = self.criterion.split_gain([sum_grad, sum_hess],
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        if isinstance(new_val, np.ndarray) and len(new_val) == len(val):
+            return val + new_val * lr
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+    HomoFeatureBinningServer
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+    def federated_binning(self, data_instance):
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+            tree_plan = plan.create_tree_plan(
+                self.boosting_strategy,
+                k=self.tree_num_per_party,
+                tree_num=self.boosting_round,
+                host_list=self.component_properties.host_party_idlist,
+                complete_secure=self.complete_secure)
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+            grad_and_hess = y.join(y_hat, lambda y, f_val:
+                                   (loss_method.compute_grad(y, loss_method.predict(f_val)),
+                                    loss_method.compute_hess(y, loss_method.predict(f_val))))
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                                   (loss_method.compute_grad(y, f_val),
+                                    loss_method.compute_hess(y, f_val)))
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+            if isinstance(id_, tuple):
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                    new_fi[generate_anonymous(role=role, fid=id_[1], party_id=party_id)
+                           ] = feature_importances[id_].importance
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+            tree_plan = plan.create_tree_plan(
+                self.boosting_strategy,
+                k=self.tree_num_per_party,
+                tree_num=self.boosting_round,
+                host_list=self.component_properties.host_party_idlist,
+                complete_secure=self.complete_secure)
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        pass
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+            grad_and_hess = self.y.join(y_hat, lambda y, f_val:
+                                        (loss_method.compute_grad(y, loss_method.predict(f_val)),
+                                         loss_method.compute_hess(y, loss_method.predict(f_val))))
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+            grad_and_hess = self.y.join(y_hat, lambda y, f_val:
+                                        (loss_method.compute_grad(y, f_val),
+                                         loss_method.compute_hess(y, f_val)))
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+            (self.backend == consts.MEMORY_BACKEND and self.use_missing and self.zero_as_missing)
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+            if isinstance(data_example.features, SparseVector):
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        new_tree = HomoDecisionTreeClient(
+            self.tree_param,
+            self.data_bin,
+            self.bin_split_points,
+            self.bin_sparse_points,
+            g_h,
+            valid_feature=valid_features,
+            epoch_idx=epoch_idx,
+            role=self.role,
+            flow_id=flow_id,
+            tree_idx=booster_dim,
+            mode='train')
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+def get_predict_scores(
+        leaf_pos,
+        learning_rate,
+        init_score,
+        trees: List[HeteroDecisionTreeGuest],
+        multi_class_num=-1,
+        predict_cache=None):
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        predict_result = predict_result.join(predict_cache, lambda v1, v2: v1 + v2)
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                          trees: List[HeteroDecisionTreeGuest], learning_rate, init_score, booster_dim,
+                          predict_cache=None, pred_leaf=False):
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+
+def goss_sampling(grad_and_hess, top_rate, other_rate):
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        self.transfer_variable = HeteroLinRTransferVariable()
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                                                         [""cross_entropy"", ""lse"", ""lae"", ""huber"", ""fair"",
+                                                          ""log_cosh"", ""tweedie""],
+                                                         descr)
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                                                         [""lse"", ""lae"", ""huber"", ""fair"", ""log_cosh"", ""tweedie""],
+                                                         descr)
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                                                            [""xgboost""],
+                                                            descr)
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        if isinstance(self.criterion_params, list):
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        elif isinstance(self.criterion_params, dict):
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+            raise ValueError(""decision tree param's max_split_nodes {} not supported, "" +
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+                                                                   [""split"", ""gain""],
+                                                                   descr)
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+    def __init__(self, task_type=consts.CLASSIFICATION,
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+            raise ValueError(
+                ""boosting_core tree param's subsample_feature_rate should be a numeric number between 0 and 1"")
+```"	1	True	2022-01-17 06:31:52	2022-01-18 07:11:00	2022-01-18 07:11:00
+https://github.com/FederatedAI/FATE/pull/3587	['bug']	fix sample api for standalone	"fix sample api for standalonefix sample api for standalone**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        except BaseException:
+```"	2	True	2021-12-30 09:31:44	2022-04-20 03:17:58	2022-01-06 06:04:23
+https://github.com/FederatedAI/FATE/pull/3583	['bug']	Bugfix/1.7.1/multiple get	"Bugfix/1.7.1/multiple getfix multiple get issue**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        except BaseException:
+```
+**[autopep8]** <sub>reported by [reviewdog](https://github.com/reviewdog/reviewdog) :dog:</sub><br>
+```suggestion
+        ...
+```"	2	True	2021-12-30 07:34:59	2022-04-20 03:18:01	2022-01-05 09:10:07
+https://github.com/FederatedAI/FATE/pull/3577	['document']	Fix example doc	"Fix example docSigned-off-by: githubID email
+
+Fixes  ISSUE #xxx
+
+Changes:
+
+1.
+
+2.
+
+3."	4	True	2021-12-29 03:53:00	2022-01-05 03:31:28	2022-01-05 03:31:28
+https://github.com/FederatedAI/FATE/pull/3533	['bug']	Fix3531	"Fix3531Signed-off-by: gxcuit gxcuit@163.com
+
+Fixes  ISSUE #3531
+
+Changes:
+
+1. overload `map_values` in `linear_model_weight`.
+
+2.
+
+3."	6	True	2021-12-14 08:14:38	2021-12-15 03:10:14	2021-12-15 03:08:19
+https://github.com/FederatedAI/FATE/pull/3513	['bug']	fix homo_lr learning_rate decay bug	"fix homo_lr learning_rate decay bugSigned-off-by: tanmingchao <tanmingchao@sfmail.sf-express.com>
+
+Fixes  ISSUE #3508"	2	True	2021-12-06 06:13:33	2022-03-07 08:29:15	2021-12-09 03:02:56
+https://github.com/FederatedAI/FATE/pull/3209	[]	fix(data_transform):修复sparse类型的输入解析异常的bug并增加sparse类型输入的示例	"fix(data_transform):修复sparse类型的输入解析异常的bug并增加sparse类型输入的示例Changes:
+
+1. data_transform解析sparse类型的输入时，增加了对是否设置label的判断
+2. 增加了sparse类型输入的示例"	1	True	2021-10-21 08:44:39	2021-10-25 07:34:53	2021-10-25 07:34:53
+https://github.com/FederatedAI/FATE/pull/2582	[]	add images demo for homo nn	"add images demo for homo nnSigned-off-by: weiwee <wbwmat@gmail.com>
+
+-------
+
+Changes:
+
+1. fix bugs
+
+2. add mnist images demo"	1	True	2021-02-15 17:50:48	2021-04-25 08:59:49	2021-02-18 02:45:34
+https://github.com/FederatedAI/FATE/pull/2578	[]	fix pipeline param	fix pipeline paramfix param	1	True	2021-02-08 03:36:08	2021-11-11 03:03:38	2021-02-08 06:58:01
+https://github.com/FederatedAI/FATE/pull/2559	[]	Feature 1.5.1 fate flow fix zombie executor process and retry task status update	"Feature 1.5.1 fate flow fix zombie executor process and retry task status updateFixes  ISSUE #2560 
+
+Changes:
+
+1. fix sometimes task executor becomes a zombie process
+2. fix retry job sometime not update task status
+3. reorganize the document for fate on spark"	1	True	2021-02-05 01:08:49	2021-02-05 05:01:28	2021-02-05 05:01:27
+https://github.com/FederatedAI/FATE/pull/2548	['bug']	fix standalone implements	"fix standalone implements1. reimplement map_reduce_partition
+2. add partition shuffle to flat_map
+3. format with black
+
+Signed-off-by: weiwee <wbwmat@gmail.com>
+
+-------
+
+Changes:
+
+1. reimplement map_reduce_partition
+
+2. add partition shuffle to flat_map
+
+3. format with black"	1	True	2021-02-04 07:22:29	2021-04-25 09:00:04	2021-02-04 08:14:44
+https://github.com/FederatedAI/FATE/pull/2518	[]	fix reader component bug	"fix reader component bugFixes  ISSUE #xxx
+
+Changes:
+
+1.
+
+2.
+
+3."	1	True	2021-01-29 09:07:16	2021-01-29 12:27:01	2021-01-29 12:27:01
+https://github.com/FederatedAI/FATE/pull/2463	['bug', 'enhancement']	Merge master into develop-1.5.1	"Merge master into develop-1.5.1Fixes  ISSUE #xxx
+
+Changes:
+
+1. 
+
+2.
+
+3."	1	True	2021-01-12 07:51:22	2021-01-12 08:38:08	2021-01-12 08:38:08
+https://github.com/FederatedAI/FATE/pull/2460	['bug', 'fate-flow']	Feature 1.5.1 fate flow api	Feature 1.5.1 fate flow apifix fate flow 1.5.1 bug	1	True	2021-01-12 04:28:56	2021-01-12 05:01:04	2021-01-12 05:01:04
+https://github.com/FederatedAI/FATE/pull/2455	[]	[#2454] fix bug	"[#2454] fix bugfix #2454
+
+Signed-off-by: weiwee <wbwmat@gmail.com>"	1	True	2021-01-07 04:08:17	2021-04-25 09:00:35	2021-01-08 11:23:25
+https://github.com/FederatedAI/FATE/pull/2450	['bug']	fix fast sbt host id type	"fix fast sbt host id typefix host id matching in fast-sbt mix mode
+
+"	1	True	2021-01-06 09:56:43	2021-11-11 03:04:12	2021-01-06 12:30:02
+https://github.com/FederatedAI/FATE/pull/2447	['bug']	Feature 1.6 benchmark catch	"Feature 1.6 benchmark catchFixes  ISSUE #xxx
+
+Changes:
+
+1. catch exception while running benchmark
+
+2.
+
+3."	1	True	2021-01-06 03:54:49	2021-11-24 10:59:14	2021-01-29 03:17:57
+https://github.com/FederatedAI/FATE/pull/2432	[]	fix predict cache	fix predict cachefix predict cache	1	True	2020-12-29 11:11:01	2021-11-11 03:04:14	2020-12-30 03:30:15
+https://github.com/FederatedAI/FATE/pull/2429	['bug', 'fate-flow']	Feature 1.5.1 fate flow api	"Feature 1.5.1 fate flow api1. fix fate flow api and idmapping bug
+2. deserialize add safe module"	1	True	2020-12-29 08:12:46	2020-12-29 14:22:39	2020-12-29 14:22:39
+https://github.com/FederatedAI/FATE/pull/2427	['bug', 'federatedml']	Feature 1.5.1 psi&sbt fix	Feature 1.5.1 psi&sbt fixfix psi/sbt	1	True	2020-12-28 07:11:37	2021-11-11 03:04:15	2020-12-29 11:27:43
+https://github.com/FederatedAI/FATE/pull/2420	[]	Feature 1.5.1 fix sbt experimemt template	"Feature 1.5.1 fix sbt experimemt templateFixes  ISSUE #xxx
+
+Changes:
+
+1. tag delimitor update
+
+2. eggroll_run update"	1	True	2020-12-24 02:10:09	2021-11-24 10:49:16	2020-12-30 06:44:18
+https://github.com/FederatedAI/FATE/pull/2406	[]	fix fate on spark deploy document	"fix fate on spark deploy documentFixes  ISSUE #xxx
+
+Changes:
+
+1.
+
+2.
+
+3."	1	True	2020-12-15 10:59:20	2021-11-24 10:49:19	2020-12-15 13:24:09
+https://github.com/FederatedAI/FATE/pull/2400	[]	when partions >=10, task is blocked. Fixed bug in policy pattern	"when partions >=10, task is blocked. Fixed bug in policy patternstrategy
+
+Fixes  ISSUE #xxx
+
+Changes:
+
+1.
+
+2.
+
+3."	1	True	2020-12-14 09:53:16	2021-11-24 10:59:13	2020-12-14 10:30:35
+https://github.com/FederatedAI/FATE/pull/2385	[]	Contributor 1.5.1 vss	"Contributor 1.5.1 vssChanges:
+
+> 1. reviese #2374 
+> 2. Support multi column summation
+> 3. Delete unused functions and variables
+> 4. Re adding Lagrange correlation function
+> 5. add testsuite
+
+
+missing explanation on input parametersneed_verify never used, there is no verification step in algorithmunused string format argumentModule parameter should have similar name to corresponding modulemaybe change the return type to boolean to make this api more friendly.Consider raise error in module with a clearer error message instead of inside protocol processthis part gives a numpy array, while select_data_by_idx gives a list. In general, we use numpy array to allow fast math operation.convoluted way of counting share amount, consider use *(x+1) in vss computation, and use the real value of needed share_amount.We follow CamelCase convention for class naming. Suggested name: VerifiableSecretSharing. always use join for joining tables of the same idbetter to use utility function from federatedml/util/data_io.py; schema content is checked inside this function lack check against invalid value: negative int, max limit etc.dsl/v1 & dsl/v2 & pipeline exemples should contain exactly the same examples: they should all use the same data sets and set up the same job workflowhere should be ""data""; this document is on how to access input & output of pipeline components"	1	True	2020-12-07 06:22:56	2021-01-22 08:55:59	2021-01-22 08:55:59
+https://github.com/FederatedAI/FATE/pull/2384	[]	fixed vhost/queue stratege , fixed clean up and close connection	"fixed vhost/queue stratege , fixed clean up and close connectionFixes  ISSUE #xxx
+
+Changes:
+
+1. fixed vhost/queue name stratege
+
+2. close mq connection
+
+3. fixed mq clean bugs"	1	True	2020-12-07 02:41:40	2020-12-08 10:57:22	2020-12-08 10:57:22
+https://github.com/FederatedAI/FATE/pull/2348	['document']	fix spdz docs	"fix spdz docsSigned-off-by: weiwee <wbwmat@gmail.com>
+"	1	True	2020-11-24 05:35:20	2021-01-18 01:29:36	2021-01-17 03:20:45
+https://github.com/FederatedAI/FATE/pull/2318	['document']	fix doc format view in readthedoc	"fix doc format view in readthedocSigned-off-by: weiwee <wbwmat@gmail.com>
+"	1	True	2020-11-12 03:27:22	2020-11-13 08:04:38	2020-11-12 04:03:30
+https://github.com/FederatedAI/FATE/pull/2315	['bug']	fix doc error	"fix doc errorSigned-off-by: mgqa34 <mgq3374541@163.com>
+
+Fixes  ISSUE #xxx
+
+Changes:
+
+1. fix doc 
+
+2.
+
+3."	1	True	2020-11-11 11:49:32	2021-11-24 10:49:30	2020-11-13 13:27:38
+https://github.com/FederatedAI/FATE/pull/2313	[]	fix log:  fateboard should be  eggroll	"fix log:  fateboard should be  eggroll""[INFO] Package fateboard start"" should be ""[INFO] Package eggroll  start""
+
+Fixes  ISSUE #xxx
+
+Changes:
+
+1.
+
+2.
+
+3."	1	True	2020-11-10 04:04:19	2020-11-11 06:48:33	2020-11-11 06:48:33
+https://github.com/FederatedAI/FATE/pull/2311	['document']	fix doc	"fix docSigned-off-by: weiwee <wbwmat@gmail.com>
+"	1	True	2020-11-09 08:49:43	2020-11-10 08:01:00	2020-11-09 11:50:20
+https://github.com/FederatedAI/FATE/pull/2309	[]	fix spdz table add	"fix spdz table addfix dtable interface in spdz module can't return right result when make add operation
+for example:
+a = 1.1234
+b = 2.1111
+a + b = 32345"	2	True	2020-11-05 10:06:14	2020-11-09 11:42:53	2020-11-09 11:42:52
+https://github.com/FederatedAI/FATE/pull/2282	['bug', 'enhancement', 'arch', 'federatedml', 'document', 'fate-flow', 'examples']	Merge develop-1.5-LTS into develop	"Merge develop-1.5-LTS into developFixes  ISSUE #xxx
+
+Changes:
+
+1. reformat submit conf's parameters setting
+
+2. add more docs
+
+3. fix some bug of 1.5-preview"	1	True	2020-11-03 08:54:45	2020-11-04 01:27:24	2020-11-04 01:27:24
+https://github.com/FederatedAI/FATE/pull/2269	[]	Feature 1.5 fix tree benchmark	Feature 1.5 fix tree benchmarkfix benchmark setting	1	True	2020-11-02 09:41:19	2020-11-02 14:18:42	2020-11-02 14:18:42
+https://github.com/FederatedAI/FATE/pull/2256	[]	Feature 1.5 rdd&conf fix	"Feature 1.5 rdd&conf fixFixes  ISSUE #xxx
+
+Changes:
+
+1.
+
+2.
+
+3."	1	True	2020-11-02 02:55:06	2021-11-11 03:04:33	2020-11-02 06:19:49
+https://github.com/FederatedAI/FATE/pull/2252	[]	Feature 1.5.0 system engineering	"Feature 1.5.0 system engineeringFixes  ISSUE #xxx
+
+Changes:
+
+1. fix tag version bug
+
+2. fix reader
+
+3."	1	True	2020-10-31 10:28:38	2020-10-31 10:35:40	2020-10-31 10:35:40
+https://github.com/FederatedAI/FATE/pull/2246	[]	fixed federation bug in arbiter mode	"fixed federation bug in arbiter modeFixes  ISSUE #xxx
+
+Changes:
+
+1.
+
+2.
+
+3."	1	True	2020-10-30 12:21:47	2020-10-30 12:32:31	2020-10-30 12:32:31
+https://github.com/FederatedAI/FATE/pull/2234	[]	fix problem of getting output model from migrated model failed	"fix problem of getting output model from migrated model failedFixes  ISSUE #xxx
+
+Changes:
+
+1. fix problem of getting output model from migrated model failed
+
+2.
+
+3."	1	True	2020-10-29 12:01:34	2020-10-29 13:33:32	2020-10-29 13:33:32
+https://github.com/FederatedAI/FATE/pull/2231	[]	fix comments: one_ve_rest should be one_vs_rest	"fix comments: one_ve_rest should be one_vs_restfix comments: one_ve_rest should be one_vs_rest
+
+Fixes  ISSUE #xxx
+
+Changes:
+
+1. the comments: one_ve_rest should be one_vs_rest"	1	True	2020-10-29 07:28:12	2020-10-29 10:33:22	2020-10-29 10:33:22
+https://github.com/FederatedAI/FATE/pull/2228	[]	fix upload bug	"fix upload bugFixes  ISSUE #xxx
+
+Changes:
+
+1. fix fate flow upload data bug"	1	True	2020-10-28 12:46:55	2020-10-29 02:26:17	2020-10-29 02:26:17
+https://github.com/FederatedAI/FATE/pull/2218	[]	Feature 1.5.0 fate flow forward	"Feature 1.5.0 fate flow forward Fixes  ISSUE #xxx
+
+Changes:
+
+1.
+
+2.
+
+3."	1	True	2020-10-27 14:17:05	2020-11-17 06:52:16	2020-10-28 06:09:48
+https://github.com/FederatedAI/FATE/pull/2209	[]	Feature 1.5.0 fate flow schedule	"Feature 1.5.0 fate flow scheduleFixes  ISSUE #xxx
+
+Changes:
+
+1. Fixed resource computing issues under asymmetric deployments
+
+2. Improve job parameters
+
+3."	1	True	2020-10-26 14:15:28	2020-10-27 03:13:52	2020-10-27 03:13:52
+https://github.com/FederatedAI/FATE/pull/2194	[]	fix pipeline error	"fix pipeline errorSigned-off-by: mgqa34 <mgq3374541@163.com>
+
+Fixes  ISSUE #xxx
+
+Changes:
+
+1.
+
+2.
+
+3."	1	True	2020-10-23 07:58:00	2021-11-24 10:59:25	2020-10-23 08:32:12
+https://github.com/FederatedAI/FATE/pull/2139	[]	fix doc	"fix docSigned-off-by: tanmingchao <mingchaotan@outlook.com>
+
+Fixes  ISSUE #xxx
+
+Changes:
+
+1.
+
+2.
+
+3."	1	True	2020-10-16 11:36:55	2021-11-11 03:04:36	2020-10-16 12:38:33
+https://github.com/FederatedAI/FATE/pull/2131	[]	Feature 1.5 fix error round 5	"Feature 1.5 fix error round 5Fixes  ISSUE #xxx
+
+Changes:
+
+1. Develop-guide
+
+2.
+
+3."	1	True	2020-10-16 08:34:52	2020-10-16 09:13:57	2020-10-16 09:13:57
+https://github.com/FederatedAI/FATE/pull/2116	[]	fix bug	"fix bugSigned-off-by: weiwee <wbwmat@gmail.com>
+"	1	True	2020-10-16 03:11:00	2020-10-28 07:28:31	2020-10-16 04:54:38
+https://github.com/FederatedAI/FATE/pull/2112	['document']	Feature 1.5 doc update	"Feature 1.5 doc updateFixes  ISSUE #xxx
+
+Changes:
+
+1. edit pipeline examples 
+
+2. continue running  testsuite when some pipeline job fails
+
+3. edit document"	1	True	2020-10-15 12:54:16	2020-10-19 03:28:53	2020-10-16 06:22:33
+https://github.com/FederatedAI/FATE/pull/2109	[]	update benchmark/ fix param doc/ fix pipeline	"update benchmark/ fix param doc/ fix pipelineSigned-off-by: chenweijing <talkingwallace@sohu.com>
+
+Fixes  ISSUE #xxx
+
+Changes:
+
+1.
+
+2.
+
+3."	1	True	2020-10-15 09:44:56	2020-10-15 11:10:09	2020-10-15 11:10:09
+https://github.com/FederatedAI/FATE/pull/2097	['bug']	Feature 1.5 doc update	"Feature 1.5 doc updateFixes  ISSUE #xxx
+
+Changes:
+
+1. fix status code for pipeline 
+
+2.
+
+3."	1	True	2020-10-14 10:10:12	2020-10-14 11:21:04	2020-10-14 11:21:04
+https://github.com/FederatedAI/FATE/pull/2060	[]	Feature 1.5.0 system engineering	"Feature 1.5.0 system engineeringFixes  ISSUE #2061
+
+Changes:
+
+1. fix rerun bug
+
+2. fix reader component bug"	1	True	2020-10-12 08:28:57	2020-10-12 09:00:29	2020-10-12 09:00:29
+https://github.com/FederatedAI/FATE/pull/2050	[]	Feature 1.5 all sbt benchmark	Feature 1.5 all sbt benchmarkfix several bugs	1	True	2020-10-12 02:51:41	2020-10-12 04:00:51	2020-10-12 04:00:51
+https://github.com/FederatedAI/FATE/pull/2042	[]	Feature 1.5 sbt bin fix	Feature 1.5 sbt bin fixfix sparse error/ add comments	1	True	2020-10-10 08:07:42	2021-11-11 03:04:40	2020-10-10 12:22:48
+https://github.com/FederatedAI/FATE/pull/2002	['document']	fix predict dsl	"fix predict dslSigned-off-by: nemirorox <yolandawu131@gmail.com>
+
+Fixes  ISSUE #xxx
+
+Changes:
+
+1. 
+
+2.
+
+3."	1	True	2020-09-27 11:02:21	2020-10-19 03:25:05	2020-09-27 12:31:18
+https://github.com/FederatedAI/FATE/pull/1961	[]	fast sbt - fast hist fix	"fast sbt - fast hist fixSigned-off-by: chenweijing <talkingwallace@sohu.com>
+
+fast sbt fix
+
+"	1	True	2020-09-24 06:52:51	2020-09-24 07:42:05	2020-09-24 07:42:04
+https://github.com/FederatedAI/FATE/pull/1951	[]	fix bugs that host status update	"fix bugs that host status updateFixes  ISSUE #xxx
+
+Changes:
+
+1.
+
+2.
+
+3."	1	True	2020-09-23 09:54:49	2020-09-23 10:27:26	2020-09-23 10:27:26
+https://github.com/FederatedAI/FATE/pull/1933	['federatedml', 'document']	Feature 1.5 pipeline examples	"Feature 1.5 pipeline examplesFixes  ISSUE #xxx
+
+Changes:
+
+1. Add documents
+
+2. fix unittest
+
+3. use new pipeline job config loader"	1	True	2020-09-22 12:08:25	2020-09-22 13:17:05	2020-09-22 13:17:04
+https://github.com/FederatedAI/FATE/pull/1918	[]	Feature 1.5 eval fix	Feature 1.5 eval fixeval multi-label display fix & roc display fix	1	True	2020-09-21 07:55:08	2021-11-11 03:05:06	2020-09-21 09:23:41
+https://github.com/FederatedAI/FATE/pull/1910	[]	Feature 1.5 float error fix	Feature 1.5 float error fix	1	True	2020-09-18 11:29:04	2021-11-11 03:05:06	2020-09-18 14:05:59
+https://github.com/FederatedAI/FATE/pull/1906	[]	fix table/dataset name	"fix table/dataset nameSigned-off-by: chenweijing <talkingwallace@sohu.com>
+
+Fixes  ISSUE #xxx
+
+Changes:
+
+1.
+
+2.
+
+3."	1	True	2020-09-17 12:37:24	2021-11-11 03:05:07	2020-09-17 13:31:18
+https://github.com/FederatedAI/FATE/pull/1896	[]	Feature 1.5.0 system engineering	"Feature 1.5.0 system engineeringFixes  ISSUE #xxx
+
+Changes:
+
+1. fix bugs of model operations
+
+2.
+
+3."	1	True	2020-09-16 11:38:07	2020-09-17 01:53:34	2020-09-17 01:53:34
+https://github.com/FederatedAI/FATE/pull/1894	['federatedml', 'document']	add v2 dsl examples	"add v2 dsl examplesSigned-off-by: nemirorox <yolandawu131@gmail.com>
+
+Fixes  ISSUE #xxx
+
+Changes:
+
+1. add some v2 dsl examples
+
+2. fix training conf setting after fit
+
+3."	1	True	2020-09-15 13:46:58	2020-10-19 03:25:34	2020-09-19 06:30:40
+https://github.com/FederatedAI/FATE/pull/1891	['bug']	remove default transfer variable	"remove default transfer variableSigned-off-by: weiwee <wbwmat@gmail.com>
+
+remove default transfer variable"	1	True	2020-09-15 04:08:59	2020-09-16 11:55:33	2020-09-15 04:54:08
+https://github.com/FederatedAI/FATE/pull/1833	['bug', 'federatedml']	use correct header after shuffle	"use correct header after shuffleSigned-off-by: nemirorox <yolandawu131@gmail.com>
+
+Fixes  ISSUE #xxx
+
+Changes:
+
+1. fix shuffle header
+
+2.
+
+3."	1	True	2020-09-08 09:14:34	2020-11-11 12:10:47	2020-09-08 13:07:07
+https://github.com/FederatedAI/FATE/pull/1819	['bug', 'enhancement', 'federatedml']	Feature 1.4.6 column expand	"Feature 1.4.6 column expandFixes  ISSUE #1812
+
+Changes:
+
+1. Fix transform error
+
+2.
+
+3."	1	True	2020-09-05 12:53:09	2020-09-07 03:50:06	2020-09-07 03:50:06
+https://github.com/FederatedAI/FATE/pull/1811	[]	Feature 1.5.0 fate flow schedule	"Feature 1.5.0 fate flow scheduleFixes  ISSUE #1810 
+
+Changes:
+
+1. Improved fate flow startup script support for getting ports from configuration file
+2. Fix clean queue
+3. Fix output storage engine"	1	True	2020-09-04 13:06:29	2020-09-07 06:27:51	2020-09-07 06:27:50
+https://github.com/FederatedAI/FATE/pull/1799	['bug']	Feature 1.5.0 system engineering	Feature 1.5.0 system engineeringFixes  standalone	1	True	2020-09-02 11:27:26	2020-09-04 13:01:13	2020-09-04 13:01:13
+https://github.com/FederatedAI/FATE/pull/1790	[]	Feature 1.5 ensemble fix	"Feature 1.5 ensemble fixFixes  ISSUE #xxx
+
+Changes:
+
+1.
+
+2.
+
+3."	1	True	2020-09-02 02:50:35	2020-09-02 04:35:55	2020-09-02 04:35:55
+https://github.com/FederatedAI/FATE/pull/1781	['document']	fix read from config	"fix read from configSigned-off-by: nemirorox <yolandawu131@gmail.com>
+
+Fixes  ISSUE #xxx
+
+Changes:
+
+1. fix param loading from config
+
+2.
+
+3."	1	True	2020-08-31 12:00:09	2020-08-31 12:41:15	2020-08-31 12:41:15
+https://github.com/FederatedAI/FATE/pull/1760	[]	Feature 1.5 param fix	Feature 1.5 param fix	1	True	2020-08-26 07:00:36	2021-11-11 03:05:46	2020-08-27 09:57:15
+https://github.com/FederatedAI/FATE/pull/1759	['bug', 'federatedml', 'document']	Feature 1.5 pipeline second round	"Feature 1.5 pipeline second roundFixes  ISSUE #1099 
+
+Changes:
+
+1. Modify pipeline backend & component
+
+2. Add Pipeline Config CLI
+
+3. Edit demo & doc"	1	True	2020-08-25 09:13:44	2020-08-27 09:56:12	2020-08-27 09:56:12
+https://github.com/FederatedAI/FATE/pull/1757	['bug']	fix check label bug	"fix check label bug
+
+"	1	True	2020-08-25 08:20:25	2021-11-11 03:05:47	2020-08-26 01:58:41
+https://github.com/FederatedAI/FATE/pull/1756	[]	Feature 1.5 ftl tranvar fix	Feature 1.5 ftl tranvar fixfix transvar	1	True	2020-08-25 08:17:10	2021-11-11 03:05:32	2020-08-27 09:58:37
+https://github.com/FederatedAI/FATE/pull/1752	[]	Feature 1.5 fast sbt adapter	"Feature 1.5 fast sbt adapterFixes  ISSUE #xxx
+
+Changes:
+
+1. fix fast_sbt and selection error
+
+2.
+
+3."	1	True	2020-08-25 06:53:18	2021-11-11 03:05:48	2020-08-25 07:59:48
+https://github.com/FederatedAI/FATE/pull/1749	['bug', 'federatedml']	fix pipeline split zero error	"fix pipeline split zero errorSigned-off-by: nemirorox <yolandawu131@gmail.com>
+
+Fixes  ISSUE #xxx
+
+Changes:
+
+1. Fix error when test size/validate size is set to zero
+
+2. Fix README doc 
+
+3."	1	True	2020-08-21 11:18:12	2020-10-19 03:26:02	2020-08-25 08:00:34
+https://github.com/FederatedAI/FATE/pull/1746	['bug', 'federatedml']	fix header align schema	"fix header align schemaSigned-off-by: nemirorox <yolandawu131@gmail.com>
+
+Fixes  ISSUE #xxx
+
+Changes:
+
+1. Renew schema for data after instance alignment"	1	True	2020-08-19 13:21:08	2020-10-19 03:26:08	2020-08-25 08:01:45
+https://github.com/FederatedAI/FATE/pull/1733	[]	Feature 1.5.0 system engineering	"Feature 1.5.0 system engineeringFixes  ISSUE #xxx
+
+Changes:
+
+1. Fixed bug where guest could see host job
+
+2. Fixed cancel job status bug
+
+3."	1	True	2020-08-17 10:07:20	2020-08-17 11:22:06	2020-08-17 11:22:06
+https://github.com/FederatedAI/FATE/pull/1720	['bug', 'federatedml']	Feature 1.5.0 system engineering pipeline adjust	"Feature 1.5.0 system engineering pipeline adjustFixes  ISSUE #xxx
+
+Changes:
+
+1. Fix stepwise pseudonym for features
+
+2. Fix pipeline log dir
+
+3. Add upload demo to pipeline demo"	1	True	2020-08-15 08:44:35	2020-08-15 09:09:53	2020-08-15 09:09:53
+https://github.com/FederatedAI/FATE/pull/1713	['federatedml', 'document']	Feature 1.5.0 system engineering pipeline adjust	"Feature 1.5.0 system engineering pipeline adjustFixes  ISSUE #1099
+
+Changes:
+
+1. Fix transfer variable conf 
+
+2. Add logger to pipeline 
+
+3. Edit README doc
+
+4. Edit pipeline demos"	1	True	2020-08-14 06:37:19	2020-08-14 08:43:03	2020-08-14 08:43:03
+https://github.com/FederatedAI/FATE/pull/1712	['bug', 'federatedml']	fix bug	"fix bugSigned-off-by: weiwee <wbwmat@gmail.com>
+
+Fixes  compatible bug
+"	1	True	2020-08-14 03:59:03	2020-08-17 02:32:12	2020-08-14 04:38:42
+https://github.com/FederatedAI/FATE/pull/1711	['bug', 'arch']	fix special KeyError case in  in federation	"fix special KeyError case in  in federationSigned-off-by: weiwee <wbwmat@gmail.com>
+
+Changes:
+
+1. fix special KeyError case in  in federation"	1	True	2020-08-14 03:46:26	2020-08-17 02:32:03	2020-08-14 04:39:27
+https://github.com/FederatedAI/FATE/pull/1694	['bug', 'federatedml']	Feature 1.5 examples fix	"Feature 1.5 examples fixFixes  ISSUE #xxx
+
+Changes:
+
+1.  delete unused param in examples' config
+
+2. fix some other bug
+
+3."	1	True	2020-08-12 12:44:02	2020-08-12 13:34:35	2020-08-12 13:34:34
+https://github.com/FederatedAI/FATE/pull/1683	['bug', 'federatedml']	fix json non-serializable in local baseline summary	"fix json non-serializable in local baseline summarySigned-off-by: nemirorox <yolandawu131@gmail.com>
+
+
+Changes:
+
+1. Fix json non-serializable issue cased by numpy.bool_ and numpy.int"	1	True	2020-08-11 09:48:00	2020-10-19 03:26:11	2020-08-11 12:13:53
+https://github.com/FederatedAI/FATE/pull/1659	['bug']	shutdown log before kill pid	"shutdown log before kill pidSigned-off-by: weiwee <wbwmat@gmail.com>
+
+Changes:
+
+1. shutdown log before kill process when federation error rasied"	1	True	2020-08-07 07:51:35	2020-09-08 13:08:00	2020-09-04 12:30:52
+https://github.com/FederatedAI/FATE/pull/1652	['bug', 'enhancement', 'federatedml']	Feature 1.5 edit dsl and conf	"Feature 1.5 edit dsl and confFixes  ISSUE #xxx
+
+Changes:
+
+1. Open duplicate parameter checker
+
+2. edit conf to avoid duplicate parameter
+
+3."	1	True	2020-08-05 02:33:18	2021-11-24 10:59:34	2020-08-05 03:16:11
+https://github.com/FederatedAI/FATE/pull/1650	['bug', 'federatedml']	Feature 1.5 header align fix	"Feature 1.5 header align fixChanges:
+
+1. fix header alignment extra indices error 
+
+2. fix stepwise header abstraction"	1	True	2020-08-03 11:43:07	2020-08-19 13:18:38	2020-08-05 04:42:10
+https://github.com/FederatedAI/FATE/pull/1643	['bug', 'federatedml']	Feature 1.5 ensemble and ftl	Feature 1.5 ensemble and ftlFixes ISSUE #1628 #1632 #1629 #1631 and fix several bugs	1	True	2020-07-31 11:31:49	2020-08-11 09:30:12	2020-08-02 01:51:48
+https://github.com/FederatedAI/FATE/pull/1637	['bug', 'enhancement', 'federatedml']	Feature 1.5 pipeline 0723	"Feature 1.5 pipeline 0723Fixes  ISSUE #1099 
+
+Changes:
+
+1. fix some bug of pipeline
+
+2. support homo\hetero nn in pipeline"	1	True	2020-07-31 06:21:11	2020-07-31 06:40:51	2020-07-31 06:40:51
+https://github.com/FederatedAI/FATE/pull/1609	[]	delete file and fix param/feat importance bug	"delete file and fix param/feat importance bugSigned-off-by: chenweijing <talkingwallace@sohu.com>
+
+Fixes  ISSUE #xxx
+
+Changes:
+
+1.
+
+2.
+
+3."	1	True	2020-07-28 03:43:06	2020-07-28 09:24:26	2020-07-28 09:24:26
+https://github.com/FederatedAI/FATE/pull/1599	[]	fix error	"fix errorSigned-off-by: tanmc123 <mingchaotan@outlook.com>
+
+Fixes  ISSUE #xxx
+
+Changes:
+
+1.
+
+2.
+
+3."	1	True	2020-07-23 09:11:50	2020-07-29 08:41:12	2020-07-29 08:41:12
+https://github.com/FederatedAI/FATE/pull/1562	['document']	Update README.rst	Update README.rstedit table info in doc to match with description 	1	True	2020-07-16 03:18:43	2020-09-08 13:21:51	2020-07-16 06:22:34
+https://github.com/FederatedAI/FATE/pull/1561	['bug', 'enhancement', 'arch', 'federatedml', 'fate-flow']	Merge 1.4.2's update into master branch	"Merge 1.4.2's update into master branchFixes  ISSUE  #1461 #1464 #1465 #1466 #1467 #1476 #1525 #1530
+
+Changes:
+
+FederatedML
+1 Optimize performance of Pearson which increases efficiency by more than twice.
+2 Optimize Min-test module: Add secure-boost as optional test task. Set partyid and work_mode as input parameters. Use pre-import data set as input so that improved test process.
+3 Support tok_k iv filter in feature selection module.
+4 Support filling missing value for tag:value format data in DataIO.
+5 Fix bug of lacking one layer of depth of tree in HeteroSecureBoost and support automatically alignment header of input data in predict process
+6 Standardize the naming of example data set and add a data pre-import script.
+
+FATE-Flow
+1 Distinguish between user stop job and system stop job;
+2 Optimized some logs;
+3 Optimize zookeeper configuration
+4 The model supports persistent storage to mysql
+5 Push the model to the online service to support the specified storage address (local file and FATEFlowServer interface)"	1	True	2020-07-16 02:52:19	2020-07-16 12:12:08	2020-07-16 12:12:08
+https://github.com/FederatedAI/FATE/pull/1536	['bug']	fix keras bug in homo nn backend	"fix keras bug in homo nn backendfix keras bugs in nn
+
+
+"	1	True	2020-07-03 07:01:06	2021-11-24 10:59:41	2020-07-08 02:53:55
+https://github.com/FederatedAI/FATE/pull/1482	['bug']	export model only if `need_run` is True	"export model only if `need_run` is TrueSigned-off-by: weiwee <wbwmat@gmail.com>
+
+
+Changes:
+
+1. export model only if `need_run` is True"	1	True	2020-06-15 06:56:01	2020-09-16 11:52:58	2020-06-15 07:14:26
+https://github.com/FederatedAI/FATE/pull/1456	['document']	Feature 1.4.1 update doc	"Feature 1.4.1 update docFixes  ISSUE #xxx
+
+Changes:
+
+1. update version of fateboard in gitmodule
+
+2. fix hetero-nn readme format
+
+3. update fate-1.4.1 content of  release note"	1	True	2020-06-11 09:44:12	2021-11-24 11:06:26	2020-06-11 10:00:00
+https://github.com/FederatedAI/FATE/pull/1455	['bug', 'federatedml', 'fate-flow']	Merge fate-1.4.1's update into develop	"Merge fate-1.4.1's update into developFixes  ISSUE #1350 #1351 #1387 #1392 #1394 #1398 #1420 #1433 #1437 
+
+Changes:
+
+1.
+
+2.
+
+3."	1	True	2020-06-11 07:32:01	2021-11-11 03:06:17	2020-06-11 08:42:39
+https://github.com/FederatedAI/FATE/pull/1449	[]	Feature 1.4.1 fate flow	"Feature 1.4.1 fate flowFixes  ISSUE #1450
+
+Changes:
+
+ fix update job info bug"	1	True	2020-06-10 12:32:27	2020-06-11 07:20:41	2020-06-11 07:20:41
+https://github.com/FederatedAI/FATE/pull/1444	[]	edit method for evaluation obtain data	"edit method for evaluation obtain dataSigned-off-by: tanmc123 <mingchaotan@outlook.com>
+
+Fixes  ISSUE #xxx
+
+Changes:
+
+1. Fix evaluation show result
+
+2.
+
+3."	1	True	2020-06-09 11:35:08	2020-09-16 11:53:21	2020-06-10 02:05:46
+https://github.com/FederatedAI/FATE/pull/1441	['bug']	Develop 1.4.1 scale precision	"Develop 1.4.1 scale precisionFixes  ISSUE #xxx
+
+Changes:
+1. fix scale precision
+2. std scale transform for not float input data"	1	True	2020-06-09 03:26:33	2020-06-09 06:12:31	2020-06-09 06:12:31
+https://github.com/FederatedAI/FATE/pull/1436	[]	Reduce running time of histogram	"Reduce running time of histogramReduce running time of histogram calculation when iterative affine is used as encryptor. Test OK under default setting (both use_missing and zero_as_missing are false), but weird behavior appear when zero_as_missing  are true, which is to be fixed.
+"	1	True	2020-06-07 17:27:54	2020-09-22 09:08:55	2020-09-22 09:08:54
+https://github.com/FederatedAI/FATE/pull/1424	[]	fix roc curve	fix roc curvefix  roc curve	1	True	2020-06-02 06:49:47	2020-06-02 07:10:59	2020-06-02 07:10:59
+https://github.com/FederatedAI/FATE/pull/1421	[]	Develop 1.4.1 intersect fix bug	"Develop 1.4.1 intersect fix bugFixes  ISSUE  #1420
+
+Changes:
+1.fix intersection bug if host do not get sync results
+2.fix scale bugs while scale after one-hot"	1	True	2020-06-01 14:48:46	2021-11-24 11:06:30	2020-06-02 04:48:06
+https://github.com/FederatedAI/FATE/pull/1418	[]	Feature 1.4.1 fate flow	"Feature 1.4.1 fate flowFixes  ISSUE #1417
+
+Changes:
+
+1. fix fate flow  bugs"	1	True	2020-06-01 05:57:27	2020-06-02 07:17:02	2020-06-02 07:17:01
+https://github.com/FederatedAI/FATE/pull/1415	['bug', 'federatedml']	Feature 1.4.1 evaluation update	"Feature 1.4.1 evaluation updatefix bugs:
+1. psi callback, nan problem
+2. pr, auc log bug
+3. precision prettifying value reset
+4. confusion mat/F1 score threshold adjust"	1	True	2020-05-31 05:31:58	2020-06-01 02:26:55	2020-06-01 02:26:55
+https://github.com/FederatedAI/FATE/pull/1411	['bug', 'federatedml', 'document']	fix local baseline binary predict	"fix local baseline binary predictSigned-off-by: nemirorox <yolandawu131@gmail.com>
+
+Fixes  ISSUE #xxx
+
+Changes:
+
+1. Fix local baseline binary predict"	1	True	2020-05-28 07:02:34	2020-10-28 07:41:52	2020-06-01 02:15:14
+https://github.com/FederatedAI/FATE/pull/1405	[]	fix bad url	"fix bad urlFixes  ISSUE 
+
+There is a commit that format markdown to reStructuredText, but miss some URLs, so I'm trying to fix it.
+
+BTW, wget -c  maybe better than wget
+
+Changes:
+
+1. fix markdown to reStructuredText
+
+2. auto-format blank"	1	True	2020-05-26 03:27:33	2020-06-08 15:46:21	2020-06-08 15:46:21
+https://github.com/FederatedAI/FATE/pull/1356	['bug', 'enhancement', 'arch', 'federatedml', 'document', 'federation', 'fate-flow', 'deploy', 'examples']	Develop	"DevelopFixes  ISSUE  #935 #943 #973 #981 #998 #1086 #1089 #1092 #1096 #1097 #1106 #1122 #1126 #1130 #1131 #1132 #1133 #1134 #1155 #1169 #1175 #1176 #1177   #1179 #1184  #1198 #1236 
+
+Changes:
+
+Major Features and Improvements
+FederatedML
+
+Support Homo Secureboost
+Support AIC/BIC-based Stepwise for Linear Models
+Add Hetero Optimal Feature Binning, support iv/gini/chi-square/ks,and allow asymmetric binning methods
+Interoperate with AI ecosystem: Add pytorch backend for Homo NN
+Homo Framework factorization, simplify developing homo algorithms
+Early stopping strategy for hetero algorithms.
+Local Baseline supports multi-class classification
+Add consistency check to Predict function
+Optimize validation strategy，3x speed up in-training validation
+FATE-Flow
+
+Refactoring model management, native file directory storage, storage structure is more flexible, more information
+Support model import and export, store and restore with reliable distributed system(Redis is currently supported)
+Using MySQL instead of Redis to implement Job Queue, reducing system complexity
+Support for uploading client local files
+Automatically detects the existence of the table and provides the destroy option
+Separate system, algorithm, scheduling command log, scheduling command log can be independently audited
+Eggroll
+
+Stability Boosts:
+
+New resource management components introduce the brand new session mechanism. Processors can be cleaned up with a simple method call, even the session goes wrong.
+Removes storage service. No C++ / native library compilation is needed.
+Federated learning algorithms can still work at a 28% packet loss rate.
+Performance Boosts:
+
+Performances of federated learning algorithms are improved on Eggroll 2. Some algorithms get 10x performance boost.
+Join interface is 16x faster than pyspark under federated learning scenarios.
+User Experiences Boosts:
+
+Quick deployment. Maven, pip, config and start.
+Light dependencies. Check our requirements.txt / pom.xml and see.
+Easy debugging. Necessary running contexts are provided. Runtime status are kept in log files and databases.
+Few daemon processes. And they are all JVM applications."	1	True	2020-05-11 11:42:44	2021-12-17 05:41:45	2020-05-12 11:50:35
+https://github.com/FederatedAI/FATE/pull/1345	[]	Remove sensitive information from the example	"Remove sensitive information from the exampleFixes  ISSUE #xxx
+
+Changes:
+
+1.
+
+2.
+
+3."	1	True	2020-05-08 11:17:14	2020-05-08 11:26:01	2020-05-08 11:26:01
+https://github.com/FederatedAI/FATE/pull/1343	['bug', 'document']	remove duplicate requirements	"remove duplicate requirementsSigned-off-by: weiwee <wbwmat@gmail.com>
+
+Changes:
+
+1. remove duplicate requirements in doc/eadthedoc"	1	True	2020-05-08 07:29:04	2020-07-17 03:10:20	2020-05-11 11:20:24
+https://github.com/FederatedAI/FATE/pull/1342	['bug']	update affine encryption's code to avoid dead loop in low probability	"update affine encryption's code to avoid dead loop in low probabilitySigned-off-by: mgqa34 <mgq3374541@163.com>
+
+Fixes  ISSUE #xxx
+
+Changes:
+
+1. fix bug of very low propability(1e-10)  of dead loop in iterativeAffine
+
+2.
+
+3."	1	True	2020-05-08 06:25:37	2020-07-14 08:32:41	2020-05-08 11:23:45
+https://github.com/FederatedAI/FATE/pull/1337	['bug']	Develop 1.4	"Develop 1.4Fixes  ISSUE #xxx
+
+Changes:
+
+1.
+
+2.
+
+3."	1	True	2020-05-07 08:48:29	2020-05-07 10:37:05	2020-05-07 10:37:05
+https://github.com/FederatedAI/FATE/pull/1329	[]	Develop 1.4	"Develop 1.4Fixes  ISSUE #xxx
+
+Changes:
+
+1. fix upload of standalone
+
+2. add predict task to min task test
+
+3."	1	True	2020-05-07 02:49:23	2020-05-07 04:30:57	2020-05-07 04:30:57
+https://github.com/FederatedAI/FATE/pull/1304	['bug']	Bugfix 1.4 fix transfer variable	"Bugfix 1.4 fix transfer variableChanges:
+
+1. fix transfer_variable singleton"	1	True	2020-05-04 07:02:56	2020-07-17 03:10:02	2020-05-04 07:41:47
+https://github.com/FederatedAI/FATE/pull/1300	['bug', 'federatedml', 'fate-flow']	Develop 1.4	"Develop 1.4Fixes  ISSUE #xxx
+
+Changes:
+
+1.
+
+2.
+
+3."	1	True	2020-05-03 02:56:13	2020-05-03 03:33:00	2020-05-03 03:33:00
+https://github.com/FederatedAI/FATE/pull/1297	[]	fix match cmd line bug	"fix match cmd line bugFixes  ISSUE #xxx
+
+Changes:
+
+1.
+
+2.
+
+3."	1	True	2020-05-02 08:25:58	2020-05-02 08:47:24	2020-05-02 08:47:24
+https://github.com/FederatedAI/FATE/pull/1200	['bug']	fix Issue 1198	fix Issue 1198Fixes  ISSUE #1198	1	True	2020-04-24 11:48:02	2020-04-27 13:42:27	2020-04-25 15:16:55
+https://github.com/FederatedAI/FATE/pull/1197	['bug']	fix issue #1169	fix issue #1169Fixes  ISSUE #1169	1	True	2020-04-24 10:53:46	2020-04-27 13:42:41	2020-04-25 12:08:59
+https://github.com/FederatedAI/FATE/pull/1180	['bug']	fix bugs when no feature in host's side but guest have features and t…	"fix bugs when no feature in host's side but guest have features and t……he node can split by guest data
+
+Signed-off-by: mgqa34 <mgq3374541@163.com>
+
+Fixes  ISSUE #1179"	1	True	2020-04-22 02:25:05	2020-07-14 08:22:55	2020-04-22 03:12:20
+https://github.com/FederatedAI/FATE/pull/1139	['bug', 'federatedml']	Fix self nonserializable	"Fix self nonserializableSigned-off-by: nemirorox <yolandawu131@gmail.com>
+
+Fix object attribute and function call in table operations. 
+
+Changes:
+
+1. modify attributes
+
+2. modify function calls in lambda expressions"	1	True	2020-04-01 02:32:59	2020-11-11 12:09:39	2020-04-01 02:57:55
+https://github.com/FederatedAI/FATE/pull/1136	['bug', 'federatedml']	Feature 1.x stepwise	"Feature 1.x stepwiseFixes data output schema & model storage 
+
+Changes:
+
+1. add data type to data output of stepwise module.
+
+2. change model storage to dict format
+
+3. format code style"	1	True	2020-03-30 09:19:49	2020-07-14 08:25:43	2020-03-31 14:21:17
+https://github.com/FederatedAI/FATE/pull/1118	['bug', 'enhancement', 'federatedml']	Linear Model Early Stop for v1.4	"Linear Model Early Stop for v1.4Fixes validate data issue
+
+Changes:
+
+1. load best model when needed
+
+2. change init method of validation strategy for linear model arbiter
+
+3 .fix pb pickle error in LR guest"	1	True	2020-03-20 09:29:06	2020-03-31 14:25:42	2020-03-31 14:25:42
+https://github.com/FederatedAI/FATE/pull/1116	['bug', 'enhancement', 'federatedml']	Fix Union Module	"Fix Union ModuleSigned-off-by: nemirorox <yolandawu131@gmail.com>
+
+Fixes known issues of Union module 
+
+Changes:
+
+1. Allow single data table input 
+
+2. Allow empty data table input"	1	True	2020-03-19 10:55:00	2020-03-27 10:31:50	2020-03-20 02:37:34
+https://github.com/FederatedAI/FATE/pull/1075	[]	Fix sqn missed error	"Fix sqn missed errorSigned-off-by: tanmc123 <mingchaotan@outlook.com>
+
+Fixes  ISSUE #xxx
+
+Changes:
+
+1. Fix sqn missed error"	1	True	2020-03-05 10:35:05	2020-04-29 08:53:11	2020-03-06 03:56:56
+https://github.com/FederatedAI/FATE/pull/1073	['bug', 'enhancement', 'arch', 'federatedml', 'document', 'fate-flow']	Merge deveop-1.3's dev content to master	"Merge deveop-1.3's dev content to masterFixes  ISSUE #790 #893 #950 #952 #956 #991 #992 #999 #1004 #1009 #958 #959 #961 #976 #988 #1006 #1017 #1019  #1029 #1041 #1044 #1046 #1047  #1050  #1053 #1060 #1063 
+
+Changes:
+
+FederatedREC
+1 Add federated recommendation submodule
+2 Add heterogeneous Factoraization Machine
+3 Add hemogeneous Factoraization Machine
+4 Add heterogeneous Matrix Factorization
+5 Add heterogeneous Singular Value Decomposition
+6 Add heterogeneous SVD++ (Factorization Meets the Neighborhood)
+7 Add heterogeneous Generalized Matrix Factorization
+
+FederatedML
+1 Support Sparse data training in heterogeneous General Linear Model(Hetero-LR、Hetero-LinR、Hetero-PoissonR)
+2 Fix 32M limitation of quantile binning to support higher feature dimension
+3 Fix 32M limitation of histogram statistics for  SecureBoost to support higher feature dimension training.
+4 Add abnormal parameters and input data detection in OneHot Encoder
+5 fix not passing validate data to fit process to support evaluate validation data during training process
+6. fix some other bug
+
+Fate-Flow
+1 Add clean job CLI for cleaning output and intermediate results, including data, metrics and sessions
+2 Support for obtaining table namespace and name of output data via CLI
+8 Fix KillJob unsuccessful execution in some special cases
+3 Improve log system, add more exception and run time status prompts"	1	True	2020-03-05 06:42:47	2020-03-05 07:12:09	2020-03-05 07:12:08
+https://github.com/FederatedAI/FATE/pull/614	[]	Fix invalid image references.	"Fix invalid image references.Changes:
+ Fixed invalid image reference error. 
+ In addition, keep the naming style of the image file consistent with the others.
+
+"	1	True	2019-09-24 14:39:42	2019-10-16 06:15:12	2019-10-16 06:15:12
+https://github.com/FederatedAI/FATE/pull/206	['bug']	fix federation crash bug	"fix federation crash bugFixes  ISSUE#207
+
+Changes:
+
+1.  there is a single loop thread in the class arch/driver/federation/src/main/java/com/webank/ai/fate/driver/federation/transfer/communication/TransferJobScheduler.java,   if the pressure is high ,  the single thread can not get thread from threadpool ,so it will throw exception ,then this thread will exit。so there is no thread to handle request 
+2.arch/driver/federation/src/main/java/com/webank/ai/fate/driver/federation/transfer/communication/processor/SendProcessor.java
+there  are  producer  and  consumer in this class，  but the order of  initialization  is  wrong ，
+the  consumer  should  before  producer，because  the consumer sometimes will  initialize failed  under high pressure,  the producor will block  in that case，so  the thread in the threadpool will use up"	5	True	2019-06-05 04:28:21	2019-06-06 07:29:13	2019-06-06 07:29:13

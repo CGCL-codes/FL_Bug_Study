@@ -1,0 +1,46 @@
+url	label	title	all_text	comments	merged	created_time	updated_time	closed_time
+https://github.com/adap/flower/pull/1266	[]	Add round number to fit and eval debug messages	"Add round number to fit and eval debug messagesAdd round numbers to fit and eval debug messages in server.py to make them more informative.
+
+Used rnd variable and %s operator in keeping with existing style."	2	True	2022-06-24 09:32:02	2022-06-27 11:10:42	2022-06-27 11:09:14
+https://github.com/adap/flower/pull/1233	[]	Fixes metrics in the C++ implementation and example	"Fixes metrics in the C++ implementation and example#### What does this implement/fix? Explain your changes.
+
+Fixes to the C++ implementation and the quickstart C++ example:
+- Fixes metrics communication issue with pointer going out of scope
+- Adds an example metric to the quickstart C++ example
+- Fixes bug in the matrix multiplication function for the C++ example.
+- Adds double support for compatibility```suggestion
+  if (scalar_msg.getDouble() != std::nullopt) {
+```Is this still required or can we revert the changes in `transport.proto`? If we add support for `float` here, we'll have to update at least the Python-based server implementation to support it as well.We don't have to modify the proto if we drop all float support. If we want to keep only doubles, I think some changes should still be made to the interface of typing.h for consistency. I've updated the PR to reflect these changes."	2	True	2022-05-25 12:37:57	2022-06-13 07:17:59	2022-06-01 09:41:07
+https://github.com/adap/flower/pull/1001	[]	Fix to the tfltransfer library	"Fix to the tfltransfer libraryFixes #956 
+
+There was a problem with the tfltransfer library in the Android example, which was causing the .tflite conversion to fail.  The library files are now changed and .tflite generation should work."	1	True	2022-01-12 01:24:24	2022-01-17 14:18:57	2022-01-17 14:18:54
+https://github.com/adap/flower/pull/982	[]	Fix missing type error thrown by mypy	"Fix missing type error thrown by mypyThis PR fixes the typing error by using `numpy.typing` types. To ensure they are available we have to set the minimum required numpy version to `^1.20.0`
+
+@pedropgusmao please have a look at the dtype I have set. I think you can judge best if its correct."	2	True	2022-01-03 10:48:35	2022-01-04 09:01:20	2022-01-04 09:01:19
+https://github.com/adap/flower/pull/979	[]	Fixed max_workers mypy related error	"Fixed max_workers mypy related errorRelated to https://github.com/adap/flower/pull/978.
+There was an error about the default value for the optional `max_workers` parameter when running `mypy` as pointed out by our _Continuous Integration_ system.
+The proposed fix has been tested successfully in a local environment without inconvenience."	3	True	2022-01-01 02:01:03	2022-01-02 16:19:20	2022-01-02 16:14:13
+https://github.com/adap/flower/pull/950	[]	Fix Android example server comment	Fix Android example server commentThe comment on the Android server number of rounds has been updated to match the source code line below it. This _pull request_ solves https://github.com/adap/flower/issues/949.	1	True	2021-12-19 23:27:44	2021-12-28 20:29:28	2021-12-22 11:47:32
+https://github.com/adap/flower/pull/885	[]	Fix FedYogi to match the paper	Fix FedYogi to match the paperThere was a `nan` issue in the aggregated model so I found an error in the code.Fixes sign to reflect page 4 of https://openreview.net/pdf?id=LkFG3lB13U5 .	2	True	2021-10-18 06:13:53	2021-10-28 05:31:26	2021-10-28 05:31:26
+https://github.com/adap/flower/pull/859	[]	Upgrades poetry to version 1.1.10. It fixes some weird bugs during	Upgrades poetry to version 1.1.10. It fixes some weird bugs duringinstall related to https://github.com/python-poetry/poetry/issues/4085	1	True	2021-09-28 11:29:53	2021-10-12 07:56:54	2021-09-28 14:14:47
+https://github.com/adap/flower/pull/826	[]	Fixing script to work with Ray ^1.6.0 without mypy `--no-implicit-reexport` issues.	Fixing script to work with Ray ^1.6.0 without mypy `--no-implicit-reexport` issues.This took a long time. Ray changed the way it structures the internal imports. Now one should call directly the submodule `ray.worker` to access `get`.	1	True	2021-08-30 20:12:30	2021-09-01 07:41:46	2021-09-01 07:41:45
+https://github.com/adap/flower/pull/748	[]	Adding sklearn logreg example	"Adding sklearn logreg exampleAdding a scikit-learn logistic regression example using MNIST dataset.
+The openml helper in scikit-learn is broken, so I used the openml python library directly.
+I tried to make this as simple as possible following the quickstart examples but it turned out little complicated since model initialisation and parameter setting is a not so obvious with scikit-learn.```suggestion
+This example of Flower uses `scikit-learn`'s `LogisticRegression` model to train a federated learning system. It will help you understand how to adapt Flower for use with `scikit-learn`.
+``````suggestion
+            # Ignore convergence failure due to low local epochs
+``````suggestion
+    Sets initial parameters as zeros
+    Required for since model params are uninitialized until model.fit is called
+    But server asks for initial parameters from clients at launch
+    Refer to sklearn.linear_model.LogisticRegression documentation
+    for more information.
+```"	4	True	2021-06-06 11:15:29	2022-01-03 16:07:27	2021-06-30 20:15:02
+https://github.com/adap/flower/pull/739	[]	Fix pytorch quickstart	"Fix pytorch quickstartFixes:
+
+    AttributeError: 'CifarClient' object has no attribute 'testloader'"	1	True	2021-05-25 10:51:34	2021-05-25 12:04:32	2021-05-25 11:31:00
+https://github.com/adap/flower/pull/673	[]	Fix Mxnet loss and accuracy calculation	"Fix Mxnet loss and accuracy calculation- change Loss to CrossEntropyLoss in ""from_centralized_to_federated""
+- create eval metric and add Loss and Accuracy
+- adjust return values to eval metric"	1	True	2021-03-11 10:27:58	2021-03-12 17:03:08	2021-03-12 17:03:07
+https://github.com/adap/flower/pull/394	[]	Change Setting to Baseline	Change Setting to BaselineThis PR addresses [this issue](https://github.com/adap/flower/issues/345). This is my first PR and I've tried adhering to most guidelines, apologies for any mistakes in that. I'm looking forward to contributing and submitting PRs to solve more of these issues.	2	True	2020-09-01 11:27:54	2020-09-01 15:35:56	2020-09-01 15:35:56
