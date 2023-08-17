@@ -142,7 +142,7 @@ This repository consists of three main folders: Dataset_Collection, Manual_Label
     The list of StackOverflow bugs based on tag and keywords is presented in the file [Dataset_Collection/StackOverflow/so_init.csv](Dataset_Collection/SO_init/so_init.csv).
     
     The source codes used to collect initial data are `GitHub_data_collection.py` and `StackOverflow_data_collection.py`, respectively.
-2. **Manual_Labelling** folder: In this folder, we have placed all the files associated with our manual labelled result (after **Step 3**). For the bugs, we further annotate `Symptom`, `Bug Type` and `Root cause`.
+2. **Manual_Labelling** folder: In this folder, we have placed all the files associated with our manual labelled result (after **Step 3**). For the bugs, we further annotate `Symptom`, `Bug Stage` and `Root cause`.
 
 3. **Quantitative_Study** folder: In this folder, we have placed the source data from Quantitative Study in Section 7. In the lifecycle file from Github, we annotate the creation time, closing time and lifecycle.
    In the lifecycle file from StackOverflow, we annotate the creation time, last active time and lifecycle.
