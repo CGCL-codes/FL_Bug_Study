@@ -1,162 +1,162 @@
-url,additions,deletions,total,changed_files
-https://github.com/OpenMined/PySyft/pull/3522,7,1,8,1
-https://github.com/OpenMined/PySyft/pull/3350,67,4,71,4
-https://github.com/OpenMined/PySyft/pull/3271,3,3,6,1
-https://github.com/OpenMined/PySyft/pull/3285,9,3,12,2
-https://github.com/OpenMined/PySyft/commit/e4b5cab232910968036f8bac1d499b19356de41c,56,12,68,5
-https://github.com/OpenMined/PySyft/pull/3256,1,3,4,1
-https://github.com/OpenMined/PySyft/pull/3205,88,32,120,1
-https://github.com/OpenMined/PySyft/pull/3148,76,40,116,1
-https://github.com/OpenMined/PySyft/pull/2548,13,3,16,1
-https://github.com/OpenMined/PySyft/pull/2407,4,1,5,1
-https://github.com/OpenMined/PySyft/pull/2395,2,2,4,1
-https://github.com/OpenMined/PySyft/pull/2358,60,1,61,3
-https://github.com/OpenMined/PySyft/pull/2339,1,1,2,1
-https://github.com/OpenMined/PySyft/pull/2219,69,27,96,4
-https://github.com/OpenMined/PySyft/pull/2048,4,4,8,3
-https://github.com/OpenMined/PySyft/pull/2022,21,11,32,1
-https://github.com/OpenMined/PySyft/pull/1982,5,0,5,1
-https://github.com/OpenMined/PySyft/pull/1646,5,2,7,1
-https://github.com/OpenMined/PySyft/pull/1545,246,21,267,5
-https://github.com/OpenMined/PySyft/pull/1395,179,119,298,3
-https://github.com/OpenMined/PySyft/pull/1315,1,0,1,1
-https://github.com/OpenMined/PySyft/pull/394,20,127,147,3
-https://github.com/OpenMined/PySyft/pull/269,6,0,6,1
-https://github.com/FederatedAI/FATE/pull/2741,18,3,21,2
-https://github.com/FederatedAI/FATE/pull/1419,6,9,15,2
-https://github.com/FederatedAI/FATE/commit/c10906e64a44e1740ad6bd333530c8e5a711cacb,6,1,7,2
-https://github.com/FederatedAI/FATE/pull/1062,1,1,2,1
-https://github.com/FederatedAI/FATE/pull/1010,99,84,183,5
-https://github.com/FederatedAI/FATE/pull/647,5,4,9,1
-https://github.com/FederatedAI/FATE/pull/541,3,3,6,2
-https://github.com/FederatedAI/FATE/pull/171,14,0,14,1
-https://github.com/tensorflow/federated/commit/8b769d83a57602507f622c4b973f07271f1d4ba6,23,64,87,3
-https://github.com/tensorflow/federated/commit/de97c52ca835b5557c0c1c9dbd768f742a2739f5,412,30,442,3
-https://github.com/tensorflow/federated/commit/14235f416391f9724b2b6c89116c6217b87931e8,5,0,5,1
-https://github.com/tensorflow/federated/commit/22c89fac4aa9e92e591a7de43e705773215986b2,7,5,12,1
-https://github.com/tensorflow/federated/commit/5299226ee7c736c46d1d3def8c6726214f6f9cb0,15,0,15,1
-https://github.com/adap/flower/pull/802,59,6,65,5
-https://github.com/adap/flower/pull/553,8,4,12,2
-https://github.com/adap/flower/pull/449,162,38,200,9
-https://github.com/bytedance/fedlearner/pull/422,38,20,58,2
-https://github.com/OpenMined/PySyft/pull/4640,36,11,47,1
-https://github.com/OpenMined/PySyft/pull/3705,3,0,3,1
-https://github.com/OpenMined/PySyft/pull/3680,7,2,9,1
-https://github.com/OpenMined/PySyft/pull/3679,9,4,13,1
-https://github.com/OpenMined/PySyft/pull/3595,16,5,21,1
-https://github.com/OpenMined/PySyft/pull/3593,68,35,103,3
-https://github.com/OpenMined/PySyft/pull/3591,19,4,23,1
-https://github.com/OpenMined/PySyft/pull/3589,26,0,26,1
-https://github.com/OpenMined/PySyft/pull/3567,107,21,128,7
-https://github.com/OpenMined/PySyft/pull/3563,4,4,8,1
-https://github.com/OpenMined/PySyft/pull/3560,5,5,10,7
-https://github.com/OpenMined/PySyft/pull/3525,0,2,2,1
-https://github.com/OpenMined/PySyft/pull/3511,2,0,2,1
-https://github.com/OpenMined/PySyft/pull/3473,9,9,18,1
-https://github.com/OpenMined/PySyft/pull/3405,5,5,10,2
-https://github.com/OpenMined/PySyft/pull/3396,2,2,4,1
-https://github.com/OpenMined/PySyft/pull/3376,12,17,29,1
-https://github.com/OpenMined/PySyft/pull/3327,1,6,7,1
-https://github.com/OpenMined/PySyft/pull/3199,9,0,9,1
-https://github.com/OpenMined/PySyft/pull/3067,0,8,8,1
-https://github.com/OpenMined/PySyft/pull/2749,1,1,2,1
-https://github.com/OpenMined/PySyft/pull/2733,6,6,12,2
-https://github.com/OpenMined/PySyft/pull/2543,1,1,2,1
-https://github.com/OpenMined/PySyft/pull/2437,1,1,2,1
-https://github.com/OpenMined/PySyft/pull/2431,4,0,4,1
-https://github.com/OpenMined/PySyft/pull/2328,4,4,8,1
-https://github.com/OpenMined/PySyft/pull/2262,13,8,21,1
-https://github.com/OpenMined/PySyft/pull/2254,11,10,21,1
-https://github.com/OpenMined/PySyft/pull/2239,9,0,9,1
-https://github.com/OpenMined/PySyft/pull/2102,1,1,2,1
-https://github.com/OpenMined/PySyft/pull/2050,18,87,105,5
-https://github.com/OpenMined/PySyft/pull/1792,4,3,7,1
-https://github.com/OpenMined/PySyft/pull/1736,34,50,84,4
-https://github.com/OpenMined/PySyft/pull/1728,8,6,14,2
-https://github.com/OpenMined/PySyft/pull/1643,1,1,2,1
-https://github.com/OpenMined/PySyft/pull/1612,85,88,173,2
-https://github.com/OpenMined/PySyft/pull/740,2,2,4,1
-https://github.com/OpenMined/PySyft/pull/314,1,1,2,1
-https://github.com/OpenMined/PySyft/pull/155,1,1,2,1
-https://github.com/OpenMined/PySyft/pull/145,27,7,34,2
-https://github.com/FederatedAI/FATE/pull/2578,6,4,10,2
-https://github.com/FederatedAI/FATE/pull/2518,1,1,2,1
-https://github.com/FederatedAI/FATE/pull/2455,7,7,14,1
-https://github.com/FederatedAI/FATE/pull/2450,3,3,6,1
-https://github.com/FederatedAI/FATE/pull/2432,1,1,2,1
-https://github.com/FederatedAI/FATE/pull/2400,3,3,6,1
-https://github.com/FederatedAI/FATE/pull/2384,207,63,270,2
-https://github.com/FederatedAI/FATE/pull/2309,17,8,25,2
-https://github.com/FederatedAI/FATE/pull/2234,57,8,65,4
-https://github.com/FederatedAI/FATE/pull/2228,1,1,2,1
-https://github.com/FederatedAI/FATE/pull/2116,2,2,4,2
-https://github.com/FederatedAI/FATE/pull/2097,1,1,2,1
-https://github.com/FederatedAI/FATE/pull/2060,14,9,23,3
-https://github.com/FederatedAI/FATE/pull/1961,5,1,6,1
-https://github.com/FederatedAI/FATE/pull/1918,25,7,32,2
-https://github.com/FederatedAI/FATE/pull/1910,4,4,8,2
-https://github.com/FederatedAI/FATE/pull/1855,25,18,43,6
-https://github.com/FederatedAI/FATE/pull/1781,2,2,4,2
-https://github.com/FederatedAI/FATE/pull/1757,1,1,2,1
-https://github.com/FederatedAI/FATE/pull/1749,22,22,44,3
-https://github.com/FederatedAI/FATE/pull/1746,3,1,4,1
-https://github.com/FederatedAI/FATE/pull/1712,17,14,31,2
-https://github.com/FederatedAI/FATE/pull/1711,27,7,34,2
-https://github.com/FederatedAI/FATE/pull/1683,15,15,30,1
-https://github.com/FederatedAI/FATE/pull/1650,3,10,13,4
-https://github.com/FederatedAI/FATE/pull/1609,11,6,17,7
-https://github.com/FederatedAI/FATE/pull/1536,1,1,2,1
-https://github.com/FederatedAI/FATE/pull/1482,2,1,3,1
-https://github.com/FederatedAI/FATE/pull/1449,5,4,9,1
-https://github.com/FederatedAI/FATE/pull/1444,4,1,5,1
-https://github.com/FederatedAI/FATE/pull/1441,11,9,20,2
-https://github.com/FederatedAI/FATE/pull/1436,88,6,94,3
-https://github.com/FederatedAI/FATE/pull/1424,15,5,20,1
-https://github.com/FederatedAI/FATE/pull/1421,15,9,24,4
-https://github.com/FederatedAI/FATE/pull/1415,49,18,67,3
-https://github.com/FederatedAI/FATE/pull/1411,7,2,9,1
-https://github.com/FederatedAI/FATE/pull/1342,2,2,4,2
-https://github.com/FederatedAI/FATE/pull/1200,24,2,26,3
-https://github.com/FederatedAI/FATE/pull/1197,1,1,2,1
-https://github.com/FederatedAI/FATE/pull/1180,5,3,8,1
-https://github.com/FederatedAI/FATE/pull/1118,25,3,28,8
-https://github.com/FederatedAI/FATE/pull/1116,0,15,15,1
-https://github.com/tensorflow/federated/pull/1597,2,2,4,1
-https://github.com/tensorflow/federated/pull/1423,1,1,2,1
-https://github.com/tensorflow/federated/pull/807,4,2,6,2
-https://github.com/tensorflow/federated/pull/667,24,2,26,2
-https://github.com/tensorflow/federated/pull/640,54,22,76,2
-https://github.com/tensorflow/federated/pull/591,5,4,9,2
-https://github.com/tensorflow/federated/pull/590,10,3,13,1
-https://github.com/tensorflow/federated/pull/571,74,32,106,2
-https://github.com/tensorflow/federated/pull/536,4,2,6,1
-https://github.com/tensorflow/federated/pull/515,15,15,30,1
-https://github.com/tensorflow/federated/pull/507,1,1,2,1
-https://github.com/tensorflow/federated/pull/468,20,5,25,1
-https://github.com/tensorflow/federated/pull/433,38,5,43,1
-https://github.com/tensorflow/federated/pull/476,8,6,14,4
-https://github.com/tensorflow/federated/pull/400,1,0,1,1
-https://github.com/tensorflow/federated/pull/385,153,117,270,1
-https://github.com/tensorflow/federated/pull/384,71,12,83,4
-https://github.com/tensorflow/federated/pull/355,2,2,4,1
-https://github.com/tensorflow/federated/pull/319,1,0,1,1
-https://github.com/tensorflow/federated/pull/318,5,1,6,1
-https://github.com/tensorflow/federated/pull/300,1,1,2,1
-https://github.com/tensorflow/federated/pull/284,61,5,66,2
-https://github.com/tensorflow/federated/pull/238,4,2,6,2
-https://github.com/tensorflow/federated/pull/164,1,0,1,1
-https://github.com/tensorflow/federated/pull/146,42,28,70,3
-https://github.com/tensorflow/federated/pull/143,1,0,1,1
-https://github.com/tensorflow/federated/pull/126,3,3,6,1
-https://github.com/adap/flower/pull/826,3,3,6,1
-https://github.com/adap/flower/pull/673,54,31,85,2
-https://github.com/bytedance/fedlearner/pull/852,20,13,33,1
-https://github.com/bytedance/fedlearner/pull/749,21,6,27,4
-https://github.com/bytedance/fedlearner/pull/730,6,2,8,1
-https://github.com/bytedance/fedlearner/pull/600,14,4,18,4
-https://github.com/bytedance/fedlearner/pull/519,65,152,217,9
-https://github.com/bytedance/fedlearner/pull/498,1,1,2,1
-https://github.com/PaddlePaddle/PaddleFL/pull/203,2,2,4,1
-https://github.com/PaddlePaddle/PaddleFL/pull/134,3,1,4,1
-https://github.com/PaddlePaddle/PaddleFL/pull/113,10,4,14,4
-https://github.com/PaddlePaddle/PaddleFL/pull/31,26,26,52,6
+url,additions,deletions,total,changed_files,hunks,functions,hunks_dict
+https://github.com/OpenMined/PySyft/pull/3522,7,1,8,1,3,"{'num': 1, 'function': {'syft/execution/role.py': ['__init__']}}","{'add': {1: 1, 2: 1, 4: 1}, 'del': {1: 1}}"
+https://github.com/OpenMined/PySyft/pull/3350,67,4,71,4,8,"{'num': 6, 'function': {'syft/frameworks/torch/tensors/interpreters/additive_shared.py': ['relu', 'handle_func_command', 'torch'], 'syft/frameworks/torch/mpc/securenn.py': ['maxpool2d'], 'syft/frameworks/torch/nn/__init__.py': ['nn'], 'syft/frameworks/torch/nn/functional.py': ['conv2d']}}","{'add': {1: 4, 2: 1, 53: 1, 5: 1, 3: 1}, 'del': {1: 4}}"
+https://github.com/OpenMined/PySyft/pull/3271,3,3,6,1,3,"{'num': 8, 'function': {'syft/frameworks/torch/tensors/interpreters/native.py': ['combine', 'handle_func_command', 'allow', 'get_', 'send', 'get', 'share', 'fix_prec']}}","{'add': {1: 3}, 'del': {1: 3}}"
+https://github.com/OpenMined/PySyft/pull/3285,9,3,12,2,6,"{'num': 3, 'function': {'syft/generic/frameworks/hook/hook_args.py': ['build_rule', 'build_unwrap_args_with_rules'], 'syft/generic/frameworks/overload.py': ['overload_function']}}","{'add': {1: 4, 2: 1, 3: 1}, 'del': {1: 3}}"
+https://github.com/OpenMined/PySyft/commit/e4b5cab232910968036f8bac1d499b19356de41c,56,12,68,5,6,"{'num': 4, 'function': {'syft/frameworks/torch/tensors/interpreters/autograd.py': ['__getattribute__'], 'syft/frameworks/torch/tensors/interpreters/gradients.py': ['gradient'], 'syft/frameworks/torch/tensors/interpreters/gradients_core.py': ['__init__'], 'syft/workers/base.py': ['recv_msg']}}","{'add': {8: 1, 1: 2, 5: 1, 42: 1}, 'del': {1: 4, 8: 1}}"
+https://github.com/OpenMined/PySyft/pull/3256,1,3,4,1,2,"{'num': 1, 'function': {'syft/execution/placeholder.py': ['instantiate']}}","{'add': {1: 1}, 'del': {1: 1, 2: 1}}"
+https://github.com/OpenMined/PySyft/pull/3205,88,32,120,1,11,"{'num': 4, 'function': {'syft/frameworks/torch/tensors/interpreters/precision.py': ['exp', '_sigmoid_chebyshev', '_tanh_chebyshev', 'log']}}","{'add': {4: 1, 5: 2, 9: 1, 2: 2, 27: 1, 31: 1, 1: 3}, 'del': {1: 3, 17: 1, 7: 1, 5: 1}}"
+https://github.com/OpenMined/PySyft/pull/3148,76,40,116,1,36,"{'num': 11, 'function': {'syft/frameworks/torch/mpc/securenn.py': ['relu_deriv', 'relu', 'maxpool2d', 'maxpool', 'private_compare', 'flip', 'share_convert', 'maxpool_deriv', 'msb', 'select_share', 'division']}}","{'add': {2: 5, 1: 26, 3: 3, 25: 1, 6: 1}, 'del': {1: 26, 2: 4, 3: 2}}"
+https://github.com/OpenMined/PySyft/pull/2548,13,3,16,1,6,"{'num': 3, 'function': {'syft/frameworks/torch/tensors/interpreters/native.py': ['send', 'get', 'share']}}","{'add': {1: 5, 8: 1}, 'del': {1: 3}}"
+https://github.com/OpenMined/PySyft/pull/2407,4,1,5,1,1,"{'num': 1, 'function': {'syft/frameworks/torch/federated/dataloader.py': ['__init__']}}","{'add': {4: 1}, 'del': {1: 1}}"
+https://github.com/OpenMined/PySyft/pull/2395,2,2,4,1,2,"{'num': 1, 'function': {'syft/workers/websocket_client.py': ['fit']}}","{'add': {1: 2}, 'del': {2: 1}}"
+https://github.com/OpenMined/PySyft/pull/2358,60,1,61,3,4,"{'num': 15, 'function': {'syft/frameworks/torch/tensors/interpreters/multi_pointer.py': ['__add__', '__mul__', 'dim', 'handle_func_command', 'grad'], 'syft/frameworks/torch/tensors/interpreters/autograd.py': ['__getattribute__', 'detail', 'torch', '__pow__', 'float_precision', 'simplify', 'handle_func_command'], 'syft/serde/serde.py': ['_compress', '_decompress', 'deserialize']}}","{'add': {57: 1, 2: 1, 1: 1}, 'del': {1: 1}}"
+https://github.com/OpenMined/PySyft/pull/2339,1,1,2,1,1,"{'num': 1, 'function': {'syft/workers/base.py': ['clear_objects']}}","{'add': {1: 1}, 'del': {1: 1}}"
+https://github.com/OpenMined/PySyft/pull/2219,69,27,96,4,17,"{'num': 10, 'function': {'syft/serde.py': ['_detail_worker', '_detail_exception', '_detail', '_detail_object_wrapper', '_detail_GetNotPermittedError', '_simplify_exception'], 'syft/workers/websocket_server.py': ['_recv_msg', '_producer_handler'], 'syft/exceptions.py': ['__init__'], 'syft/workers/base.py': ['respond_to_obj_req']}}","{'add': {6: 2, 3: 3, 1: 6, 38: 1, 2: 2}, 'del': {20: 1, 1: 5, 2: 1}}"
+https://github.com/OpenMined/PySyft/pull/2048,4,4,8,3,4,"{'num': 3, 'function': {'syft/exceptions.py': [], 'syft/frameworks/torch/hook_args.py': [], 'syft/frameworks/torch/torch_attributes.py': ['__init__']}}","{'add': {1: 4}, 'del': {2: 1, 1: 2}}"
+https://github.com/OpenMined/PySyft/pull/2022,21,11,32,1,3,"{'num': 1, 'function': {'syft/workers/base.py': ['__init__']}}","{'add': {1: 1, 20: 1}, 'del': {11: 1}}"
+https://github.com/OpenMined/PySyft/pull/1982,5,0,5,1,3,"{'num': 1, 'function': {'syft/frameworks/torch/federated/dataloader.py': ['__init__']}}","{'add': {1: 2, 3: 1}, 'del': {}}"
+https://github.com/OpenMined/PySyft/pull/1646,5,2,7,1,3,"{'num': 3, 'function': {'syft/core/workers/base.py': ['set_obj', 'receive_msg', 'process_message_type']}}","{'add': {1: 2, 3: 1}, 'del': {1: 2}}"
+https://github.com/OpenMined/PySyft/pull/1545,246,21,267,5,24,"{'num': 19, 'function': {'syft/core/frameworks/torch/__init__.py': [], 'syft/core/frameworks/torch/tensor.py': ['__mul__', '__init__', 'fix_precision', 'public_add_', 'get_shape', 'deser', 'handle_call', 'native_get_shape', '__add__', 'ser', 'share', 'get', '__repr__'], 'syft/mpc/spdz.py': [], 'syft/core/frameworks/torch/hook.py': ['_get_overloaded_method'], 'syft/core/frameworks/torch/utils.py': ['fix_chain_ends', 'assert_is_chain_well_formed', 'find_tail_of_chain']}}","{'add': {4: 3, 1: 5, 3: 2, 9: 1, 31: 1, 18: 1, 10: 1, 37: 2, 2: 3, 6: 2, 34: 1, 24: 1, 5: 1}, 'del': {1: 5, 10: 1, 6: 1}}"
+https://github.com/OpenMined/PySyft/pull/1395,179,119,298,3,24,"{'num': 16, 'function': {'syft/core/hooks/torch/hook.py': ['_execute_remote_call', '_assemble_result_pointer', '_get_overload_method_in_tensor_or_var', '_get_overload_function_in_torch_module', '_compile_command'], 'syft/core/utils.py': ['python_encode', 'custom_obj_hook', 'encode', '__init__'], 'syft/core/workers/base.py': ['handle_command', 'get_obj', '_retrieve_tensor', '_is_command_valid_guard', 'process_command', 'receive_msg', '_check_workers']}}","{'add': {2: 2, 1: 5, 30: 1, 3: 2, 118: 1, 4: 2, 8: 1}, 'del': {1: 9, 5: 1, 2: 3, 18: 1, 29: 1, 3: 1, 20: 1, 4: 2, 10: 1, 11: 1}}"
+https://github.com/OpenMined/PySyft/pull/1315,1,0,1,1,1,"{'num': 1, 'function': {'syft/tensor/int_tensor.py': []}}","{'add': {1: 1}, 'del': {}}"
+https://github.com/OpenMined/PySyft/pull/394,20,127,147,3,24,"{'num': 8, 'function': {'syft/he/paillier/__init__.py': [], 'syft/he/paillier/basic.py': ['sum', '__truediv__', '__mul__', '__add__'], 'syft/he/paillier/keys.py': ['generate', 'encrypt', 'deserialize']}}","{'add': {1: 18, 2: 1}, 'del': {1: 19, 3: 1, 5: 1, 2: 1, 9: 1, 89: 1}}"
+https://github.com/OpenMined/PySyft/pull/269,6,0,6,1,1,"{'num': 1, 'function': {'syft/tensor.py': ['abs_']}}","{'add': {6: 1}, 'del': {}}"
+https://github.com/FederatedAI/FATE/pull/2741,18,3,21,2,5,"{'num': 5, 'function': {'python/federatedml/feature/one_hot_encoder.py': ['add_value', 'transfer_one_instance', 'load_model', '__init__'], 'python/federatedml/feature/homo_onehot/homo_ohe_base.py': ['fit']}}","{'add': {1: 2, 9: 1, 2: 1, 5: 1}, 'del': {1: 3}}"
+https://github.com/FederatedAI/FATE/pull/1419,6,9,15,2,15,"{'num': 4, 'function': {'federatedml/nn/backend/pytorch/nn_model.py': ['evaluate', 'predict', '__init__'], 'federatedml/nn/homo_nn/enter_point.py': ['predict']}}","{'add': {1: 2, 2: 2}, 'del': {2: 1, 1: 5, 3: 1}}"
+https://github.com/FederatedAI/FATE/commit/c10906e64a44e1740ad6bd333530c8e5a711cacb,6,1,7,2,2,"{'num': 1, 'function': {'federatedml/model_selection/stepwise/hetero_stepwise.py': ['record_step_best']}}","{'add': {5: 1, 1: 1}, 'del': {1: 1}}"
+https://github.com/FederatedAI/FATE/pull/1062,1,1,2,1,1,"{'num': 1, 'function': {'federatedml/nn/homo_nn/enter_point.py': []}}","{'add': {1: 1}, 'del': {1: 1}}"
+https://github.com/FederatedAI/FATE/pull/1010,99,84,183,5,34,"{'num': 9, 'function': {'federatedml/tree/feature_histogram.py': ['recombine_histograms', 'calculate_histogram', '__init__'], 'federatedml/tree/hetero_decision_tree_guest.py': ['sync_encrypted_splitinfo_host', 'find_host_split'], 'federatedml/tree/hetero_decision_tree_host.py': ['fit'], 'federatedml/tree/splitter.py': ['find_split', 'find_split_single_histogram_host'], 'federatedml/util/consts.py': []}}","{'add': {1: 15, 5: 1, 10: 1, 2: 8, 18: 1, 6: 2, 4: 3, 11: 1}, 'del': {1: 12, 3: 4, 2: 6, 10: 1, 4: 4, 7: 1, 15: 1}}"
+https://github.com/FederatedAI/FATE/pull/647,5,4,9,1,5,"{'num': 3, 'function': {'federatedml/util/validation_strategy.py': ['need_run_validation', 'validate', 'evaluate_data']}}","{'add': {2: 1, 1: 3}, 'del': {2: 1, 1: 2}}"
+https://github.com/FederatedAI/FATE/pull/541,3,3,6,2,3,"{'num': 2, 'function': {'federatedml/model_base.py': ['_run_data'], 'federatedml/model_selection/KFold.py': ['_synchronize_data']}}","{'add': {1: 3}, 'del': {1: 3}}"
+https://github.com/FederatedAI/FATE/pull/171,14,0,14,1,3,"{'num': 1, 'function': {'federatedml/one_vs_rest/one_vs_rest.py': ['evaluate']}}","{'add': {1: 2, 12: 1}, 'del': {}}"
+https://github.com/tensorflow/federated/commit/8b769d83a57602507f622c4b973f07271f1d4ba6,23,64,87,3,19,"{'num': 5, 'function': {'tensorflow_federated/python/examples/simple_fedavg/emnist_fedavg_main.py': ['main', 'create_original_fedavg_cnn_model', 'client_optimizer_fn', 'get_emnist_dataset'], 'tensorflow_federated/python/examples/simple_fedavg/simple_fedavg_tf.py': ['client_update']}}","{'add': {3: 2, 1: 2, 9: 1, 2: 3}, 'del': {2: 2, 1: 11, 3: 1, 4: 1, 34: 1, 8: 1}}"
+https://github.com/tensorflow/federated/commit/de97c52ca835b5557c0c1c9dbd768f742a2739f5,412,30,442,3,22,"{'num': 6, 'function': {'tensorflow_federated/python/simulation/datasets/file_per_user_client_data.py': ['create_tf_dataset_from_all_clients', '__init__'], 'tensorflow_federated/python/simulation/datasets/sql_client_data.py': ['create_tf_dataset_for_client', 'client_ids', 'element_type_structure', '__init__']}}","{'add': {1: 8, 2: 1, 5: 1, 3: 1, 21: 1, 31: 1, 96: 1, 8: 1, 98: 1, 13: 1, 29: 1, 19: 1, 22: 1, 59: 1}, 'del': {1: 7, 5: 1, 2: 4, 4: 1, 3: 2}}"
+https://github.com/tensorflow/federated/commit/14235f416391f9724b2b6c89116c6217b87931e8,5,0,5,1,1,"{'num': 1, 'function': {'tensorflow_federated/python/learning/keras_utils.py': ['from_keras_model']}}","{'add': {5: 1}, 'del': {}}"
+https://github.com/tensorflow/federated/commit/22c89fac4aa9e92e591a7de43e705773215986b2,7,5,12,1,3,"{'num': 1, 'function': {'tensorflow_federated/python/research/optimization/stackoverflow_lr/dataset.py': ['build_to_ids_fn']}}","{'add': {5: 1, 2: 1}, 'del': {1: 1, 2: 2}}"
+https://github.com/tensorflow/federated/commit/5299226ee7c736c46d1d3def8c6726214f6f9cb0,15,0,15,1,1,"{'num': 1, 'function': {'tensorflow_federated/python/core/impl/eager_executor.py': ['embed_tensorflow_computation']}}","{'add': {15: 1}, 'del': {}}"
+https://github.com/adap/flower/pull/802,59,6,65,5,7,"{'num': 4, 'function': {'src/py/flwr/server/strategy/__init__.py': [], 'src/py/flwr/server/strategy/qfedavg.py': ['aggregate_evaluate'], 'src/py/flwr_experimental/baseline/tf_fashion_mnist/server.py': ['main'], 'src/py/flwr_experimental/baseline/tf_hotkey/server.py': ['main']}}","{'add': {2: 3, 51: 1, 1: 2}, 'del': {1: 4, 2: 1}}"
+https://github.com/adap/flower/pull/553,8,4,12,2,3,"{'num': 4, 'function': {'src/py/flwr/server/app.py': ['start_server'], 'src/py/flwr/server/server.py': ['disconnect_all_clients', 'fit_round', 'fit']}}","{'add': {3: 1, 5: 1}, 'del': {4: 1}}"
+https://github.com/adap/flower/pull/449,162,38,200,9,44,"{'num': 12, 'function': {'src/py/flwr/client/app.py': ['start_client'], 'src/py/flwr/client/grpc_client/message_handler.py': ['_evaluate'], 'src/py/flwr/common/__init__.py': [], 'src/py/flwr/common/serde.py': ['parameters_from_proto'], 'src/py/flwr/common/typing.py': [], 'src/py/flwr/proto/transport_pb2.py': [], 'src/py/flwr/server/client_proxy.py': [], 'src/py/flwr/server/grpc_server/grpc_client_proxy.py': ['evaluate'], 'src/py/flwr/server/server.py': ['_get_initial_weights', 'fit_round', 'fit', 'reconnect_client']}}","{'add': {1: 24, 24: 1, 2: 5, 3: 4, 15: 1, 5: 2, 14: 1, 4: 2, 9: 2, 27: 1}, 'del': {8: 1, 1: 19, 3: 1, 2: 4}}"
+https://github.com/bytedance/fedlearner/pull/422,38,20,58,2,8,"{'num': 2, 'function': {'example/mnist/follower.py': ['model_fn'], 'example/mnist/leader.py': ['model_fn']}}","{'add': {6: 1, 9: 1, 3: 1, 1: 2, 2: 2, 14: 1}, 'del': {8: 1, 1: 2, 10: 1}}"
+https://github.com/OpenMined/PySyft/pull/4640,36,11,47,1,6,"{'num': 1, 'function': {'syft/grid/clients/data_centric_fl_client.py': ['__str__']}}","{'add': {1: 3, 12: 1, 21: 1}, 'del': {2: 3, 4: 1, 1: 1}}"
+https://github.com/OpenMined/PySyft/pull/3705,3,0,3,1,1,"{'num': 1, 'function': {'syft/frameworks/crypten/context.py': ['run_multiworkers']}}","{'add': {3: 1}, 'del': {}}"
+https://github.com/OpenMined/PySyft/pull/3680,7,2,9,1,3,"{'num': 2, 'function': {'syft/frameworks/torch/tensors/interpreters/additive_shared.py': ['ge', 'torch']}}","{'add': {1: 2, 5: 1}, 'del': {1: 2}}"
+https://github.com/OpenMined/PySyft/pull/3679,9,4,13,1,4,"{'num': 3, 'function': {'syft/frameworks/torch/tensors/interpreters/additive_shared.py': ['calculateBits', 'modulo', '__init__']}}","{'add': {6: 1, 1: 3}, 'del': {1: 4}}"
+https://github.com/OpenMined/PySyft/pull/3595,16,5,21,1,6,"{'num': 2, 'function': {'syft/execution/role_assignments.py': ['simplify', 'unassign']}}","{'add': {3: 1, 1: 3, 8: 1, 2: 1}, 'del': {1: 5}}"
+https://github.com/OpenMined/PySyft/pull/3593,68,35,103,3,4,"{'num': 4, 'function': {'syft/grid/__init__.py': ['register'], 'syft/grid/network.py': ['connect'], 'syft/grid/nodes_manager.py': ['start_offer', '__getitem__']}}","{'add': {39: 1, 13: 2, 3: 1}, 'del': {35: 1}}"
+https://github.com/OpenMined/PySyft/pull/3591,19,4,23,1,5,"{'num': 1, 'function': {'syft/grid/__init__.py': ['register']}}","{'add': {2: 1, 1: 2, 10: 1, 5: 1}, 'del': {1: 2, 2: 1}}"
+https://github.com/OpenMined/PySyft/pull/3589,26,0,26,1,3,"{'num': 1, 'function': {'syft/grid/__init__.py': ['register']}}","{'add': {1: 1, 3: 1, 22: 1}, 'del': {}}"
+https://github.com/OpenMined/PySyft/pull/3567,107,21,128,7,24,"{'num': 13, 'function': {'syft/execution/placeholder.py': ['create_placeholders'], 'syft/execution/plan.py': ['build', 'get_args_shape', 'code', '__init__', '__call__', 'unbufferize'], 'syft/execution/role.py': ['_execute_action'], 'syft/execution/translation/torchscript.py': ['translate'], 'syft/frameworks/torch/tensors/interpreters/autograd.py': ['torch'], 'syft/frameworks/torch/tensors/interpreters/gradients.py': ['gradient', '__init__'], 'syft/frameworks/torch/tensors/interpreters/gradients_core.py': []}}","{'add': {1: 10, 2: 4, 4: 2, 3: 2, 30: 1, 7: 1, 6: 1, 19: 1, 13: 1}, 'del': {1: 11, 2: 3, 4: 1}}"
+https://github.com/OpenMined/PySyft/pull/3563,4,4,8,1,4,"{'num': 4, 'function': {'syft/grid/webrtc_connection.py': ['_send_msg', 'search', '_recv_msg', '__init__']}}","{'add': {1: 4}, 'del': {1: 4}}"
+https://github.com/OpenMined/PySyft/pull/3560,5,5,10,7,6,"{'num': 3, 'function': {'syft/grid/__init__.py': [], 'syft/grid/network.py': [], 'syft/grid/nodes_manager.py': []}}","{'add': {1: 3, 2: 1}, 'del': {1: 3, 2: 1}}"
+https://github.com/OpenMined/PySyft/pull/3525,0,2,2,1,1,"{'num': 1, 'function': {'syft/workers/base.py': ['__init__']}}","{'add': {}, 'del': {2: 1}}"
+https://github.com/OpenMined/PySyft/pull/3511,2,0,2,1,1,"{'num': 1, 'function': {'syft/grid/abstract_grid.py': []}}","{'add': {2: 1}, 'del': {}}"
+https://github.com/OpenMined/PySyft/pull/3473,9,9,18,1,7,"{'num': 3, 'function': {'syft/workers/base.py': ['recv_msg', 'execute_computation_action', '_get_msg']}}","{'add': {4: 1, 1: 5}, 'del': {5: 1, 1: 4}}"
+https://github.com/OpenMined/PySyft/pull/3405,5,5,10,2,4,"{'num': 2, 'function': {'syft/execution/plan.py': ['unbufferize'], 'syft/execution/translation/torchscript.py': ['remove']}}","{'add': {1: 1, 4: 1}, 'del': {1: 1, 4: 1}}"
+https://github.com/OpenMined/PySyft/pull/3396,2,2,4,1,2,"{'num': 2, 'function': {'syft/frameworks/torch/tensors/interpreters/additive_shared.py': ['simplify', 'detail']}}","{'add': {1: 2}, 'del': {1: 2}}"
+https://github.com/OpenMined/PySyft/pull/3376,12,17,29,1,10,"{'num': 2, 'function': {'syft/execution/translation/torchscript.py': ['__init__', 'translate']}}","{'add': {2: 2, 1: 8}, 'del': {1: 7, 5: 1, 3: 1, 2: 1}}"
+https://github.com/OpenMined/PySyft/pull/3327,1,6,7,1,1,"{'num': 2, 'function': {'syft/frameworks/torch/hook/hook.py': ['_hook_optim', '_get_hooked_additive_shared_method']}}","{'add': {1: 1}, 'del': {6: 1}}"
+https://github.com/OpenMined/PySyft/pull/3199,9,0,9,1,3,"{'num': 2, 'function': {'syft/execution/plan.py': ['add_placeholder', 'build']}}","{'add': {3: 3}, 'del': {}}"
+https://github.com/OpenMined/PySyft/pull/3067,0,8,8,1,1,"{'num': 1, 'function': {'syft/generic/pointers/pointer_tensor.py': ['detail']}}","{'add': {}, 'del': {8: 1}}"
+https://github.com/OpenMined/PySyft/pull/2749,1,1,2,1,1,"{'num': 1, 'function': {'docker-images/pysyft-worker/worker-server.py': []}}","{'add': {1: 1}, 'del': {1: 1}}"
+https://github.com/OpenMined/PySyft/pull/2733,6,6,12,2,5,"{'num': 3, 'function': {'syft/exceptions.py': ['simplify', 'get_attributes'], 'syft/workers/base.py': ['serializer']}}","{'add': {1: 4, 2: 1}, 'del': {1: 4, 2: 1}}"
+https://github.com/OpenMined/PySyft/pull/2543,1,1,2,1,1,"{'num': 1, 'function': {'syft/frameworks/torch/crypto/spdz.py': ['spdz_mul']}}","{'add': {1: 1}, 'del': {1: 1}}"
+https://github.com/OpenMined/PySyft/pull/2437,1,1,2,1,1,"{'num': 7, 'function': {'syft/workers/base.py': ['send', 'create_message_execute_command', 'recv_msg', '__getitem__', '__str__', 'execute_command', 'send_msg']}}","{'add': {1: 1}, 'del': {1: 1}}"
+https://github.com/OpenMined/PySyft/pull/2431,4,0,4,1,1,"{'num': 1, 'function': {'syft/workers/base.py': ['__init__']}}","{'add': {4: 1}, 'del': {}}"
+https://github.com/OpenMined/PySyft/pull/2328,4,4,8,1,3,"{'num': 1, 'function': {'syft/exceptions.py': ['__init__']}}","{'add': {2: 1, 1: 2}, 'del': {2: 1, 1: 2}}"
+https://github.com/OpenMined/PySyft/pull/2262,13,8,21,1,5,"{'num': 4, 'function': {'syft/frameworks/torch/hook/hook_args.py': ['hook_method_args', 'hook_function_args', 'hook_response', 'register_response']}}","{'add': {6: 1, 1: 3, 4: 1}, 'del': {4: 1, 1: 4}}"
+https://github.com/OpenMined/PySyft/pull/2254,11,10,21,1,9,"{'num': 1, 'function': {'syft/workers/tfe.py': ['start']}}","{'add': {1: 8, 3: 1}, 'del': {1: 2, 4: 1, 2: 2}}"
+https://github.com/OpenMined/PySyft/pull/2239,9,0,9,1,1,"{'num': 1, 'function': {'syft/frameworks/torch/pointers/pointer_tensor.py': []}}","{'add': {9: 1}, 'del': {}}"
+https://github.com/OpenMined/PySyft/pull/2102,1,1,2,1,1,"{'num': 1, 'function': {'syft/frameworks/torch/federated/dataset.py': []}}","{'add': {1: 1}, 'del': {1: 1}}"
+https://github.com/OpenMined/PySyft/pull/2050,18,87,105,5,18,"{'num': 9, 'function': {'syft/__init__.py': [], 'syft/serde.py': ['_detail_plan'], 'syft/workers/__init__.py': [], 'syft/workers/base.py': ['search', 'send'], 'syft/workers/plan.py': ['send', 'request_execute_plan', '_send', 'method2plan']}}","{'add': {1: 6, 6: 1, 2: 3}, 'del': {1: 11, 48: 1, 4: 1, 2: 3, 8: 1, 10: 1}}"
+https://github.com/OpenMined/PySyft/pull/1792,4,3,7,1,4,"{'num': 1, 'function': {'docs/conf.py': []}}","{'add': {1: 2, 2: 1}, 'del': {1: 1, 2: 1}}"
+https://github.com/OpenMined/PySyft/pull/1736,34,50,84,4,20,"{'num': 12, 'function': {'syft/core/workers/base.py': ['_search', 'process_message_type'], 'syft/core/workers/socket.py': ['search'], 'syft/core/frameworks/torch/hook.py': ['_hook_module', '_add_registration_to___init__', '_hook_properties', '_hook_native_tensors_and_variables', '_hook_backward', '_assign_methods_to_use_child'], 'syft/core/frameworks/torch/tensor.py': ['send', 'truncate', 'ser']}}","{'add': {2: 4, 1: 11, 3: 2, 4: 1, 5: 1}, 'del': {1: 13, 2: 4, 15: 1, 10: 1, 4: 1}}"
+https://github.com/OpenMined/PySyft/pull/1728,8,6,14,2,5,"{'num': 2, 'function': {'syft/core/frameworks/torch/hook.py': ['_hook_module'], 'syft/core/frameworks/torch/tensor.py': ['send']}}","{'add': {1: 4, 4: 1}, 'del': {1: 4, 2: 1}}"
+https://github.com/OpenMined/PySyft/pull/1643,1,1,2,1,1,"{'num': 1, 'function': {'syft/core/frameworks/__init__.py': []}}","{'add': {1: 1}, 'del': {1: 1}}"
+https://github.com/OpenMined/PySyft/pull/1612,85,88,173,2,25,"{'num': 18, 'function': {'syft/core/frameworks/torch/tensor.py': ['decode', '__add__', '__sub__', '__rsub__', '__mul__', '__lt__', '__ge__', '__le__', '__eq__', '__div__', 'cumsum', '__mul__'], 'syft/spdz/spdz.py': ['encode', 'truncate', 'spdz_add', 'spdz_neg', 'spdz_mul', 'spdz_matmul']}}","{'add': {2: 5, 1: 10, 8: 5, 13: 1, 4: 1, 5: 1, 3: 1}, 'del': {2: 6, 1: 11, 8: 5, 18: 1, 4: 1, 3: 1}}"
+https://github.com/OpenMined/PySyft/pull/740,2,2,4,1,2,"{'num': 1, 'function': {'syft/optim.py': []}}","{'add': {1: 2}, 'del': {1: 2}}"
+https://github.com/OpenMined/PySyft/pull/314,1,1,2,1,1,"{'num': 2, 'function': {'syft/tensor.py': ['equal', '__getitem__']}}","{'add': {1: 1}, 'del': {1: 1}}"
+https://github.com/OpenMined/PySyft/pull/155,1,1,2,1,1,"{'num': 1, 'function': {'setup.py': []}}","{'add': {1: 1}, 'del': {1: 1}}"
+https://github.com/OpenMined/PySyft/pull/145,27,7,34,2,8,"{'num': 4, 'function': {'syft/math.py': ['cumsum', 'ceil'], 'syft/tensor.py': ['addmm_', 'sum']}}","{'add': {2: 3, 18: 1, 1: 3}, 'del': {1: 5, 2: 1}}"
+https://github.com/FederatedAI/FATE/pull/2578,6,4,10,2,4,"{'num': 2, 'function': {'python/fate_client/pipeline/param/boosting_param.py': ['__init__'], 'python/federatedml/param/boosting_param.py': ['__init__']}}","{'add': {1: 2, 2: 2}, 'del': {1: 4}}"
+https://github.com/FederatedAI/FATE/pull/2518,1,1,2,1,1,"{'num': 1, 'function': {'python/fate_flow/components/reader.py': ['run']}}","{'add': {1: 1}, 'del': {1: 1}}"
+https://github.com/FederatedAI/FATE/pull/2455,7,7,14,1,1,"{'num': 1, 'function': {'python/fate_arch/_standalone.py': ['_do_map_partitions']}}","{'add': {7: 1}, 'del': {7: 1}}"
+https://github.com/FederatedAI/FATE/pull/2450,3,3,6,1,3,"{'num': 1, 'function': {'python/federatedml/ensemble/boosting/hetero/hetero_fast_secureboost_plan.py': ['create_layered_tree_node_plan']}}","{'add': {1: 3}, 'del': {1: 3}}"
+https://github.com/FederatedAI/FATE/pull/2432,1,1,2,1,1,"{'num': 1, 'function': {'python/federatedml/ensemble/boosting/hetero/hetero_secureboost_guest.py': ['predict']}}","{'add': {1: 1}, 'del': {1: 1}}"
+https://github.com/FederatedAI/FATE/pull/2400,3,3,6,1,3,"{'num': 2, 'function': {'python/fate_arch/federation/rabbitmq/_rabbit_manager.py': ['_set_federated_upstream', '_set_federated_queue_policy']}}","{'add': {1: 3}, 'del': {1: 3}}"
+https://github.com/FederatedAI/FATE/pull/2384,207,63,270,2,42,"{'num': 22, 'function': {'python/fate_arch/federation/rabbitmq/_federation.py': ['remote', '_get_or_create_queue', '__init__', 'cleanup'], 'python/fate_arch/federation/rabbitmq/_rabbit_manager.py': ['bind_exchange_to_queue', '_unset_federated_queue_policy', '_set_federated_upstream', '__init__', '_unset_federated_upstream', 'get_exchanges', 'delete_exchange', 'connection_retry', 'unbind_exchange_to_queue', 'get_policies', 'de_federate_queue', 'create_vhost', 'get_queues', 'create_user', 'get_connections', 'add_user_to_vhost', 'create_queue', '_set_federated_queue_policy']}}","{'add': {1: 22, 2: 5, 4: 1, 18: 1, 6: 6, 15: 1, 7: 1, 10: 1, 25: 1, 11: 1, 28: 1, 21: 1}, 'del': {1: 23, 2: 7, 3: 5, 11: 1}}"
+https://github.com/FederatedAI/FATE/pull/2309,17,8,25,2,2,"{'num': 2, 'function': {'python/federatedml/secureprotol/spdz/tensor/fixedpoint_numpy.py': ['__init__'], 'python/federatedml/secureprotol/spdz/tensor/fixedpoint_table.py': ['from_source']}}","{'add': {16: 1, 1: 1}, 'del': {7: 1, 1: 1}}"
+https://github.com/FederatedAI/FATE/pull/2234,57,8,65,4,11,"{'num': 4, 'function': {'python/fate_flow/apps/tracking_app.py': ['component_output_model'], 'python/fate_flow/utils/job_utils.py': ['get_job_configuration'], 'python/fate_flow/pipelined_model/migrate_model.py': ['migration'], 'python/fate_flow/utils/config_adapter.py': ['get_job_type']}}","{'add': {1: 5, 18: 1, 4: 1, 2: 1, 15: 1, 13: 1}, 'del': {2: 3, 1: 2}}"
+https://github.com/FederatedAI/FATE/pull/2228,1,1,2,1,1,"{'num': 1, 'function': {'python/fate_flow/apps/data_access_app.py': ['download_upload']}}","{'add': {1: 1}, 'del': {1: 1}}"
+https://github.com/FederatedAI/FATE/pull/2116,2,2,4,2,2,"{'num': 2, 'function': {'python/fate_arch/common/profile.py': ['computing_statistics_table'], 'python/federatedml/nn/backend/tf_keras/nn_model.py': ['__init__']}}","{'add': {1: 2}, 'del': {1: 2}}"
+https://github.com/FederatedAI/FATE/pull/2097,1,1,2,1,1,"{'num': 1, 'function': {'python/fate_client/pipeline/backend/config.py': []}}","{'add': {1: 1}, 'del': {1: 1}}"
+https://github.com/FederatedAI/FATE/pull/2060,14,9,23,3,3,"{'num': 7, 'function': {'python/fate_flow/operation/task_executor.py': ['run_task'], 'python/fate_flow/scheduler/dag_scheduler.py': ['calculate_job_status', 'schedule_running_job', 'start_job', 'rerun_job', 'schedule_canceled_jobs'], 'python/fate_flow/components/reader.py': ['run']}}","{'add': {13: 1, 1: 1}, 'del': {7: 1, 1: 2}}"
+https://github.com/FederatedAI/FATE/pull/1961,5,1,6,1,1,"{'num': 1, 'function': {'python/federatedml/ensemble/basic_algorithms/decision_tree/hetero/hetero_fast_decision_tree_host.py': ['host_local_assign_instances_to_new_node']}}","{'add': {5: 1}, 'del': {1: 1}}"
+https://github.com/FederatedAI/FATE/pull/1918,25,7,32,2,7,"{'num': 4, 'function': {'python/federatedml/evaluation/evaluation.py': ['__save_curve_meta', '__save_roc_curve', '__save_pr_curve'], 'python/federatedml/evaluation/metric_interface.py': []}}","{'add': {16: 1, 2: 1, 1: 2, 5: 1}, 'del': {2: 3, 1: 1}}"
+https://github.com/FederatedAI/FATE/pull/1910,4,4,8,2,4,"{'num': 4, 'function': {'federatedml/ensemble/basic_algorithms/decision_tree/hetero/hetero_decision_tree_guest.py': ['find_best_split_guest_and_host', 'federated_find_split', 'find_host_split'], 'federatedml/ensemble/basic_algorithms/decision_tree/tree_core/splitter.py': ['find_split_single_histogram_guest']}}","{'add': {1: 4}, 'del': {1: 4}}"
+https://github.com/FederatedAI/FATE/pull/1855,25,18,43,6,13,"{'num': 8, 'function': {'fate_arch/abc/_computing.py': ['mapValues'], 'fate_arch/computing/eggroll/_table.py': ['applyPartitions', 'mapPartitions'], 'fate_arch/computing/spark/_table.py': ['mapValues'], 'fate_arch/computing/standalone/_table.py': ['applyPartitions'], 'fate_arch/standalone/_standalone.py': ['_generator_from_cursor', 'flatMap'], 'federatedml/secureprotol/spdz/utils/random_utils.py': ['urand_tensor']}}","{'add': {1: 9, 7: 1, 2: 1, 4: 1, 3: 1}, 'del': {1: 10, 2: 1, 6: 1}}"
+https://github.com/FederatedAI/FATE/pull/1781,2,2,4,2,2,"{'num': 2, 'function': {'examples/pipeline/data_split/pipeline-hetero-data-split-multi-model.py': ['main'], 'examples/pipeline/data_split/pipeline-hetero-data-split.py': ['main']}}","{'add': {1: 2}, 'del': {1: 2}}"
+https://github.com/FederatedAI/FATE/pull/1757,1,1,2,1,1,"{'num': 1, 'function': {'federatedml/ensemble/boosting/boosting_core/hetero_boosting.py': ['check_label']}}","{'add': {1: 1}, 'del': {1: 1}}"
+https://github.com/FederatedAI/FATE/pull/1749,22,22,44,3,9,"{'num': 4, 'function': {'federatedml/model_selection/data_split/data_split.py': ['param_validator', 'check_need_transform'], 'federatedml/model_selection/data_split/hetero_data_split.py': ['fit'], 'federatedml/model_selection/data_split/homo_data_split.py': ['fit']}}","{'add': {3: 4, 1: 2, 2: 1, 6: 1}, 'del': {1: 3, 6: 1, 4: 1, 3: 3}}"
+https://github.com/FederatedAI/FATE/pull/1746,3,1,4,1,2,"{'num': 1, 'function': {'federatedml/statistic/data_overview.py': ['header_alignment']}}","{'add': {2: 1, 1: 1}, 'del': {1: 1}}"
+https://github.com/FederatedAI/FATE/pull/1712,17,14,31,2,11,"{'num': 5, 'function': {'federatedml/nn/homo_nn/enter_point.py': ['_get_param', 'predict', '__build_pytorch_model', '_init_model'], 'federatedml/nn/homo_nn/nn_model.py': ['get_nn_builder']}}","{'add': {4: 1, 2: 3, 1: 7}, 'del': {3: 1, 1: 7, 2: 2}}"
+https://github.com/FederatedAI/FATE/pull/1711,27,7,34,2,5,"{'num': 3, 'function': {'fate_arch/federation/transfer_variable/_transfer_variable.py': ['remote', 'get'], 'fate_arch/session/_parties.py': ['all_parties']}}","{'add': {1: 1, 2: 2, 6: 1, 16: 1}, 'del': {4: 1, 1: 1, 2: 1}}"
+https://github.com/FederatedAI/FATE/pull/1683,15,15,30,1,9,"{'num': 2, 'function': {'federatedml/local_baseline/local_baseline.py': ['_get_param', 'get_model_summary']}}","{'add': {2: 4, 3: 1, 1: 4}, 'del': {2: 4, 3: 1, 1: 4}}"
+https://github.com/FederatedAI/FATE/pull/1650,3,10,13,4,6,"{'num': 4, 'function': {'federatedml/model_selection/stepwise/hetero_stepwise.py': ['predict'], 'federatedml/statistic/data_overview.py': ['header_alignment'], 'pipeline/demo/hetero_stepwise/pipeline-stepwise-lr.py': [], 'federatedml/linear_model/poisson_regression/hetero_poisson_regression/hetero_poisson_guest.py': ['predict']}}","{'add': {1: 3}, 'del': {1: 5, 6: 1}}"
+https://github.com/FederatedAI/FATE/pull/1609,11,6,17,7,9,"{'num': 8, 'function': {'federatedml/ensemble/basic_algorithms/decision_tree/hetero/hetero_fast_decision_tree_host.py': ['update_host_side_tree'], 'federatedml/param/boosting_param.py': ['__init__'], 'federatedml/ensemble/basic_algorithms/decision_tree/hetero/hetero_decision_tree_guest.py': ['assign_instances_to_new_node', 'fit'], 'federatedml/ensemble/basic_algorithms/decision_tree/homo/homo_decision_tree_arbiter.py': [], 'federatedml/ensemble/boosting/hetero/hetero_secureboost_host.py': [], 'federatedml/ensemble/boosting/homo/homo_secureboosting_aggregator.py': [], 'federatedml/util/validation_strategy.py': ['handle_precompute_scores']}}","{'add': {1: 7, 2: 2}, 'del': {1: 6}}"
+https://github.com/FederatedAI/FATE/pull/1536,1,1,2,1,1,"{'num': 1, 'function': {'federatedml/nn/backend/tf_keras/nn_model.py': ['__init__']}}","{'add': {1: 1}, 'del': {1: 1}}"
+https://github.com/FederatedAI/FATE/pull/1482,2,1,3,1,1,"{'num': 1, 'function': {'federatedml/statistic/correlation/hetero_pearson.py': ['_get_param']}}","{'add': {2: 1}, 'del': {1: 1}}"
+https://github.com/FederatedAI/FATE/pull/1449,5,4,9,1,2,"{'num': 1, 'function': {'fate_flow/manager/tracking_manager.py': ['save_job_info']}}","{'add': {4: 1, 1: 1}, 'del': {3: 1, 1: 1}}"
+https://github.com/FederatedAI/FATE/pull/1444,4,1,5,1,1,"{'num': 1, 'function': {'federatedml/evaluation/evaluation.py': []}}","{'add': {4: 1}, 'del': {1: 1}}"
+https://github.com/FederatedAI/FATE/pull/1441,11,9,20,2,6,"{'num': 4, 'function': {'federatedml/feature/feature_scale/min_max_scale.py': ['__get_param', '__scale'], 'federatedml/feature/feature_scale/standard_scale.py': ['__get_param', '__scale_with_column_range']}}","{'add': {1: 3, 2: 2, 4: 1}, 'del': {1: 3, 2: 1, 4: 1}}"
+https://github.com/FederatedAI/FATE/pull/1436,88,6,94,3,20,"{'num': 14, 'function': {'federatedml/tree/__init__.py': [], 'federatedml/tree/hetero/hetero_decision_tree_host.py': ['sync_data_predicted_by_host', 'sync_predict_data', 'fit', '__init__', 'sync_tree_node_queue', 'sync_node_positions'], 'federatedml/tree/hetero/hetero_secureboosting_tree_host.py': ['sparse_to_array', 'sync_stop_flag', 'fit', '__init__'], 'federatedml/tree/tree_core/fast_feature_histogram.py': ['construct_table', 'break_down_cipher', 'calculate_histogram_matrix']}}","{'add': {1: 4, 6: 1, 2: 2, 9: 1, 16: 1, 4: 3, 3: 1, 20: 1, 14: 1}, 'del': {1: 6}}"
+https://github.com/FederatedAI/FATE/pull/1424,15,5,20,1,2,"{'num': 1, 'function': {'federatedml/evaluation/evaluation.py': ['__process_single_value_data']}}","{'add': {14: 1, 1: 1}, 'del': {5: 1}}"
+https://github.com/FederatedAI/FATE/pull/1421,15,9,24,4,10,"{'num': 4, 'function': {'federatedml/feature/feature_scale/min_max_scale.py': ['__scale'], 'federatedml/feature/feature_scale/standard_scale.py': ['__scale'], 'federatedml/statistic/intersect/intersect.py': ['_get_schema'], 'federatedml/statistic/intersect/intersect_model.py': ['__share_info']}}","{'add': {1: 8, 5: 1, 2: 1}, 'del': {1: 4, 3: 1, 2: 1}}"
+https://github.com/FederatedAI/FATE/pull/1415,49,18,67,3,23,"{'num': 8, 'function': {'federatedml/evaluation/metrics/classification_metric.py': ['compute_metric_from_confusion_mat', 'compute', 'cut_by_index'], 'federatedml/evaluation/evaluation.py': ['evaluate_metrics', 'callback_metric_data'], 'federatedml/evaluation/metric_interface.py': ['f1_score', 'quantile_pr', 'psi']}}","{'add': {3: 3, 2: 2, 4: 3, 7: 1, 1: 8, 9: 1}, 'del': {3: 1, 4: 1, 1: 11}}"
+https://github.com/FederatedAI/FATE/pull/1411,7,2,9,1,1,"{'num': 1, 'function': {'federatedml/local_baseline/local_baseline.py': ['predict']}}","{'add': {7: 1}, 'del': {2: 1}}"
+https://github.com/FederatedAI/FATE/pull/1342,2,2,4,2,3,"{'num': 2, 'function': {'federatedml/secureprotol/affine.py': ['generate_keypair'], 'federatedml/secureprotol/iterative_affine.py': ['generate_keypair']}}","{'add': {1: 2}, 'del': {1: 2}}"
+https://github.com/FederatedAI/FATE/pull/1200,24,2,26,3,4,"{'num': 4, 'function': {'arch/api/federation.py': ['local_party'], 'federatedml/statistic/correlation/hetero_pearson.py': ['fit', '__init__'], 'federatedml/transfer_variable/base_transfer_variable.py': []}}","{'add': {4: 2, 15: 1, 1: 1}, 'del': {1: 2}}"
+https://github.com/FederatedAI/FATE/pull/1197,1,1,2,1,1,"{'num': 1, 'function': {'arch/api/table/pyspark/table_impl.py': []}}","{'add': {1: 1}, 'del': {1: 1}}"
+https://github.com/FederatedAI/FATE/pull/1180,5,3,8,1,2,"{'num': 1, 'function': {'federatedml/tree/hetero_decision_tree_guest.py': ['federated_find_split']}}","{'add': {4: 1, 1: 1}, 'del': {2: 1, 1: 1}}"
+https://github.com/FederatedAI/FATE/pull/1118,25,3,28,8,12,"{'num': 13, 'function': {'federatedml/linear_model/linear_model_base.py': ['_get_param', '__init__', '_abnormal_detection', 'cross_validation', 'export_model'], 'federatedml/linear_model/base_linear_model_arbiter.py': ['fit'], 'federatedml/linear_model/linear_regression/hetero_linear_regression/hetero_linr_guest.py': ['fit'], 'federatedml/linear_model/linear_regression/hetero_linear_regression/hetero_linr_host.py': ['fit'], 'federatedml/linear_model/logistic_regression/hetero_logistic_regression/hetero_lr_guest.py': ['fit_binary', 'predict'], 'federatedml/linear_model/logistic_regression/hetero_logistic_regression/hetero_lr_host.py': ['fit_binary'], 'federatedml/linear_model/poisson_regression/hetero_poisson_regression/hetero_poisson_guest.py': ['fit'], 'federatedml/linear_model/poisson_regression/hetero_poisson_regression/hetero_poisson_host.py': ['fit']}}","{'add': {1: 2, 4: 1, 3: 3, 2: 5}, 'del': {2: 1, 1: 1}}"
+https://github.com/FederatedAI/FATE/pull/1116,0,15,15,1,2,"{'num': 2, 'function': {'federatedml/statistic/union/union.py': ['fit', '_init_model']}}","{'add': {}, 'del': {13: 1, 2: 1}}"
+https://github.com/tensorflow/federated/pull/1597,2,2,4,1,2,"{'num': 1, 'function': {'tensorflow_federated/python/simulation/baselines/emnist/char_recognition_tasks.py': ['_get_character_recognition_model']}}","{'add': {1: 2}, 'del': {1: 2}}"
+https://github.com/tensorflow/federated/pull/1423,1,1,2,1,1,"{'num': 1, 'function': {'tensorflow_federated/python/learning/learning_process.py': ['initialize']}}","{'add': {1: 1}, 'del': {1: 1}}"
+https://github.com/tensorflow/federated/pull/807,4,2,6,2,2,"{'num': 2, 'function': {'tensorflow_federated/python/core/impl/executors/composing_executor.py': ['create_call'], 'tensorflow_federated/python/core/impl/executors/federating_executor.py': ['create_call']}}","{'add': {2: 2}, 'del': {1: 2}}"
+https://github.com/tensorflow/federated/pull/667,24,2,26,2,9,"{'num': 6, 'function': {'tensorflow_federated/python/core/impl/executor_service.py': ['CreateSelection', 'CreateTuple', 'Compute', 'CreateValue', 'CreateCall'], 'tensorflow_federated/python/core/impl/executor_service_utils.py': ['serialize_tensor_value']}}","{'add': {1: 7, 3: 1, 14: 1}, 'del': {2: 1}}"
+https://github.com/tensorflow/federated/pull/640,54,22,76,2,11,"{'num': 4, 'function': {'tensorflow_federated/python/core/impl/federated_executor.py': ['type_signature'], 'tensorflow_federated/python/core/impl/lambda_executor.py': ['_evaluate', '_delegate', 'type_signature']}}","{'add': {1: 4, 4: 2, 2: 1, 5: 1, 14: 1, 21: 1}, 'del': {1: 3, 2: 1, 10: 1, 3: 1, 4: 1}}"
+https://github.com/tensorflow/federated/pull/591,5,4,9,2,5,"{'num': 4, 'function': {'tensorflow_federated/python/core/impl/eager_executor.py': ['embed_tensorflow_computation'], 'tensorflow_federated/python/tensorflow_libs/graph_merge.py': ['compose_graph_specs', '_concat_graphs', '__init__']}}","{'add': {1: 5}, 'del': {1: 4}}"
+https://github.com/tensorflow/federated/pull/590,10,3,13,1,3,"{'num': 1, 'function': {'tensorflow_federated/python/core/impl/eager_executor.py': ['embed_tensorflow_computation']}}","{'add': {1: 1, 3: 1, 6: 1}, 'del': {1: 3}}"
+https://github.com/tensorflow/federated/pull/571,74,32,106,2,24,"{'num': 2, 'function': {'tensorflow_federated/python/core/impl/computation_constructing_utils.py': ['create_named_tuple'], 'tensorflow_federated/python/core/impl/transformations.py': ['merge_tuple_intrinsics']}}","{'add': {62: 1, 3: 2, 2: 1, 4: 1}, 'del': {3: 1, 2: 1, 18: 1, 1: 1, 8: 1}}"
+https://github.com/tensorflow/federated/pull/536,4,2,6,1,1,"{'num': 1, 'function': {'tensorflow_federated/python/core/impl/intrinsic_factory.py': ['federated_zip']}}","{'add': {4: 1}, 'del': {2: 1}}"
+https://github.com/tensorflow/federated/pull/515,15,15,30,1,4,"{'num': 1, 'function': {'tensorflow_federated/python/learning/federated_evaluation.py': ['build_federated_evaluation']}}","{'add': {1: 1, 11: 1, 3: 1}, 'del': {1: 1, 12: 1, 2: 1}}"
+https://github.com/tensorflow/federated/pull/507,1,1,2,1,1,"{'num': 1, 'function': {'tensorflow_federated/python/core/impl/transformations.py': ['uniquify_reference_names']}}","{'add': {1: 1}, 'del': {1: 1}}"
+https://github.com/tensorflow/federated/pull/468,20,5,25,1,8,"{'num': 3, 'function': {'tensorflow_federated/python/core/impl/compiled_computation_transforms.py': ['concatenate_tensorflow_blocks', 'transform', '_construct_concatenated_type']}}","{'add': {1: 3, 3: 1, 2: 3, 8: 1}, 'del': {1: 3, 2: 1}}"
+https://github.com/tensorflow/federated/pull/433,38,5,43,1,4,"{'num': 1, 'function': {'tensorflow_federated/python/core/utils/computation_utils.py': ['__call__']}}","{'add': {1: 1, 22: 1, 2: 1, 13: 1}, 'del': {1: 3, 2: 1}}"
+https://github.com/tensorflow/federated/pull/476,8,6,14,4,6,"{'num': 4, 'function': {'tensorflow_federated/python/core/impl/compiled_computation_transforms.py': [], 'tensorflow_federated/python/core/impl/tensorflow_serialization.py': ['finalize_binding'], 'tensorflow_federated/python/research/semi_cyclic_sgd/preprocess_sentiment140.py': ['main'], 'tensorflow_federated/python/tensorflow_libs/graph_merge.py': ['_uniquify_shared_names']}}","{'add': {1: 4, 2: 2}, 'del': {1: 4, 2: 1}}"
+https://github.com/tensorflow/federated/pull/400,1,0,1,1,1,"{'num': 1, 'function': {'tensorflow_federated/python/simulation/datasets/emnist/synthetic.py': []}}","{'add': {1: 1}, 'del': {}}"
+https://github.com/tensorflow/federated/pull/385,153,117,270,1,8,"{'num': 2, 'function': {'tensorflow_federated/python/core/impl/transformations.py': ['replace_chained_federated_maps_with_federated_map', 'merge_tuple_intrinsics']}}","{'add': {1: 3, 15: 1, 121: 1, 6: 1, 5: 1, 3: 1}, 'del': {1: 4, 15: 1, 98: 1}}"
+https://github.com/tensorflow/federated/pull/384,71,12,83,4,10,"{'num': 4, 'function': {'tensorflow_federated/python/common_libs/py_typecheck.py': ['is_named_tuple'], 'tensorflow_federated/python/core/api/computation_types.py': ['to_type'], 'tensorflow_federated/python/core/impl/function_utils.py': ['wrap_as_zero_or_one_arg_callable'], 'tensorflow_federated/python/core/impl/type_utils.py': ['infer_type']}}","{'add': {1: 3, 17: 1, 9: 1, 2: 2, 20: 1, 6: 1, 12: 1}, 'del': {1: 2, 2: 3, 4: 1}}"
+https://github.com/tensorflow/federated/pull/355,2,2,4,1,2,"{'num': 1, 'function': {'tensorflow_federated/python/core/impl/transformations.py': ['replace_tuple_intrinsics_with_intrinsic']}}","{'add': {1: 2}, 'del': {1: 2}}"
+https://github.com/tensorflow/federated/pull/319,1,0,1,1,1,"{'num': 1, 'function': {'tensorflow_federated/python/learning/federated_sgd.py': []}}","{'add': {1: 1}, 'del': {}}"
+https://github.com/tensorflow/federated/pull/318,5,1,6,1,1,"{'num': 1, 'function': {'tensorflow_federated/python/core/impl/transformations.py': ['replace_chained_federated_maps_with_federated_map']}}","{'add': {5: 1}, 'del': {1: 1}}"
+https://github.com/tensorflow/federated/pull/300,1,1,2,1,6,"{'num': 1, 'function': {'tensorflow_federated/python/simulation/datasets/emnist/load_data.py': ['_transform']}}","{'add': {1: 1}, 'del': {1: 1}}"
+https://github.com/tensorflow/federated/pull/284,61,5,66,2,7,"{'num': 4, 'function': {'tensorflow_federated/python/learning/model_examples.py': ['_dense_all_zeros_layer', 'build_embedding_keras_model'], 'tensorflow_federated/python/learning/model_utils.py': ['__init__', 'keras_weights']}}","{'add': {1: 3, 43: 1, 4: 1, 9: 1, 2: 1}, 'del': {1: 3, 2: 1}}"
+https://github.com/tensorflow/federated/pull/238,4,2,6,2,3,"{'num': 2, 'function': {'tensorflow_federated/python/learning/model_utils.py': ['_forward_pass'], 'tensorflow_federated/python/simulation/hdf5_client_data.py': ['_create_dataset']}}","{'add': {1: 2, 2: 1}, 'del': {1: 2}}"
+https://github.com/tensorflow/federated/pull/164,1,0,1,1,1,"{'num': 1, 'function': {'tensorflow_federated/python/learning/framework/optimizer_utils.py': []}}","{'add': {1: 1}, 'del': {}}"
+https://github.com/tensorflow/federated/pull/146,42,28,70,3,5,"{'num': 3, 'function': {'tensorflow_federated/python/core/impl/graph_utils.py': ['make_data_set_from_elements'], 'tensorflow_federated/python/learning/federated_averaging.py': ['__call__'], 'tensorflow_federated/python/learning/framework/optimizer_utils.py': ['server_update_model']}}","{'add': {35: 1, 1: 3, 4: 1}, 'del': {26: 1, 1: 2}}"
+https://github.com/tensorflow/federated/pull/143,1,0,1,1,1,"{'num': 1, 'function': {'tensorflow_federated/python/simulation/transforming_client_data.py': []}}","{'add': {1: 1}, 'del': {}}"
+https://github.com/tensorflow/federated/pull/126,3,3,6,1,1,"{'num': 1, 'function': {'tensorflow_federated/python/core/impl/reference_executor.py': ['to_representation_for_type']}}","{'add': {3: 1}, 'del': {3: 1}}"
+https://github.com/adap/flower/pull/826,3,3,6,1,3,"{'num': 3, 'function': {'src/py/flwr/simulation/ray_transport/ray_client_proxy.py': ['evaluate', 'fit', 'get_parameters']}}","{'add': {1: 3}, 'del': {1: 3}}"
+https://github.com/adap/flower/pull/673,54,31,85,2,19,"{'num': 8, 'function': {'examples/mxnet_from_centralized_to_federated/mxnet_mnist.py': ['test', 'main', 'model', 'train'], 'examples/mxnet_from_centralized_to_federated/client.py': ['set_parameters', 'evaluate', 'main', 'fit']}}","{'add': {5: 3, 9: 1, 1: 7, 2: 6, 8: 1, 3: 1}, 'del': {2: 3, 4: 1, 1: 4, 5: 1, 3: 4}}"
+https://github.com/bytedance/fedlearner/pull/852,20,13,33,1,12,"{'num': 6, 'function': {'fedlearner/model/tree/trainer.py': ['create_argument_parser', 'train', 'test_one_file', 'extract_field', 'read_data', 'read_data_dir']}}","{'add': {4: 1, 2: 5, 1: 6}, 'del': {2: 3, 1: 7}}"
+https://github.com/bytedance/fedlearner/pull/749,21,6,27,4,7,"{'num': 4, 'function': {'web_console_v2/api/fedlearner_webconsole/job/apis.py': ['get'], 'web_console_v2/api/fedlearner_webconsole/workflow/apis.py': ['get'], 'web_console_v2/api/fedlearner_webconsole/workflow/models.py': ['_prepare_for_ready'], 'web_console_v2/api/fedlearner_webconsole/job/yaml_formatter.py': ['code_dict_encode']}}","{'add': {1: 5, 2: 1, 14: 1}, 'del': {3: 2}}"
+https://github.com/bytedance/fedlearner/pull/730,6,2,8,1,2,"{'num': 1, 'function': {'web_console_v2/api/fedlearner_webconsole/job/yaml_formatter.py': ['format_yaml']}}","{'add': {2: 1, 4: 1}, 'del': {2: 1}}"
+https://github.com/bytedance/fedlearner/pull/600,14,4,18,4,8,"{'num': 4, 'function': {'web_console_v2/api/command.py': [], 'web_console_v2/api/config.py': [], 'web_console_v2/api/fedlearner_webconsole/app.py': ['create_app'], 'web_console_v2/api/server.py': []}}","{'add': {1: 3, 8: 1, 3: 1}, 'del': {1: 2, 2: 1}}"
+https://github.com/bytedance/fedlearner/pull/519,65,152,217,9,27,"{'num': 10, 'function': {'web_console_v2/api/fedlearner_webconsole/app.py': ['create_app'], 'web_console_v2/api/fedlearner_webconsole/job/apis.py': [], 'web_console_v2/api/fedlearner_webconsole/job/models.py': ['get_config', 'get_pods'], 'web_console_v2/api/fedlearner_webconsole/project/adapter.py': ['get_web_console_grpc_spec', 'get_worker_grpc_spec'], 'web_console_v2/api/fedlearner_webconsole/scheduler/scheduler.py': ['_schedule_workflow'], 'web_console_v2/api/fedlearner_webconsole/scheduler/transaction.py': ['process'], 'web_console_v2/api/fedlearner_webconsole/utils/fake_k8s_client.py': ['get_flapp'], 'web_console_v2/api/fedlearner_webconsole/workflow/models.py': ['commit']}}","{'add': {3: 5, 1: 10, 7: 1, 2: 1, 27: 1, 4: 1}, 'del': {1: 13, 4: 2, 3: 2, 2: 4, 5: 1, 112: 1}}"
+https://github.com/bytedance/fedlearner/pull/498,1,1,2,1,1,"{'num': 1, 'function': {'web_console_v2/api/fedlearner_webconsole/workflow_template/apis.py': ['dict_to_workflow_definition']}}","{'add': {1: 1}, 'del': {1: 1}}"
+https://github.com/PaddlePaddle/PaddleFL/pull/203,2,2,4,1,2,"{'num': 1, 'function': {'python/paddle_fl/paddle_fl/core/trainer/fl_trainer.py': ['run']}}","{'add': {1: 2}, 'del': {1: 2}}"
+https://github.com/PaddlePaddle/PaddleFL/pull/134,3,1,4,1,5,"{'num': 3, 'function': {'python/paddle_fl/mpc/data_utils/aby3.py': ['_transpile_type_and_shape', 'decrypt_model'], 'python/paddle_fl/mpc/data_utils/op_extra_desc.py': []}}","{'add': {1: 3}, 'del': {1: 1}}"
+https://github.com/PaddlePaddle/PaddleFL/pull/113,10,4,14,4,10,"{'num': 6, 'function': {'python/paddle_fl/mpc/__init__.py': [], 'python/paddle_fl/mpc/data_utils/__init__.py': [], 'python/paddle_fl/mpc/data_utils/one_hot_encoding.py': ['one_hot_encoding_map'], 'python/paddle_fl/mpc/metrics.py': [], 'python/paddle_fl/mpc/data_utils/aby3.py': ['_transpile_type_and_shape', 'decrypt_model']}}","{'add': {1: 6, 4: 1}, 'del': {1: 2, 2: 1}}"
+https://github.com/PaddlePaddle/PaddleFL/pull/31,26,26,52,6,23,"{'num': 7, 'function': {'paddle_fl/core/master/fl_job.py': ['save'], 'setup.py': [], 'paddle_fl/core/submitter/client_base.py': ['generate_job_sh'], 'paddle_fl/version.py': [], 'paddle_fl/core/scheduler/agent_master.py': ['start_fl_training', 'init_env'], 'paddle_fl/core/trainer/diffiehellman/diffiehellman.py': []}}","{'add': {1: 21, 3: 1, 2: 1}, 'del': {1: 21, 3: 1, 2: 1}}"

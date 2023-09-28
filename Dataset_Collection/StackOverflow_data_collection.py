@@ -47,7 +47,7 @@ def main():
                 items = fetch_data_from_stack_overflow(url)
                 all_data.extend(filter_and_format_data(items, question_list))
 
-    with open('data/SO/init.csv', 'w', encoding="utf-8") as f:
+    with open('StackOverflow/so_init.csv', 'w', encoding="utf-8") as f:
         writer = csv.writer(f, delimiter=',')
         writer.writerow(['id', 'url', 'label', 'title', 'created_time', 'last_activity_date'])
         writer.writerows(all_data)

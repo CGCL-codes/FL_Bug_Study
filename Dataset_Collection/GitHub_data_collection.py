@@ -24,8 +24,8 @@ def fetch_issues_and_prs(fl, g):
     repo = g.get_repo(fl)
     issues = repo.get_issues(state="closed")
     
-    with open(f'data/{fl.split("/")[1]}/issues_init.csv', 'w', encoding="utf-8", newline='') as f_issue, \
-         open(f'data/{fl.split("/")[1]}/PRs_init.csv', 'w', encoding="utf-8", newline='') as f_pull:
+    with open(f'GitHub/{fl.split("/")[1]}/issues_init.csv', 'w', encoding="utf-8", newline='') as f_issue, \
+         open(f'GitHub/{fl.split("/")[1]}/PRs_init.csv', 'w', encoding="utf-8", newline='') as f_pull:
         writer_issue = csv.writer(f_issue, delimiter='\t')
         writer_pull = csv.writer(f_pull, delimiter='\t')
         writer_issue.writerow(['url', 'label', 'title', 'all_text', 'comments', 'created_time', 'updated_time', 'closed_time'])
